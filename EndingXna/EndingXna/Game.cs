@@ -382,9 +382,10 @@ public class Game : Sprite
 		mouseVy = mouseY - lastMouseY;
 		lastMouseX = mouseX;
 		lastMouseY = mouseY;
-		frameCount++;
+
+	    frameCount++;
 	}
-		
+
 	public void initLevel() {
 		level = new Level(currentLevelType, currentLevelObj);
 		level.checkView = level.checkButton.active = UserData.settings.checkView;

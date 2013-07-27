@@ -42,7 +42,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         _graphics.PreferredBackBufferHeight = 640;
 
         //Make 30 FPS or put a key limiter on KeyDown!
-        //TargetElapsedTime = TimeSpan.FromSeconds(1/30.0f);
+        TargetElapsedTime = TimeSpan.FromSeconds(1/30.0f);
     }
 
     /// <summary>
@@ -151,6 +151,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
             if (Stage.keyDownActions != null)
                 Stage.keyDownActions(null);
         }
+            
 
         //Need to raise the enter frame events for all objects?
         if (_game.enterFrameActions != null)
@@ -169,7 +170,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         GraphicsDevice.Clear(Color.Black);
 
         //Blit the game with no scaling here...
-        _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+        _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap, null, null, null);
         _game.Draw(gameTime);
         _spriteBatch.End();
         

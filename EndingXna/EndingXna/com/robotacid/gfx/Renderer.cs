@@ -5,10 +5,13 @@ using com.robotacid.ui.editor;
 using flash;
 using flash.display;
 using flash.geom;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Array = flash.Array;
 using Math = flash.Math;
+using Point = flash.geom.Point;
+using Rectangle = flash.geom.Rectangle;
 
 //using Math = System.Math;
 
@@ -45,6 +48,9 @@ namespace com.robotacid.gfx
 		public static Texture2D MenuSpriteSheet;
 		public BitmapData gameSpriteSheet;
 		public BitmapData menuSpriteSheet;
+
+        public static Texture2D BackgroundSpriteSheet;
+        public BitmapData backgroundSpriteSheet;
 		
 		// blits
 		public BlitRect sparkBlit;
@@ -164,25 +170,28 @@ namespace com.robotacid.gfx
 
         public static void LoadContent(ContentManager content) {
  
+            BackgroundSpriteSheet = content.Load<Texture2D>("textures/background");
 		    GameSpriteSheet = content.Load<Texture2D>("textures/game-sprites");
             MenuSpriteSheet = content.Load<Texture2D>("textures/menu-sprites");
         }
 
-
+        BlitSprite checkerboard;
         /* Prepares sprites and bitmaps for a game session */
 		public void createRenderLayers(Sprite holder = null) {
 			
-			if(holder != null) holder = game;
+			if(holder == null) holder = game;
 			
 			canvasPoint = new Point();
 			canvas = new Sprite();
 			holder.addChild(canvas);
 			
+            checkerboard = new BlitSprite(gameSpriteSheet, new Rectangle(0, 0, 16, 16));
+
 			backgroundShape = new Shape();
 			backgroundBitmapData = new BitmapData(16, 16, true, 0x0);
 
             //TODO - this is blitting the background - I think copyPixel may need to be intelligent
-            //if we are Drawing it can render or wise we do a SetData on to a Texture2D?
+            //if we are Drawing it can render otherwise do we SetData on to a Texture2D?
 			//backgroundBitmapData.copyPixels(gameSpriteSheet, new Rectangle(0, 0, 16, 16), new Point());
 			
 			bitmapData = new BitmapData(WIDTH, HEIGHT, true, 0x0);
@@ -226,11 +235,10 @@ namespace com.robotacid.gfx
 
         /* Clean graphics and reset camera - no object destruction/creation */
 		public void reset() {
-            //TODO - what to do about these - shall I make them 'render targets' and batch the operations up and execute them in the Draw phase?
+            //CONVERSION - no action here - these may become render targets and they will be cleared when bound to graphics device
 			//bitmapData.fillRect(bitmapData.rect, 0x0);
 			//bitmapDataShadow.fillRect(bitmapData.rect, 0x0);
 			//guiBitmapData.fillRect(bitmapData.rect, 0x0);
-			//TODO
             //backgroundShape.graphics.clear();
 			glitchMap.reset();
 			var data = game.level.data;
@@ -270,6 +278,7 @@ namespace com.robotacid.gfx
 				
 			} 
             else if(game.state == Game.GAME){
+
                 updateShaker();
 				
                 Level level;
@@ -356,6 +365,8 @@ namespace com.robotacid.gfx
             //backgroundShape.graphics.beginBitmapFill(backgroundBitmapData, matrix);
             //backgroundShape.graphics.drawRect(0, 0, Game.WIDTH, Game.HEIGHT);
             //backgroundShape.graphics.endFill();
+
+            XnaGame.Instance._spriteBatch.Draw(backgroundSpriteSheet.texture, new Vector2(0, 0), new Microsoft.Xna.Framework.Rectangle(-canvasPoint.x, -canvasPoint.y, Game.WIDTH, Game.HEIGHT), Color.White);
 		}
 		
 		public void displace(Number x, Number y) {
@@ -501,11 +512,11 @@ namespace com.robotacid.gfx
             var gameSpriteSheetBitmap = GameSpriteSheet;
 			var menuSpriteSheetBitmap = MenuSpriteSheet;
 
-            //TODO
 			//gameSpriteSheet = gameSpriteSheetBitmap.bitmapData;
             gameSpriteSheet = new BitmapData(GameSpriteSheet, 0, 0);//  menuSpriteSheetBitmap.bitmapData);
 			menuSpriteSheet = new BitmapData(MenuSpriteSheet, 0, 0);//  menuSpriteSheetBitmap.bitmapData);
-			
+			backgroundSpriteSheet = new BitmapData(BackgroundSpriteSheet, 0, 0);//  menuSpriteSheetBitmap.bitmapData);
+
 			sparkBlit = new BlitRect(0, 0, 1, 1, 0xffffffff);
 			debrisBlit = new BlitRect(0, 0, 1, 1, 0xffffffff);
 			wallDebrisBlit = new BlitRect(0, 0, 1, 1, WALL_COL);

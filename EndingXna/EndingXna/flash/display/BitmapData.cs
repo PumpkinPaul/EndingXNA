@@ -45,6 +45,7 @@ namespace flash.display
             if (sourceBitmapData.texture == null)
                 return;
 
+            //XnaGame.Instance._spriteBatch.Draw(sourceBitmapData.texture, new Vector2(destPoint.x + 1, destPoint.y + 1), new Microsoft.Xna.Framework.Rectangle(sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height), Color.Black);
             XnaGame.Instance._spriteBatch.Draw(sourceBitmapData.texture, new Vector2(destPoint.x, destPoint.y), new Microsoft.Xna.Framework.Rectangle(sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height), Color.White);
         }
 
