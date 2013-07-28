@@ -27,6 +27,25 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     public float Scale { get { return Instance._game.scaleRatio; } }
     public bool CanDraw { get; private set; }
 
+    #if XBOX360
+        public const float DefaultZoomFactor = 0.0f;
+        public const int TitleSafeTestOffset = 0;
+    #else
+        public const float DefaultZoomFactor = 1.0f;
+        public const int TitleSafeTestOffset = 50;
+    #endif
+
+    private float _zoomFactor = DefaultZoomFactor;
+
+    public float ZoomFactor { 
+        get { return this._zoomFactor; } 
+        set { 
+            this._zoomFactor = value;
+            this.SetRenderViewport();
+        } 
+    }
+    public Viewport RenderViewport { get; private set; }
+
     public XnaGame()
     {
         Instance = this;
@@ -59,6 +78,19 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         _game = new Game();
 
         IsMouseVisible = true;
+
+        //Initialise the final rendering viewport - this will allow the user to size the rendered image to match their display device
+        this.SetRenderViewport();
+    }
+
+    private void SetRenderViewport()
+    {
+        //Specify offset to test Titlesafe on Windows...
+        this.RenderViewport = new Viewport(
+                (int)MathHelper.Lerp(this.GraphicsDevice.Viewport.TitleSafeArea.X + TitleSafeTestOffset, this.GraphicsDevice.Viewport.X, this.ZoomFactor),
+                (int)MathHelper.Lerp(this.GraphicsDevice.Viewport.TitleSafeArea.Y + TitleSafeTestOffset, this.GraphicsDevice.Viewport.Y, this.ZoomFactor),
+                (int)MathHelper.Lerp(this.GraphicsDevice.Viewport.TitleSafeArea.Width - (TitleSafeTestOffset * 2), this.GraphicsDevice.Viewport.Width, this.ZoomFactor),
+                (int)MathHelper.Lerp(this.GraphicsDevice.Viewport.TitleSafeArea.Height - (TitleSafeTestOffset * 2), this.GraphicsDevice.Viewport.Height, this.ZoomFactor));
     }
 
     /// <summary>
@@ -107,6 +139,9 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         base.Update(gameTime);
     }
 
+    /// <summary>
+    /// Listen for events and dispatch to 'flash' game 
+    /// </summary>
     private void DispatchEvents()
     {
         if (GraphicsDevice.Viewport.Bounds.Contains(InputHelper.MousePos)) {
@@ -161,21 +196,15 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     {
         CanDraw = true;
 
-        //GraphicsDevice.SetRenderTarget(_sceneRenderTarget);
-        ////GraphicsDevice.Clear(Color.Black);
-
-        //////Blit the game with no scaling here...
-        ////SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap, null, null, null);
-        _game.Draw(gameTime);
-        ////SpriteBatch.End();
-        
-        //GraphicsDevice.SetRenderTarget(null);
-
-        //////...now apply the scaling to the final image - use poit sampling for a nice clean look with none of the fuzziness that linear causes. 
-        //SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp, null,null);
-        //SpriteBatch.Draw(_sceneRenderTarget, Vector2.Zero, GraphicsDevice.Viewport.Bounds, Color.White, 0, Vector2.Zero, Scale, SpriteEffects.None, 0);
-        //SpriteBatch.End();
-
+        _game.Draw(_sceneRenderTarget, gameTime);
+   
+        GraphicsDevice.SetRenderTarget(null);
+        GraphicsDevice.Clear(Color.Black);
+        //...now apply the scaling to the final image - use point sampling for a nice clean look with none of the fuzziness that linear causes. 
+        SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp, null,null);
+        SpriteBatch.Draw(_sceneRenderTarget, Vector2.Zero, GraphicsDevice.Viewport.Bounds, Color.White, 0, Vector2.Zero, Scale, SpriteEffects.None, 0);
+        //SpriteBatch.Draw(_sceneRenderTarget, RenderViewport.Bounds, Color.White);
+        SpriteBatch.End();
         base.Draw(gameTime);
 
         CanDraw = false;

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace flash.display
 {
@@ -22,6 +24,15 @@ namespace flash.display
 
         public void removeChildAt(int index) {
             _displayObjects.RemoveAt(index);
+        }
+
+        public override void Draw(RenderTarget2D sceneRenderTarget, GameTime gameTime) 
+        {
+            OnDraw(sceneRenderTarget, gameTime);
+            foreach (var displayObject in  _displayObjects)
+            {
+                displayObject.OnDraw(sceneRenderTarget, gameTime);    
+            }
         }
     }
 }

@@ -12,6 +12,12 @@ namespace flash
         public Array(IEnumerable<T> collection) : base(collection) { }
         public Array(int capacity) : base(capacity) { }
 
+        public T this[string index] 
+        { 
+            get { return default(T); }
+            set {}
+        }
+
         public override string ToString() {
             _sb.Clear();
             bool isFirst = true;

@@ -148,7 +148,8 @@ namespace com.robotacid.gfx
 		private int i;
 		
 		public static Point point = new Point();
-		//TODO public static var matrix:Matrix = new Matrix();
+		//CONVERSION - don't need this anymore
+        //public static var matrix:Matrix = new Matrix();
 		
 		// measurements from Game.as
 		public readonly static Number SCALE = Game.SCALE;
@@ -285,10 +286,11 @@ namespace com.robotacid.gfx
 		 * ================================================================================================
 		 */
 		public void main() {
-            //This is now a NOP - rendering is done in the Draw method which is called directly by the host XNA game.
+            //This is now a NOP - rendering is done in the main method below.
+            //We keep this around to minimise impact on original source.
         }
 
-        internal void Draw()
+        internal void main(RenderTarget2D sceneRenderTarget)
         {
             // clear bitmapDatas - refresh can be set to false for glitchy trails
             //if(refresh) bitmapData.fillRect(bitmapData.rect, 0x0);
@@ -346,8 +348,9 @@ namespace com.robotacid.gfx
                 glitchMap.apply(bitmapData, canvasPoint.x, canvasPoint.y);
                 glitchMap.update();
 				
-                bitmapDataShadow.copyPixels(bitmapData, bitmapData.rect, new Point(1, 1), null, null, true);
-                bitmapDataShadow.colorTransform(bitmapDataShadow.rect, new ColorTransform(0, 0, 0));
+                //CONVERSION - handled below
+                //bitmapDataShadow.copyPixels(bitmapData, bitmapData.rect, new Point(1, 1), null, null, true);
+                //bitmapDataShadow.colorTransform(bitmapDataShadow.rect, new ColorTransform(0, 0, 0));
 				
                 if(roomFx.length > 0) roomFx = roomFx.filter(fxFilterCallBack);
             }
@@ -360,9 +363,7 @@ namespace com.robotacid.gfx
             XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
             XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null,null);
             XnaGame.Instance.FlashRenderer.Flush(XnaGame.Instance.SpriteBatch, _shadowRenderTarget);
-
             XnaGame.Instance.FlashRenderer.Draw(XnaGame.Instance.SpriteBatch, _gameRenderTarget, Vector2.One, Color.Black);
-
             XnaGame.Instance.SpriteBatch.End();
             
             XnaGame.Instance.GraphicsDevice.SetRenderTarget(_gameRenderTarget);
@@ -377,14 +378,16 @@ namespace com.robotacid.gfx
             XnaGame.Instance.FlashRenderer.Flush(XnaGame.Instance.SpriteBatch, _guiRenderTarget);
             XnaGame.Instance.SpriteBatch.End();
 
-            //Draw final composite image to the screen
-            XnaGame.Instance.GraphicsDevice.SetRenderTarget(null);
+            //Draw final composite image - we'll draw to another render target first - the XNA wrapper will blit this final render target
+            //to the screen later respecting title safe viewport.
+            //Note - it could all be done here if you wanted but the game wrapper was already set up to do it.
+            XnaGame.Instance.GraphicsDevice.SetRenderTarget(sceneRenderTarget);
             XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
             XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null,null);
-            XnaGame.Instance.SpriteBatch.Draw(_backgroundRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White, 0, Vector2.Zero, XnaGame.Instance.Scale, SpriteEffects.None, 0);
-            XnaGame.Instance.SpriteBatch.Draw(_shadowRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White, 0, Vector2.Zero, XnaGame.Instance.Scale, SpriteEffects.None, 0);
-            XnaGame.Instance.SpriteBatch.Draw(_gameRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White, 0, Vector2.Zero, XnaGame.Instance.Scale, SpriteEffects.None, 0);
-            XnaGame.Instance.SpriteBatch.Draw(_guiRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White, 0, Vector2.Zero, XnaGame.Instance.Scale, SpriteEffects.None, 0);
+            XnaGame.Instance.SpriteBatch.Draw(_backgroundRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White);
+            XnaGame.Instance.SpriteBatch.Draw(_shadowRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White);
+            XnaGame.Instance.SpriteBatch.Draw(_gameRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White);
+            XnaGame.Instance.SpriteBatch.Draw(_guiRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White);
             XnaGame.Instance.SpriteBatch.End();
         }
 

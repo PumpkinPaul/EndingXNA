@@ -1,6 +1,8 @@
 ﻿using System;
 using flash.events;
 using flash.geom;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using pumpkin;
 
 namespace flash.display
@@ -31,5 +33,15 @@ namespace flash.display
         public Number scaleZ { get; set; }
 
         //public Action addedToStage;
+
+        //Bridge to XNA
+        public virtual void Draw(RenderTarget2D sceneRenderTarget, GameTime gameTime) {
+            OnDraw(sceneRenderTarget, gameTime);
+        }
+
+        protected internal virtual void OnDraw(RenderTarget2D sceneRenderTarget, GameTime gameTime)
+        {
+            //Replay cached drawing commands
+        }
     }
 }

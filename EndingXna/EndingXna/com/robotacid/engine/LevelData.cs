@@ -237,7 +237,6 @@ namespace com.robotacid.engine
             obj.player.x = (int)(width * 0.5) >> 0; 
             obj.player.y = (int)(height * 0.5) >> 0;
             
-            //TODO: map is empty!
             int r, c;
             for(r = 0; r < height; r++){
                 obj.map.push(new Array<int>());

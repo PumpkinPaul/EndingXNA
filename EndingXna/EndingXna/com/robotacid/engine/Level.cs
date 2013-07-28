@@ -200,7 +200,6 @@ namespace com.robotacid.engine
 		}
 		
 		private void reset() {
-            //TODO:
 			String str;
             int time;
 			if(room.type == Room.PUZZLE){

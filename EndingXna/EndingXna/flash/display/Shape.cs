@@ -3,6 +3,10 @@
 namespace flash.display
 {
     public class Shape : DisplayObject {
-        //public Graphics graphics { get { return Graphics.Instance; } }
+        public Graphics graphics { get ; private set; } 
+
+        public Shape() {
+            graphics = new Graphics();
+        }
     }
 }

@@ -45,39 +45,22 @@ namespace flash.display
             //    return;
 
             if (!XnaGame.Instance.CanDraw)
-                throw new InvalidOperationException(); 
+                //throw new InvalidOperationException(); 
+                return;
 
             if (sourceBitmapData.texture == null)
                 return;
 
             XnaGame.Instance.FlashRenderer.CopyPixels(renderTarget, sourceBitmapData, sourceRect, destPoint, alphaBitmapData, alphaPoint, mergeAlpha);
-            return;
-
-            //OLD
-            if (!XnaGame.Instance.CanDraw)
-                throw new InvalidOperationException(); 
-
-            if (sourceBitmapData.texture == null)
-                return;
-
-            //XnaGame.Instance._spriteBatch.Draw(sourceBitmapData.texture, new Vector2(destPoint.x + 1, destPoint.y + 1), new Microsoft.Xna.Framework.Rectangle(sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height), Color.Black);
-            XnaGame.Instance.SpriteBatch.Draw(sourceBitmapData.texture, new Vector2(destPoint.x, destPoint.y), new Microsoft.Xna.Framework.Rectangle(sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height), Color.White);
         }
 
         public void fillRect(Rectangle rect, uint color) {
 
              if (!XnaGame.Instance.CanDraw)
-                throw new InvalidOperationException(); 
+                //throw new InvalidOperationException(); 
+                return;
 
              XnaGame.Instance.FlashRenderer.FillRect(renderTarget, rect, color); 
-             return;
-
-             //OLD
-             //if (!XnaGame.Instance.CanDraw)
-             //   throw new InvalidOperationException(); 
-
-             ////XnaGame.Instance._spriteBatch.Draw(XnaGame.Instance._1x1PixelTexture, new Microsoft.Xna.Framework.Rectangle(rect.x, rect.y, rect.width, rect.height), new Color { PackedValue = color });
-             //XnaGame.Instance.SpriteBatch.Draw(XnaGame.Instance.PixelTexture, new Microsoft.Xna.Framework.Rectangle(rect.x, rect.y, rect.width, rect.height), UIntToColor(color));
         }
 
         public BitmapData clone() {

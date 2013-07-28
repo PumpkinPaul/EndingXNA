@@ -5,6 +5,7 @@ using com.robotacid.gfx;
 using flash.display;
 using flash.events;
 using flash.system;
+using Microsoft.Xna.Framework.Graphics;
 using Renderer = com.robotacid.gfx.Renderer;
 using FX = com.robotacid.gfx.FX;
 //using PNGEncoder = com.robotacid.gfx.PNGEncoder;
@@ -60,9 +61,9 @@ using Math = flash.Math;
 /// </summary>
 public class Game : Sprite
 {
-    //Added this method as the bridge between XNA and Ending / Flash
-    public void Draw(GameTime gameTime) {
-        renderer.Draw();           
+    //render.main() is a NOP now so override here to do the main rendering
+    protected internal override void OnDraw(RenderTarget2D sceneRenderTarget, GameTime gameTime) {
+        renderer.main(sceneRenderTarget);           
     }
 
     public const Boolean TEST_BED_INIT = false;
