@@ -25,6 +25,13 @@ namespace com.robotacid.gfx
 	/// @conversion Paul Cunningham, pumpkin-games.net
     /// </summary>
     public class Renderer  {
+
+        //Some render targets to replace the bitmaps
+        static RenderTarget2D _backgroundRenderTarget;
+        static RenderTarget2D _gameRenderTarget;
+        static RenderTarget2D _shadowRenderTarget;
+        static RenderTarget2D _guiRenderTarget;
+
         public Game game;
 		public CanvasCamera camera;
 
@@ -167,15 +174,30 @@ namespace com.robotacid.gfx
             trackPlayer = true;
         }
 
-
+        /// <summary>
+        /// Xna bridge to load graphics recources
+        /// </summary>
+        /// <param name="content">Xna Content Manager.</param>
         public static void LoadContent(ContentManager content) {
  
             BackgroundSpriteSheet = content.Load<Texture2D>("textures/background");
 		    GameSpriteSheet = content.Load<Texture2D>("textures/game-sprites");
             MenuSpriteSheet = content.Load<Texture2D>("textures/menu-sprites");
+
+            PresentationParameters pp = XnaGame.Instance.GraphicsDevice.PresentationParameters;
+            SurfaceFormat format = pp.BackBufferFormat;
+
+            _backgroundRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, Game.WIDTH, Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
+            _gameRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, Game.WIDTH, Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
+            _shadowRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, Game.WIDTH, Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
+            _guiRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, Game.WIDTH, Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
+
+            XnaGame.Instance.FlashRenderer.Register(_backgroundRenderTarget);
+            XnaGame.Instance.FlashRenderer.Register(_gameRenderTarget);
+            XnaGame.Instance.FlashRenderer.Register(_shadowRenderTarget);
+            XnaGame.Instance.FlashRenderer.Register(_guiRenderTarget);
         }
 
-        BlitSprite checkerboard;
         /* Prepares sprites and bitmaps for a game session */
 		public void createRenderLayers(Sprite holder = null) {
 			
@@ -184,14 +206,11 @@ namespace com.robotacid.gfx
 			canvasPoint = new Point();
 			canvas = new Sprite();
 			holder.addChild(canvas);
-			
-            checkerboard = new BlitSprite(gameSpriteSheet, new Rectangle(0, 0, 16, 16));
-
+		
 			backgroundShape = new Shape();
 			backgroundBitmapData = new BitmapData(16, 16, true, 0x0);
 
-            //TODO - this is blitting the background - I think copyPixel may need to be intelligent
-            //if we are Drawing it can render otherwise do we SetData on to a Texture2D?
+            //CONVERSION - simply made this a texture in the Content project
 			//backgroundBitmapData.copyPixels(gameSpriteSheet, new Rectangle(0, 0, 16, 16), new Point());
 			
 			bitmapData = new BitmapData(WIDTH, HEIGHT, true, 0x0);
@@ -218,6 +237,11 @@ namespace com.robotacid.gfx
 			slideY = 0;
 			sliding = false;
 			refresh = true;
+
+            //backgroundBitmapData.renderTarget = _backgroundRenderTarget;
+            bitmapData.renderTarget = _gameRenderTarget;
+            bitmapDataShadow.renderTarget = _shadowRenderTarget;
+            guiBitmapData.renderTarget = _guiRenderTarget;
 		}
 
         /* Destroy all objects */
@@ -235,7 +259,7 @@ namespace com.robotacid.gfx
 
         /* Clean graphics and reset camera - no object destruction/creation */
 		public void reset() {
-            //CONVERSION - no action here - these may become render targets and they will be cleared when bound to graphics device
+            //CONVERSION - no action here
 			//bitmapData.fillRect(bitmapData.rect, 0x0);
 			//bitmapDataShadow.fillRect(bitmapData.rect, 0x0);
 			//guiBitmapData.fillRect(bitmapData.rect, 0x0);
@@ -267,9 +291,9 @@ namespace com.robotacid.gfx
         internal void Draw()
         {
             // clear bitmapDatas - refresh can be set to false for glitchy trails
-			if(refresh) bitmapData.fillRect(bitmapData.rect, 0x0);
-			bitmapDataShadow.fillRect(bitmapDataShadow.rect, 0x0);
-			guiBitmapData.fillRect(guiBitmapData.rect, 0x0);
+            //if(refresh) bitmapData.fillRect(bitmapData.rect, 0x0);
+            //bitmapDataShadow.fillRect(bitmapDataShadow.rect, 0x0);
+            //guiBitmapData.fillRect(guiBitmapData.rect, 0x0);
 			
 			if(game.state == Game.MENU){
 				guiBitmapData.fillRect(guiBitmapData.rect, 0xFF1A1E26);
@@ -327,46 +351,51 @@ namespace com.robotacid.gfx
 				
                 if(roomFx.length > 0) roomFx = roomFx.filter(fxFilterCallBack);
             }
-			
-            //TODO
-            //// update shapes
-            //bitmap.graphics.clear();
-            //matrix.identity();
-            //bitmap.graphics.lineStyle(0, 0, 0);
-            //bitmap.graphics.beginBitmapFill(bitmapData, matrix);
-            //bitmap.graphics.drawRect(0, 0, Game.WIDTH, Game.HEIGHT);
-            //bitmap.graphics.endFill();
-			
-            //bitmapShadow.graphics.clear();
-            //matrix.identity();
-            //bitmapShadow.graphics.lineStyle(0, 0, 0);
-            //bitmapShadow.graphics.beginBitmapFill(bitmapDataShadow, matrix);
-            //bitmapShadow.graphics.drawRect(0, 0, Game.WIDTH, Game.HEIGHT);
-            //bitmapShadow.graphics.endFill();
-			
-            //guiBitmap.graphics.clear();
-            //matrix.identity();
-            //guiBitmap.graphics.lineStyle(0, 0, 0);
-            //guiBitmap.graphics.beginBitmapFill(guiBitmapData, matrix);
-            //guiBitmap.graphics.drawRect(0, 0, Game.WIDTH, Game.HEIGHT);
-            //guiBitmap.graphics.endFill();   
 
-            //XnaGame.Instance.RenderSomething(guiBitmapData);
+            // update shapes
+            //CONVERION
+            // Now draw the deferred scene object applying whatever effects are required to mimic the orignal game
+            XnaGame.Instance.GraphicsDevice.SetRenderTarget(_shadowRenderTarget);
+            if(refresh) XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
+            XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
+            XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null,null);
+            XnaGame.Instance.FlashRenderer.Flush(XnaGame.Instance.SpriteBatch, _shadowRenderTarget);
+
+            XnaGame.Instance.FlashRenderer.Draw(XnaGame.Instance.SpriteBatch, _gameRenderTarget, Vector2.One, Color.Black);
+
+            XnaGame.Instance.SpriteBatch.End();
+            
+            XnaGame.Instance.GraphicsDevice.SetRenderTarget(_gameRenderTarget);
+            if(refresh) XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
+            XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null,null);
+            XnaGame.Instance.FlashRenderer.Flush(XnaGame.Instance.SpriteBatch, _gameRenderTarget);
+            XnaGame.Instance.SpriteBatch.End();
+            
+            XnaGame.Instance.GraphicsDevice.SetRenderTarget(_guiRenderTarget);
+            XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
+            XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null,null);
+            XnaGame.Instance.FlashRenderer.Flush(XnaGame.Instance.SpriteBatch, _guiRenderTarget);
+            XnaGame.Instance.SpriteBatch.End();
+
+            //Draw final composite image to the screen
+            XnaGame.Instance.GraphicsDevice.SetRenderTarget(null);
+            XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
+            XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null,null);
+            XnaGame.Instance.SpriteBatch.Draw(_backgroundRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White, 0, Vector2.Zero, XnaGame.Instance.Scale, SpriteEffects.None, 0);
+            XnaGame.Instance.SpriteBatch.Draw(_shadowRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White, 0, Vector2.Zero, XnaGame.Instance.Scale, SpriteEffects.None, 0);
+            XnaGame.Instance.SpriteBatch.Draw(_gameRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White, 0, Vector2.Zero, XnaGame.Instance.Scale, SpriteEffects.None, 0);
+            XnaGame.Instance.SpriteBatch.Draw(_guiRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White, 0, Vector2.Zero, XnaGame.Instance.Scale, SpriteEffects.None, 0);
+            XnaGame.Instance.SpriteBatch.End();
         }
 
         private void updateCheckers() {
-            //TODO
-            //// checker background
-            //backgroundShape.graphics.clear();
-            //matrix.identity();
-            //matrix.tx = canvasPoint.x;
-            //matrix.ty = canvasPoint.y;
-            //backgroundShape.graphics.lineStyle(0, 0, 0);
-            //backgroundShape.graphics.beginBitmapFill(backgroundBitmapData, matrix);
-            //backgroundShape.graphics.drawRect(0, 0, Game.WIDTH, Game.HEIGHT);
-            //backgroundShape.graphics.endFill();
-
-            XnaGame.Instance._spriteBatch.Draw(backgroundSpriteSheet.texture, new Vector2(0, 0), new Microsoft.Xna.Framework.Rectangle(-canvasPoint.x, -canvasPoint.y, Game.WIDTH, Game.HEIGHT), Color.White);
+            // checker background
+            //CONVERSION
+            XnaGame.Instance.GraphicsDevice.SetRenderTarget(_backgroundRenderTarget);
+            XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
+            XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointWrap, null,null);
+            XnaGame.Instance.SpriteBatch.Draw(backgroundSpriteSheet.texture, new Vector2(0, 0), new Microsoft.Xna.Framework.Rectangle(-canvasPoint.x, -canvasPoint.y, Game.WIDTH, Game.HEIGHT), Color.White);
+            XnaGame.Instance.SpriteBatch.End();
 		}
 		
 		public void displace(Number x, Number y) {

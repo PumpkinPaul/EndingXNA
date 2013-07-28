@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using Microsoft.Xna.Framework.Graphics;
 using com.robotacid.gfx;
 using com.robotacid.sound;
@@ -10,18 +9,17 @@ using Microsoft.Xna.Framework.Input;
 using pumpkin;
 
 /// <summary>
-/// This is the bridge between XNA and the Flash / Endig code
+/// This is the bridge between XNA and the Flash / Ending code
 /// </summary>
 public class XnaGame : Microsoft.Xna.Framework.Game
 {
     public static XnaGame Instance { get; private set; }
-
+     
     private readonly GraphicsDeviceManager _graphics;
-    //TODO
-    public SpriteBatch _spriteBatch;
+    
+    public SpriteBatch SpriteBatch { get; private set; }
     private RenderTarget2D _sceneRenderTarget;
-    //public Texture2D _texture2D;
-    public Texture2D _1x1PixelTexture;
+    public FlashRenderer FlashRenderer { get; private set; }
 
     private Game _game;
     
@@ -43,6 +41,8 @@ public class XnaGame : Microsoft.Xna.Framework.Game
 
         //Make 30 FPS or put a key limiter on KeyDown!
         TargetElapsedTime = TimeSpan.FromSeconds(1/30.0f);
+
+        FlashRenderer = new FlashRenderer();
     }
 
     /// <summary>
@@ -59,7 +59,6 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         _game = new Game();
 
         IsMouseVisible = true;
-
     }
 
     /// <summary>
@@ -71,14 +70,10 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         PresentationParameters pp = GraphicsDevice.PresentationParameters;
         SurfaceFormat format = pp.BackBufferFormat;
 
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
+        SpriteBatch = new SpriteBatch(GraphicsDevice);
         _sceneRenderTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.DiscardContents);
-        //_texture2D = Content.Load<Texture2D>("textures/game-sprites");
-        _1x1PixelTexture = new Texture2D(GraphicsDevice, 1, 1);
-        var pixelData = new Color[1];
-        _1x1PixelTexture.GetData(pixelData);
-        pixelData[0] = Color.White;
-        _1x1PixelTexture.SetData(pixelData);
+
+        FlashRenderer.LoadContent(Content, GraphicsDevice);
 
         Renderer.LoadContent(Content);
         SoundLibrary.LoadContent(Content);
@@ -88,7 +83,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     {
         base.UnloadContent();
 
-        _spriteBatch.Dispose();
+        SpriteBatch.Dispose();
         _sceneRenderTarget.Dispose();
         _sceneRenderTarget.Dispose();
     }
@@ -166,20 +161,20 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     {
         CanDraw = true;
 
-        GraphicsDevice.SetRenderTarget(_sceneRenderTarget);
-        GraphicsDevice.Clear(Color.Black);
+        //GraphicsDevice.SetRenderTarget(_sceneRenderTarget);
+        ////GraphicsDevice.Clear(Color.Black);
 
-        //Blit the game with no scaling here...
-        _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap, null, null, null);
+        //////Blit the game with no scaling here...
+        ////SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap, null, null, null);
         _game.Draw(gameTime);
-        _spriteBatch.End();
+        ////SpriteBatch.End();
         
-        GraphicsDevice.SetRenderTarget(null);
+        //GraphicsDevice.SetRenderTarget(null);
 
-        //...now apply the scaling to the final image - use poit sampling for a nice clean look with none of the fuzziness that linear causes. 
-        _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp, null,null);
-        _spriteBatch.Draw(_sceneRenderTarget, Vector2.Zero, GraphicsDevice.Viewport.Bounds, Color.White, 0, Vector2.Zero, Scale, SpriteEffects.None, 0);
-        _spriteBatch.End();
+        //////...now apply the scaling to the final image - use poit sampling for a nice clean look with none of the fuzziness that linear causes. 
+        //SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp, null,null);
+        //SpriteBatch.Draw(_sceneRenderTarget, Vector2.Zero, GraphicsDevice.Viewport.Bounds, Color.White, 0, Vector2.Zero, Scale, SpriteEffects.None, 0);
+        //SpriteBatch.End();
 
         base.Draw(gameTime);
 

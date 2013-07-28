@@ -12,6 +12,7 @@ namespace flash.display
 
         static Dictionary<Texture2D, Color[]> PixelData = new Dictionary<Texture2D, Color[]>();
 
+        public RenderTarget2D renderTarget { get; set; }
         public Texture2D texture;
         public int height { get; private set; }
         public Rectangle rect { get; private set; }
@@ -39,6 +40,20 @@ namespace flash.display
         }
 
         public void copyPixels(BitmapData sourceBitmapData, Rectangle sourceRect, Point destPoint, BitmapData alphaBitmapData = null, Point alphaPoint = null, Boolean mergeAlpha = false) {
+
+            //if (renderTarget == null)
+            //    return;
+
+            if (!XnaGame.Instance.CanDraw)
+                throw new InvalidOperationException(); 
+
+            if (sourceBitmapData.texture == null)
+                return;
+
+            XnaGame.Instance.FlashRenderer.CopyPixels(renderTarget, sourceBitmapData, sourceRect, destPoint, alphaBitmapData, alphaPoint, mergeAlpha);
+            return;
+
+            //OLD
             if (!XnaGame.Instance.CanDraw)
                 throw new InvalidOperationException(); 
 
@@ -46,32 +61,31 @@ namespace flash.display
                 return;
 
             //XnaGame.Instance._spriteBatch.Draw(sourceBitmapData.texture, new Vector2(destPoint.x + 1, destPoint.y + 1), new Microsoft.Xna.Framework.Rectangle(sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height), Color.Black);
-            XnaGame.Instance._spriteBatch.Draw(sourceBitmapData.texture, new Vector2(destPoint.x, destPoint.y), new Microsoft.Xna.Framework.Rectangle(sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height), Color.White);
+            XnaGame.Instance.SpriteBatch.Draw(sourceBitmapData.texture, new Vector2(destPoint.x, destPoint.y), new Microsoft.Xna.Framework.Rectangle(sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height), Color.White);
         }
 
         public void fillRect(Rectangle rect, uint color) {
+
              if (!XnaGame.Instance.CanDraw)
                 throw new InvalidOperationException(); 
 
-             //XnaGame.Instance._spriteBatch.Draw(XnaGame.Instance._1x1PixelTexture, new Microsoft.Xna.Framework.Rectangle(rect.x, rect.y, rect.width, rect.height), new Color { PackedValue = color });
-             XnaGame.Instance._spriteBatch.Draw(XnaGame.Instance._1x1PixelTexture, new Microsoft.Xna.Framework.Rectangle(rect.x, rect.y, rect.width, rect.height), UIntToColor(color));
+             XnaGame.Instance.FlashRenderer.FillRect(renderTarget, rect, color); 
+             return;
+
+             //OLD
+             //if (!XnaGame.Instance.CanDraw)
+             //   throw new InvalidOperationException(); 
+
+             ////XnaGame.Instance._spriteBatch.Draw(XnaGame.Instance._1x1PixelTexture, new Microsoft.Xna.Framework.Rectangle(rect.x, rect.y, rect.width, rect.height), new Color { PackedValue = color });
+             //XnaGame.Instance.SpriteBatch.Draw(XnaGame.Instance.PixelTexture, new Microsoft.Xna.Framework.Rectangle(rect.x, rect.y, rect.width, rect.height), UIntToColor(color));
         }
 
         public BitmapData clone() {
-            return new BitmapData(width, height, transparent, fillColor);
+            return new BitmapData(texture, width, height, transparent, fillColor);
         }
 
         public void dispose() {
             //NOP - graphics resources handle by XNA
-        }
-
-        private static Color UIntToColor(uint color)
-        {
-             var a = (byte)(color >> 24);
-             var r = (byte)(color >> 16);
-             var g = (byte)(color >> 8);
-             var b = (byte)(color >> 0);
-             return new Color(r, g, b, a);
         }
 
         public uint getPixel32(int x, int y) {

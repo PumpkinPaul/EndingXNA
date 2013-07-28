@@ -137,6 +137,8 @@
     <Compile Include="com\robotacid\ui\LevelButtonData.cs" />
     <Compile Include="com\robotacid\ui\TitleMenu.cs" />
     <Compile Include="com\robotacid\util\XorRandom.cs" />
+    <Compile Include="FlashRenderer.cs" />
+    <Compile Include="flash\display\Graphics.cs" />
     <Compile Include="flash\events\EventDispatcher.cs" />
     <Compile Include="flash\ui\Keyboard.cs" />
     <Compile Include="flash\display\Stage.cs" />
