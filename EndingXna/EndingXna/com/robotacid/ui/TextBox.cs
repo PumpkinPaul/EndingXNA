@@ -58,7 +58,7 @@ namespace com.robotacid.ui
 
         public const int BORDER_ALLOWANCE = 0;
 
-        public TextBox(Number width, Number height, uint backgroundCol = 0xFF111111, uint borderCol = 0xFF99999U) {
+        public TextBox(Number _width, Number _height, uint backgroundCol = 0xFF111111, uint borderCol = 0xFF99999U) {
             this._width = _width;
 			this._height = _height;
 			this.backgroundCol = backgroundCol;
@@ -78,7 +78,7 @@ namespace com.robotacid.ui
 			borderRect = new Rectangle(0, 0, _width, _height);
 			boundsRect = new Rectangle(0, 0, _width, _height);
 			maskRect = new Rectangle(0, 0, 1, 1);
-			bitmapData = new BitmapData(_width, _height, true, 0x0);
+			bitmapData = new BitmapData(Renderer.GameSpriteSheet, _width, _height, true, 0x0);
             drawBorder();
         }
 
@@ -132,7 +132,7 @@ namespace com.robotacid.ui
 			_height = height;
 			borderRect = new Rectangle(1, 1, _width - 2, _height - 2);
 			boundsRect = new Rectangle(2, 2, _width - 4, _height - 4);
-			bitmapData = new BitmapData(width, height, true, 0x0);
+			bitmapData = new BitmapData(Renderer.GameSpriteSheet, width, height, true, 0x0);
 			updateText();
 			draw();
 		}
@@ -351,12 +351,21 @@ namespace com.robotacid.ui
 		
 		public void drawBorder() {
 			bitmapData.fillRect(bitmapData.rect, borderCol);
-			bitmapData.fillRect(borderRect, backgroundCol);
+            //TODO: put back
+			//bitmapData.fillRect(borderRect, backgroundCol);
+            bitmapData.fillRect(borderRect, 0xFFFF00FF);
 		}
 		
 		public void renderTo(Number x, Number y, BitmapData target) {
             var p = new Point(x, y);
             target.copyPixels(bitmapData, bitmapData.rect, p, null, null, true);
 		}
+
+        //TODO - remove
+        protected internal override void OnDraw(Microsoft.Xna.Framework.Graphics.RenderTarget2D sceneRenderTarget, Microsoft.Xna.Framework.GameTime gameTime) {
+            base.OnDraw(sceneRenderTarget, gameTime);
+
+            XnaGame.Instance.FlashRenderer.FillRect(new Rectangle(0, 0, 50, 50), 0xFF00FFFF);
+        }
     }
 }
