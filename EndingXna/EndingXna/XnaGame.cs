@@ -25,7 +25,6 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     
     public static Stage Stage { get; private set; }
     public float Scale { get { return Instance._game.scaleRatio; } }
-    public bool CanDraw { get; private set; }
 
     #if XBOX360
         public const float DefaultZoomFactor = 0.0f;
@@ -77,6 +76,8 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         Stage = new Stage();
         _game = new Game();
 
+        Stage.addChild(_game);
+
         IsMouseVisible = true;
 
         //Initialise the final rendering viewport - this will allow the user to size the rendered image to match their display device
@@ -106,6 +107,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         _sceneRenderTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.DiscardContents);
 
         FlashRenderer.LoadContent(Content, GraphicsDevice);
+        FlashRenderer.Register(_sceneRenderTarget);
 
         Renderer.LoadContent(Content);
         SoundLibrary.LoadContent(Content);
@@ -194,9 +196,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     /// <param name="gameTime">Provides a snapshot of timing values.</param>
     protected override void Draw(GameTime gameTime)
     {
-        CanDraw = true;
-
-        _game.Draw(_sceneRenderTarget, gameTime);
+        Stage.Draw(_sceneRenderTarget, gameTime);
    
         GraphicsDevice.SetRenderTarget(null);
         GraphicsDevice.Clear(Color.Black);
@@ -206,8 +206,6 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         //SpriteBatch.Draw(_sceneRenderTarget, RenderViewport.Bounds, Color.White);
         SpriteBatch.End();
         base.Draw(gameTime);
-
-        CanDraw = false;
     }
 
     protected override void OnActivated(object sender, EventArgs args) {
