@@ -27,6 +27,7 @@ namespace com.robotacid.gfx
     public class Renderer  {
 
         //Some render targets to replace the bitmaps
+        static RenderTarget2D _defaultRenderTarget;
         static RenderTarget2D _backgroundRenderTarget;
         static RenderTarget2D _gameRenderTarget;
         static RenderTarget2D _shadowRenderTarget;
@@ -188,11 +189,13 @@ namespace com.robotacid.gfx
             PresentationParameters pp = XnaGame.Instance.GraphicsDevice.PresentationParameters;
             SurfaceFormat format = pp.BackBufferFormat;
 
+            _defaultRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, Game.WIDTH, Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
             _backgroundRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, Game.WIDTH, Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
             _gameRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, Game.WIDTH, Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
             _shadowRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, Game.WIDTH, Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
             _guiRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, Game.WIDTH, Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
 
+            XnaGame.Instance.FlashRenderer.Register(_defaultRenderTarget);
             XnaGame.Instance.FlashRenderer.Register(_backgroundRenderTarget);
             XnaGame.Instance.FlashRenderer.Register(_gameRenderTarget);
             XnaGame.Instance.FlashRenderer.Register(_shadowRenderTarget);
@@ -361,21 +364,27 @@ namespace com.robotacid.gfx
             XnaGame.Instance.GraphicsDevice.SetRenderTarget(_shadowRenderTarget);
             if(refresh) XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
             XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
-            XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null,null);
+            XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
             XnaGame.Instance.FlashRenderer.Flush(XnaGame.Instance.SpriteBatch, _shadowRenderTarget);
             XnaGame.Instance.FlashRenderer.Draw(XnaGame.Instance.SpriteBatch, _gameRenderTarget, Vector2.One, Color.Black);
             XnaGame.Instance.SpriteBatch.End();
             
             XnaGame.Instance.GraphicsDevice.SetRenderTarget(_gameRenderTarget);
             if(refresh) XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
-            XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null,null);
+            XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
             XnaGame.Instance.FlashRenderer.Flush(XnaGame.Instance.SpriteBatch, _gameRenderTarget);
             XnaGame.Instance.SpriteBatch.End();
             
             XnaGame.Instance.GraphicsDevice.SetRenderTarget(_guiRenderTarget);
             XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
-            XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null,null);
+            XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
             XnaGame.Instance.FlashRenderer.Flush(XnaGame.Instance.SpriteBatch, _guiRenderTarget);
+            XnaGame.Instance.SpriteBatch.End();
+
+            XnaGame.Instance.GraphicsDevice.SetRenderTarget(_defaultRenderTarget);
+            XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
+            XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
+            XnaGame.Instance.FlashRenderer.Flush(XnaGame.Instance.SpriteBatch, null);
             XnaGame.Instance.SpriteBatch.End();
 
             //Draw final composite image - we'll draw to another render target first - the XNA wrapper will blit this final render target
@@ -383,11 +392,12 @@ namespace com.robotacid.gfx
             //Note - it could all be done here if you wanted but the game wrapper was already set up to do it.
             XnaGame.Instance.GraphicsDevice.SetRenderTarget(sceneRenderTarget);
             XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
-            XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null,null);
+            XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
             XnaGame.Instance.SpriteBatch.Draw(_backgroundRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White);
             XnaGame.Instance.SpriteBatch.Draw(_shadowRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White);
             XnaGame.Instance.SpriteBatch.Draw(_gameRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White);
             XnaGame.Instance.SpriteBatch.Draw(_guiRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White);
+            XnaGame.Instance.SpriteBatch.Draw(_defaultRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White);
             XnaGame.Instance.SpriteBatch.End();
         }
 

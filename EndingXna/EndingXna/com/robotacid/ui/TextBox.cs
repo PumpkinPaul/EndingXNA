@@ -4,6 +4,8 @@ using com.robotacid.gfx;
 using flash;
 using flash.display;
 using flash.geom;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Array = flash.Array;
 using Level = com.robotacid.engine.Level;
 using LevelData = com.robotacid.engine.LevelData;
@@ -57,6 +59,8 @@ namespace com.robotacid.ui
 		protected Rectangle maskRect;
 
         public const int BORDER_ALLOWANCE = 0;
+
+        private Point _position = new Point();
 
         public TextBox(Number _width, Number _height, uint backgroundCol = 0xFF111111, uint borderCol = 0xFF99999U) {
             this._width = _width;
@@ -224,10 +228,10 @@ namespace com.robotacid.ui
                         completeWordsWidth = 0;
                         wordBeginning = 0;
                         wordWidth = lastBitmapData.width;
-                        currentLine = new Array<Rectangle>();   //May not be correct //TODO
-                        currentLine.push(lastBitmapData);       //May not be correct //TODO
-                        currentTextLine = new Array<char?>();   //May not be correct //TODO
-                        currentTextLine.push(lastChar);         //May not be correct //TODO  
+                        currentLine = new Array<Rectangle>();   
+                        currentLine.push(lastBitmapData);     
+                        currentTextLine = new Array<char?>();   
+                        currentTextLine.push(lastChar);     
                         continue;
                     }
 					
@@ -337,6 +341,9 @@ namespace com.robotacid.ui
                     }
                 }
                 y += lineSpacing;
+
+                _position.x = alignX;
+                _position.y = alignY;
             }
 			
             if(_color != null) transform.colorTransform = _color;
@@ -344,14 +351,15 @@ namespace com.robotacid.ui
             //TODO
             graphics.clear();
             //graphics.lineStyle(0, 0, 0);
-            graphics.beginBitmapFill(bitmapData);
+            //graphics.beginBitmapFill(bitmapData);
             //graphics.drawRect(0, 0, _width, _height);
             //graphics.endFill();
 		}
 		
 		public void drawBorder() {
-			bitmapData.fillRect(bitmapData.rect, borderCol);
             //TODO: put back
+			bitmapData.fillRect(bitmapData.rect, borderCol);
+            
 			//bitmapData.fillRect(borderRect, backgroundCol);
             bitmapData.fillRect(borderRect, 0xFFFF00FF);
 		}
@@ -362,10 +370,11 @@ namespace com.robotacid.ui
 		}
 
         //TODO - remove
-        protected internal override void OnDraw(Microsoft.Xna.Framework.Graphics.RenderTarget2D sceneRenderTarget, Microsoft.Xna.Framework.GameTime gameTime) {
-            base.OnDraw(sceneRenderTarget, gameTime);
+        protected internal override void OnDraw(RenderTarget2D sceneRenderTarget, Microsoft.Xna.Framework.GameTime gameTime) {
+            //base.OnDraw(sceneRenderTarget, gameTime);
 
-            XnaGame.Instance.FlashRenderer.FillRect(new Rectangle(0, 0, 50, 50), 0xFF00FFFF);
+            if (visible)     
+                bitmapData.copyPixels(text, bitmapData.rect, _position);
         }
     }
 }

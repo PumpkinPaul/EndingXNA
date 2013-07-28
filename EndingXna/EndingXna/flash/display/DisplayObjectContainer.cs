@@ -29,10 +29,12 @@ namespace flash.display
         public override void Draw(RenderTarget2D sceneRenderTarget, GameTime gameTime) 
         {
             //Draw this object first...
-            OnDraw(sceneRenderTarget, gameTime);
+            if (visible) {
+                OnDraw(sceneRenderTarget, gameTime);
 
-            //...and then draw any objects that we contain.
-            DrawChildren(sceneRenderTarget, gameTime);
+                //...and then draw any objects that we contain.
+                DrawChildren(sceneRenderTarget, gameTime);
+            }
         }
 
         private void DrawChildren(RenderTarget2D sceneRenderTarget, GameTime gameTime)

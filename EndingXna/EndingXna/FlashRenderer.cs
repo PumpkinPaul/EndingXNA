@@ -9,15 +9,21 @@ using Rectangle = flash.geom.Rectangle;
 
 public class FlashRenderer
 {
+    /// <summary>
+    /// Responsible for caching drawing commands for play back at render end.
+    /// </summary>
     private struct RenderInfo
     {
         public Texture2D Texture;
+        public string Text;
         public Microsoft.Xna.Framework.Rectangle Destination;
         public Microsoft.Xna.Framework.Rectangle? Source;
         public Color Color;
     }
 
     private readonly Dictionary<RenderTarget2D, List<RenderInfo>> _queues = new Dictionary<RenderTarget2D, List<RenderInfo>>();
+    private RenderTarget2D _renderTarget;
+    private RenderTarget2D _defaultTarget;
 
     private Texture2D _pixelTexture;
 
@@ -31,9 +37,27 @@ public class FlashRenderer
     
     }
 
-    public void Register(RenderTarget2D renderTarget2D) 
+    public void Register(RenderTarget2D renderTarget) 
     {
-        _queues.Add(renderTarget2D, new List<RenderInfo>());  
+        _queues.Add(renderTarget, new List<RenderInfo>());  
+
+        if (_queues.Count == 1)
+            _defaultTarget = renderTarget;
+    }
+
+    public int GetCommandCount(RenderTarget2D renderTarget) 
+    {
+        return _queues[renderTarget].Count;
+    }
+
+    public RenderTarget2D RenderTarget 
+    { 
+        get { return _renderTarget; }
+        set 
+        { 
+            _renderTarget = value; 
+            XnaGame.Instance.GraphicsDevice.SetRenderTarget(value);
+        } 
     }
 
     public void CopyPixels(RenderTarget2D renderTarget, BitmapData sourceBitmapData, Rectangle sourceRect, Point destPoint, BitmapData alphaBitmapData = null, Point alphaPoint = null, Boolean mergeAlpha = false) {
@@ -47,7 +71,20 @@ public class FlashRenderer
             Color = Color.White
         };
 
-        _queues[renderTarget].Add(info);
+        _queues[renderTarget ?? _defaultTarget].Add(info);
+    }
+
+    public void CopyPixels(RenderTarget2D renderTarget, string text, Rectangle sourceRect, Point destPoint, BitmapData alphaBitmapData = null, Point alphaPoint = null, Boolean mergeAlpha = false) {
+        //XnaGame.Instance.SpriteBatch.Draw(sourceBitmapData.texture, new Vector2(destPoint.x, destPoint.y), new Microsoft.Xna.Framework.Rectangle(sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height), Color.White);
+
+        var info = new RenderInfo
+        {
+            Text = text,
+            Destination = new Microsoft.Xna.Framework.Rectangle(destPoint.x, destPoint.y, sourceRect.width, sourceRect.height),
+            Color = Color.White
+        };
+
+        _queues[renderTarget ?? _defaultTarget].Add(info);
 
     }
 
@@ -62,24 +99,28 @@ public class FlashRenderer
             Color = UIntToColor(color)
         };
 
-        _queues[renderTarget].Add(info);
+        _queues[renderTarget ?? _defaultTarget].Add(info);
     }
 
     public void Flush(SpriteBatch spriteBatch, RenderTarget2D renderTarget) 
     {
        Draw(spriteBatch, renderTarget, Vector2.Zero, null);
 
-       _queues[renderTarget].Clear();
+       _queues[renderTarget ?? _defaultTarget].Clear();
     }
 
     public void Draw(SpriteBatch spriteBatch, RenderTarget2D renderTarget, Vector2 offset, Color? color) 
     {
-        var queue = _queues[renderTarget];
+        var queue = _queues[renderTarget ?? _defaultTarget];
 
         foreach(var info in queue) 
         {
             var destination = new Microsoft.Xna.Framework.Rectangle(info.Destination.X + (int)offset.X, info.Destination.Y + (int)offset.Y, info.Destination.Width, info.Destination.Height);
-            spriteBatch.Draw(info.Texture, destination, info.Source , color ?? info.Color);    
+            
+            if (info.Texture != null)
+                spriteBatch.Draw(info.Texture, destination, info.Source , color ?? info.Color);    
+            else
+                spriteBatch.DrawString(XnaGame.Instance.SpriteFont, info.Text, new Vector2(destination.X, destination.Y), color ?? info.Color);    
         }
     }
 

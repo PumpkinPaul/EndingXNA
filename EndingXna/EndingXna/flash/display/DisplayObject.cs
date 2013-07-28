@@ -34,9 +34,15 @@ namespace flash.display
 
         //public Action addedToStage;
 
+        public DisplayObject() {
+            visible = true;
+        }
+
         //Bridge to XNA
         public virtual void Draw(RenderTarget2D sceneRenderTarget, GameTime gameTime) {
-            OnDraw(sceneRenderTarget, gameTime);
+            
+            if (visible)
+                OnDraw(sceneRenderTarget, gameTime);
         }
 
         protected internal virtual void OnDraw(RenderTarget2D sceneRenderTarget, GameTime gameTime)

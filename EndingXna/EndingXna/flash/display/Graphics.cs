@@ -18,7 +18,7 @@ namespace flash.display
             if (bitmapData.texture == null)
                 return;
 
-            XnaGame.Instance.FlashRenderer.CopyPixels(bitmapData, bitmapData.rect, Point.Zero);//, alphaBitmapData, alphaPoint, mergeAlpha);
+           XnaGame.Instance.FlashRenderer.CopyPixels(null, bitmapData, bitmapData.rect, Point.Zero);//, alphaBitmapData, alphaPoint, mergeAlpha);
         }
          
         public void drawRect(Number x, Number y, Number width, Number height) {

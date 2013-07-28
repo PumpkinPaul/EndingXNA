@@ -17,9 +17,12 @@ public class XnaGame : Microsoft.Xna.Framework.Game
      
     private readonly GraphicsDeviceManager _graphics;
     
+    public SpriteFont SpriteFont { get; private set; }
     public SpriteBatch SpriteBatch { get; private set; }
     private RenderTarget2D _sceneRenderTarget;
     public FlashRenderer FlashRenderer { get; private set; }
+
+    public bool CanDraw { get; set; }
 
     private Game _game;
     
@@ -102,6 +105,8 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     {
         PresentationParameters pp = GraphicsDevice.PresentationParameters;
         SurfaceFormat format = pp.BackBufferFormat;
+
+        SpriteFont = Content.Load<SpriteFont>("textures/font-sprites");
 
         SpriteBatch = new SpriteBatch(GraphicsDevice);
         _sceneRenderTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.DiscardContents);
@@ -196,6 +201,8 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     /// <param name="gameTime">Provides a snapshot of timing values.</param>
     protected override void Draw(GameTime gameTime)
     {
+        CanDraw = true;
+
         Stage.Draw(_sceneRenderTarget, gameTime);
    
         GraphicsDevice.SetRenderTarget(null);
@@ -203,9 +210,11 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         //...now apply the scaling to the final image - use point sampling for a nice clean look with none of the fuzziness that linear causes. 
         SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp, null,null);
         SpriteBatch.Draw(_sceneRenderTarget, Vector2.Zero, GraphicsDevice.Viewport.Bounds, Color.White, 0, Vector2.Zero, Scale, SpriteEffects.None, 0);
-        //SpriteBatch.Draw(_sceneRenderTarget, RenderViewport.Bounds, Color.White);
         SpriteBatch.End();
+        
         base.Draw(gameTime);
+
+        CanDraw = false;
     }
 
     protected override void OnActivated(object sender, EventArgs args) {

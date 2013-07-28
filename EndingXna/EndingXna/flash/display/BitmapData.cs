@@ -27,6 +27,10 @@ namespace flash.display
             this.transparent = transparent;
             this.fillColor = fillColor;
 
+            if (width == 0)
+            {
+                int x = 1;
+            }
             rect = new Rectangle(0, 0, width, height);          
         }
 
@@ -41,24 +45,18 @@ namespace flash.display
 
         public void copyPixels(BitmapData sourceBitmapData, Rectangle sourceRect, Point destPoint, BitmapData alphaBitmapData = null, Point alphaPoint = null, Boolean mergeAlpha = false) {
 
-            //if (renderTarget == null)
-            //    return;
-
-            if (!XnaGame.Instance.CanDraw)
-                //throw new InvalidOperationException(); 
-                return;
-
             if (sourceBitmapData.texture == null)
                 return;
 
             XnaGame.Instance.FlashRenderer.CopyPixels(renderTarget, sourceBitmapData, sourceRect, destPoint, alphaBitmapData, alphaPoint, mergeAlpha);
         }
 
-        public void fillRect(Rectangle rect, uint color) {
+        public void copyPixels(string text, Rectangle sourceRect, Point destPoint, BitmapData alphaBitmapData = null, Point alphaPoint = null, Boolean mergeAlpha = false) {
 
-             if (!XnaGame.Instance.CanDraw)
-                //throw new InvalidOperationException(); 
-                return;
+            XnaGame.Instance.FlashRenderer.CopyPixels(renderTarget, text, sourceRect, destPoint, alphaBitmapData, alphaPoint, mergeAlpha);
+        }
+
+        public void fillRect(Rectangle rect, uint color) {
 
              XnaGame.Instance.FlashRenderer.FillRect(renderTarget, rect, color); 
         }
