@@ -47,7 +47,7 @@ public class FlashRenderer
 
     public int GetCommandCount(RenderTarget2D renderTarget) 
     {
-        return _queues[renderTarget].Count;
+        return _queues[renderTarget ?? _defaultTarget].Count;
     }
 
     public RenderTarget2D RenderTarget 
@@ -74,21 +74,26 @@ public class FlashRenderer
         _queues[renderTarget ?? _defaultTarget].Add(info);
     }
 
-    public void CopyPixels(RenderTarget2D renderTarget, string text, Rectangle sourceRect, Point destPoint, BitmapData alphaBitmapData = null, Point alphaPoint = null, Boolean mergeAlpha = false) {
+    public void DrawText(RenderTarget2D renderTarget, string text, Rectangle sourceRect, Point destPoint, uint color, float alpha)
+    {
+        this.DrawText(renderTarget, text, sourceRect, destPoint, UIntToColor(color) * alpha);
+    }
+
+    public void DrawText(RenderTarget2D renderTarget, string text, Rectangle sourceRect, Point destPoint, Color color, BitmapData alphaBitmapData = null, Point alphaPoint = null, Boolean mergeAlpha = false) {
         //XnaGame.Instance.SpriteBatch.Draw(sourceBitmapData.texture, new Vector2(destPoint.x, destPoint.y), new Microsoft.Xna.Framework.Rectangle(sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height), Color.White);
 
         var info = new RenderInfo
         {
             Text = text,
             Destination = new Microsoft.Xna.Framework.Rectangle(destPoint.x, destPoint.y, sourceRect.width, sourceRect.height),
-            Color = Color.White
+            Color = color
         };
 
         _queues[renderTarget ?? _defaultTarget].Add(info);
 
     }
 
-    public void FillRect(RenderTarget2D renderTarget, Rectangle rect, uint color) {
+    public void FillRect(RenderTarget2D renderTarget, Rectangle rect, uint color, float alpha = 1.0f) {
         //XnaGame.Instance.SpriteBatch.Draw(_pixelTexture, new Microsoft.Xna.Framework.Rectangle(rect.x, rect.y, rect.width, rect.height), UIntToColor(color));
 
         var info = new RenderInfo
@@ -96,7 +101,7 @@ public class FlashRenderer
             Texture = _pixelTexture,
             Destination = new Microsoft.Xna.Framework.Rectangle(rect.x, rect.y, rect.width, rect.height),
             Source = null,
-            Color = UIntToColor(color)
+            Color = UIntToColor(color) * alpha
         };
 
         _queues[renderTarget ?? _defaultTarget].Add(info);
@@ -120,11 +125,11 @@ public class FlashRenderer
             if (info.Texture != null)
                 spriteBatch.Draw(info.Texture, destination, info.Source , color ?? info.Color);    
             else
-                spriteBatch.DrawString(XnaGame.Instance.SpriteFont, info.Text, new Vector2(destination.X, destination.Y), color ?? info.Color);    
+                spriteBatch.DrawString(XnaGame.Instance.SpriteFont, info.Text, new Vector2(destination.X-1, destination.Y-1), color ?? info.Color);    
         }
     }
 
-    private static Color UIntToColor(uint color)
+    public static Color UIntToColor(uint color)
     {
         var a = (byte)(color >> 24);
         var r = (byte)(color >> 16);

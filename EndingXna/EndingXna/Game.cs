@@ -285,8 +285,8 @@ public class Game : Sprite
 		if(focusPrompt == null){
 			focusPrompt = new Sprite();
 			focusPrompt.addChild(screenText("click"));
-			stage.addEventListener(Event.DEACTIVATE, onFocusLost);
-			stage.addEventListener(Event.ACTIVATE, onFocus);
+			//stage.addEventListener(Event.DEACTIVATE, onFocusLost);
+			//stage.addEventListener(Event.ACTIVATE, onFocus);
 		}
 			
 		if(state == GAME || state == MENU){
@@ -330,6 +330,7 @@ public class Game : Sprite
 	}
 		
 	private void addListeners() {
+        //TODO
 		stage.addEventListener(Event.DEACTIVATE, onFocusLost);
 		stage.addEventListener(Event.ACTIVATE, onFocus);
 		stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove);

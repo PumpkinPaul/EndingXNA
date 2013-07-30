@@ -49,6 +49,7 @@ namespace com.robotacid.gfx
 		public Shape backgroundShape;
 		public BitmapData backgroundBitmapData;
 		public BitmapData darkBitmapData;
+        public uint darkBitmapDataColor = 0xaa000000;
 		public TextBox exhibitTimeOut;
 		
 		// sprite sheets
@@ -300,6 +301,9 @@ namespace com.robotacid.gfx
             //bitmapDataShadow.fillRect(bitmapDataShadow.rect, 0x0);
             //guiBitmapData.fillRect(guiBitmapData.rect, 0x0);
 			
+            XnaGame.Instance.FlashRenderer.RenderTarget = _defaultRenderTarget;
+            XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
+
 			if(game.state == Game.MENU){
 				guiBitmapData.fillRect(guiBitmapData.rect, 0xFF1A1E26);
 				game.titleMenu.render();
@@ -363,7 +367,7 @@ namespace com.robotacid.gfx
             // Now draw the deferred scene object applying whatever effects are required to mimic the orignal game
             XnaGame.Instance.GraphicsDevice.SetRenderTarget(_shadowRenderTarget);
             if(refresh) XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
-            XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
+            //XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
             XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
             XnaGame.Instance.FlashRenderer.Flush(XnaGame.Instance.SpriteBatch, _shadowRenderTarget);
             XnaGame.Instance.FlashRenderer.Draw(XnaGame.Instance.SpriteBatch, _gameRenderTarget, Vector2.One, Color.Black);

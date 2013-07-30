@@ -389,7 +389,7 @@ namespace com.robotacid.ui
 			if(uiManager.currentGroup == ROOT){
                 //CONVERSION
                 //renderer.guiBitmapData.copyPixels(scoreTextBox.bitmapData, scoreTextBox.bitmapData.rect, new Point(0, adventureButton.y + adventureButton.blit.height), null, null, true);
-				renderer.guiBitmapData.copyPixels(scoreTextBox.text, scoreTextBox.bitmapData.rect, new Point(0, adventureButton.y + adventureButton.blit.height), null, null, true);
+				renderer.guiBitmapData.copyPixels(scoreTextBox.text, scoreTextBox.bitmapData.rect, new Point(scoreTextBox._position.x, adventureButton.y + adventureButton.blit.height), 1.0f);
 			} else if(uiManager.currentGroup == PUZZLE_LEVELS){
 				int i;
                 BlitButton button;

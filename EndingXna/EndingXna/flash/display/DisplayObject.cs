@@ -11,6 +11,7 @@ namespace flash.display
 
         /// <summary>Indicates the alpha transparency value of the object specified.</summary>
         public Number alpha { get; set; }
+        public Number effectiveAlpha { get; set; }
 
         public Stage stage { get { return XnaGame.Stage; } }
 
@@ -36,12 +37,22 @@ namespace flash.display
 
         public DisplayObject() {
             visible = true;
+            alpha = 1.0f;
         }
 
         //Bridge to XNA
         public virtual void Draw(RenderTarget2D sceneRenderTarget, GameTime gameTime) {
             
-            if (visible)
+            bool parentVisible = true;
+
+            effectiveAlpha = alpha;
+            if (parent != null) {
+                effectiveAlpha *= parent.effectiveAlpha;
+                parentVisible = parent.visible;
+            }
+
+            //Draw this object first...
+            if (visible && parentVisible) 
                 OnDraw(sceneRenderTarget, gameTime);
         }
 

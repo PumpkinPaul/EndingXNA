@@ -51,9 +51,14 @@ namespace flash.display
             XnaGame.Instance.FlashRenderer.CopyPixels(renderTarget, sourceBitmapData, sourceRect, destPoint, alphaBitmapData, alphaPoint, mergeAlpha);
         }
 
+        public void copyPixels(string text, Rectangle sourceRect, Point destPoint, float alpha) 
+        {
+            XnaGame.Instance.FlashRenderer.DrawText(renderTarget, text, sourceRect, destPoint, Color.White * alpha);
+        }
+
         public void copyPixels(string text, Rectangle sourceRect, Point destPoint, BitmapData alphaBitmapData = null, Point alphaPoint = null, Boolean mergeAlpha = false) {
 
-            XnaGame.Instance.FlashRenderer.CopyPixels(renderTarget, text, sourceRect, destPoint, alphaBitmapData, alphaPoint, mergeAlpha);
+            XnaGame.Instance.FlashRenderer.DrawText(renderTarget, text, sourceRect, destPoint, Color.White, alphaBitmapData, alphaPoint, mergeAlpha);
         }
 
         public void fillRect(Rectangle rect, uint color) {

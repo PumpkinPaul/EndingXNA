@@ -54,6 +54,8 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
 
+        IsFixedTimeStep = true;
+
         _graphics.PreferredBackBufferWidth = 480;
         _graphics.PreferredBackBufferHeight = 320;
 
@@ -208,7 +210,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         GraphicsDevice.SetRenderTarget(null);
         GraphicsDevice.Clear(Color.Black);
         //...now apply the scaling to the final image - use point sampling for a nice clean look with none of the fuzziness that linear causes. 
-        SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp, null,null);
+        SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null,null);
         SpriteBatch.Draw(_sceneRenderTarget, Vector2.Zero, GraphicsDevice.Viewport.Bounds, Color.White, 0, Vector2.Zero, Scale, SpriteEffects.None, 0);
         SpriteBatch.End();
         
@@ -219,6 +221,8 @@ public class XnaGame : Microsoft.Xna.Framework.Game
 
     protected override void OnActivated(object sender, EventArgs args) {
         base.OnActivated(sender, args);
+
+        return;
                                                      
         if (_game.activateActions != null)
             _game.activateActions(null);
@@ -229,6 +233,8 @@ public class XnaGame : Microsoft.Xna.Framework.Game
 
     protected override void OnDeactivated(object sender, EventArgs args) {
         base.OnDeactivated(sender, args);
+
+        return;
 
         if (_game.deactivateActions != null)
             _game.deactivateActions(null);

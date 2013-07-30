@@ -60,7 +60,7 @@ namespace com.robotacid.ui
 
         public const int BORDER_ALLOWANCE = 0;
 
-        private Point _position = new Point();
+        public Point _position = new Point();
 
         public TextBox(Number _width, Number _height, uint backgroundCol = 0xFF111111, uint borderCol = 0xFF99999U) {
             this._width = _width;
@@ -69,7 +69,7 @@ namespace com.robotacid.ui
 			this.borderCol = borderCol;
 			align = "left";
 			alignVert = "top";
-			_colorInt = 0xFFFFFF;
+			_colorInt = 0x00FFFFFF;
 			wordWrap = true;
 			tracking = 0;
 			leading = 1;
@@ -329,10 +329,10 @@ namespace com.robotacid.ui
                                     maskRect.y = boundsRect.y - point.y;
                                     point.y = boundsRect.y;
                                 }
-                                bitmapData.copyPixels(spriteSheet, maskRect, point, null, null, true);
+                                //bitmapData.copyPixels(spriteSheet, maskRect, point, null, null, true);
                             }
                         } else {
-                            bitmapData.copyPixels(spriteSheet, charx, point, null, null, true);
+                            //bitmapData.copyPixels(spriteSheet, charx, point, null, null, true);
                         }
                         x += charx.width;
                     } else {
@@ -349,7 +349,7 @@ namespace com.robotacid.ui
             if(_color != null) transform.colorTransform = _color;
 			
             //TODO
-            graphics.clear();
+            //graphics.clear();
             //graphics.lineStyle(0, 0, 0);
             //graphics.beginBitmapFill(bitmapData);
             //graphics.drawRect(0, 0, _width, _height);
@@ -358,10 +358,8 @@ namespace com.robotacid.ui
 		
 		public void drawBorder() {
             //TODO: put back
-			bitmapData.fillRect(bitmapData.rect, borderCol);
-            
+			//bitmapData.fillRect(bitmapData.rect, borderCol);
 			//bitmapData.fillRect(borderRect, backgroundCol);
-            bitmapData.fillRect(borderRect, 0xFFFF00FF);
 		}
 		
 		public void renderTo(Number x, Number y, BitmapData target) {
@@ -370,11 +368,9 @@ namespace com.robotacid.ui
 		}
 
         //TODO - remove
-        protected internal override void OnDraw(RenderTarget2D sceneRenderTarget, Microsoft.Xna.Framework.GameTime gameTime) {
-            //base.OnDraw(sceneRenderTarget, gameTime);
-
-            if (visible)     
-                bitmapData.copyPixels(text, bitmapData.rect, _position);
+        protected internal override void OnDraw(RenderTarget2D sceneRenderTarget, GameTime gameTime) {
+            XnaGame.Instance.FlashRenderer.FillRect(null, bitmapData.rect, backgroundCol, effectiveAlpha);   
+            XnaGame.Instance.FlashRenderer.DrawText(null, text, bitmapData.rect, _position, _colorInt, effectiveAlpha);  
         }
     }
 }

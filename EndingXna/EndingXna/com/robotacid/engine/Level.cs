@@ -872,11 +872,14 @@ namespace com.robotacid.engine
 				renderer.numberBlit.update();
 				renderer.numberBlit.renderNumbers(renderer.guiBitmapData);
 				if(uiManager.currentGroup > 0){
-					renderer.guiBitmapData.copyPixels(renderer.darkBitmapData, renderer.darkBitmapData.rect, new Point(), null, null, true);
+					//renderer.guiBitmapData.copyPixels(renderer.darkBitmapData, renderer.darkBitmapData.rect, new Point(), null, null, true);
+                    renderer.guiBitmapData.fillRect(renderer.darkBitmapData.rect, renderer.darkBitmapDataColor);
+
+
 					if(room.type == Room.ADVENTURE){
                         //CONVERSION
 						//renderer.guiBitmapData.copyPixels(scoreTextBox.bitmapData, scoreTextBox.bitmapData.rect, new Point(0, Game.HEIGHT - Game.SCALE * 3), null, null, true);
-                        renderer.guiBitmapData.copyPixels(scoreTextBox.text, scoreTextBox.bitmapData.rect, new Point(0, Game.HEIGHT - Game.SCALE * 3), null, null, true);
+                        renderer.guiBitmapData.copyPixels(scoreTextBox.text, scoreTextBox.bitmapData.rect, new Point(scoreTextBox._position.x, Game.HEIGHT - Game.SCALE * 3), null, null, true);
 					}
 				}
 				uiManager.render(renderer.guiBitmapData);

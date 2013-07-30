@@ -311,7 +311,8 @@ namespace com.robotacid.ui.editor
 		public void render() {
 			BlitRect blit;
 			if(uiManager.currentGroup == 1){
-				renderer.guiBitmapData.copyPixels(renderer.darkBitmapData, renderer.darkBitmapData.rect, new Point(), null, null, true);
+				//renderer.guiBitmapData.copyPixels(renderer.darkBitmapData, renderer.darkBitmapData.rect, new Point(), null, null, true);
+                renderer.guiBitmapData.fillRect(renderer.darkBitmapData.rect, renderer.darkBitmapDataColor);
 			}
 			uiManager.render(renderer.guiBitmapData);
 			if(uiManager.currentGroup == 0){
