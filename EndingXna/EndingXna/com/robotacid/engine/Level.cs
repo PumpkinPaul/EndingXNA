@@ -560,10 +560,10 @@ namespace com.robotacid.engine
 		public BlitRect getPropertyBlit(int property, Boolean rotate = false) {
 			BlitRect blit = null;
             BlitClip blitClip;
-			if((property & Room.PLAYER) > 0) {
+			if((property & Room.PLAYER) != 0) {
 				blit = renderer.playerBlit;
-			} else if((property & Room.ENEMY) > 0) {
-				if((property & Room.MOVER) > 0) {
+			} else if((property & Room.ENEMY) != 0) {
+				if((property & Room.MOVER) != 0) {
 					if((property & Room.M_UP_DOWN_LEFT_RIGHT) == Room.M_UP_DOWN_LEFT_RIGHT){
 						blit = renderer.moverBlit;
 					} else if((property & Room.M_UP_DOWN_LEFT_RIGHT) == (Room.M_LEFT | Room.M_RIGHT)){
@@ -571,37 +571,37 @@ namespace com.robotacid.engine
 					} else if((property & Room.M_UP_DOWN_LEFT_RIGHT) == (Room.M_UP | Room.M_DOWN)){
 						blit = renderer.vertMoverBlit;
 					}
-				} else if((property & Room.TRAP) == Room.TRAP) {
+				} else if((property & Room.TRAP) != 0) {
 					blitClip = renderer.trapBlit as BlitClip;
 					// all 15 trap direction combinations map to the bitwise direction properties
 					blitClip.frame = -1 + ((property & Room.M_UP_DOWN_LEFT_RIGHT) >> Room.M_DIR_SHIFT);
 					blit = renderer.trapBlit;
-				} else if((property & Room.TURNER) > 0) {
+				} else if((property & Room.TURNER) != 0) {
 					blit = renderer.turnerBlit;
 					blitClip = renderer.turnerBlit as BlitClip;
 					blitClip.frame = getTurnerFrame(property, rotate);
-				} else if((property & Room.DOOR) > 0) {
+				} else if((property & Room.DOOR) != 0) {
 					blit = renderer.doorBlit;
 					blitClip = renderer.doorBlit as BlitClip;
-					if((property & Room.ENDING) > 0) {
+					if((property & Room.ENDING) != 0) {
 						blitClip.frame = blitClip.totalFrames - 1;
 					} else {
 						blitClip.frame = blitClip.totalFrames - room.endingDist;
-						if((property & Room.INCREMENT) > 0) {
+						if((property & Room.INCREMENT) != 0) {
 							blitClip.frame++;
 						}
 						if(blitClip.frame < 0) blitClip.frame = 0;
 						if(blitClip.frame > blitClip.totalFrames - 1) blitClip.frame = blitClip.totalFrames - 1;
 					}
-				} else if((property & Room.VIRUS) > 0) {
+				} else if((property & Room.VIRUS) != 0) {
 					blit = renderer.virusBlit;
 				}
-			} else if((property & Room.ALLY) > 0) {
+			} else if((property & Room.ALLY) != 0) {
 				blit = renderer.allyBlit;
-			} else if((property & Room.WALL) > 0) {
-				if((property & Room.SWAP) > 0) {
+			} else if((property & Room.WALL) != 0) {
+				if((property & Room.SWAP) != 0) {
 					blit = renderer.swapBlit;
-				} else if((property & Room.INDESTRUCTIBLE) > 0) {
+				} else if((property & Room.INDESTRUCTIBLE) != 0) {
 					blit = renderer.indestructibleWallBlit;
 				} else {
 					blit = renderer.wallBlit;
@@ -609,7 +609,7 @@ namespace com.robotacid.engine
 			} else {
 				if(property == Room.BOMB){
 					return renderer.bombBlit;
-				} else if((property & Room.GENERATOR) > 0) {
+				} else if((property & Room.GENERATOR) != 0) {
 					return renderer.generatorBlit;
 				}
 				blit = renderer.errorBlit;
@@ -806,24 +806,24 @@ namespace com.robotacid.engine
 		public void render() {
 			moveStep = SCALE / animDelay;
 			restStep = moveStep * 0.5;
-			var fromX = -renderer.canvasPoint.x * Game.INV_SCALE;
-			var fromY = -renderer.canvasPoint.y * Game.INV_SCALE;
-			var toX = 1 + fromX + Game.WIDTH * Game.INV_SCALE;
-			var toY = 1 + fromY + Game.HEIGHT * Game.INV_SCALE;
+			int fromX = (int)(-renderer.canvasPoint.x * Game.INV_SCALE);
+			int fromY = (int)(-renderer.canvasPoint.y * Game.INV_SCALE);
+			int toX = (int)(1 + fromX + Game.WIDTH * Game.INV_SCALE);
+			int toY = (int)(1 + fromY + Game.HEIGHT * Game.INV_SCALE);
 			int property, i, r, c;
 			Point player, p;
 			Array<Point> entities = new Array<Point>();
 			var renderMap = data.map;
 			
-			for(r = (int)fromY; r < toY; r++){
-				for(c = (int)fromX; c < toX; c++){
+			for(r = fromY; r < toY; r++){
+				for(c = fromX; c < toX; c++){
 					if(
 						(c >= 0 && r >= 0 && c < data.width && r < data.height)
 					){
 						if(blackOutMap != null && uiManager.active && blackOutMap[r][c] == 0){
 							renderProperty(c * SCALE, r * SCALE, Room.VOID, renderer.bitmapData);
 							
-						} else if(renderMap[r][c] > 0){
+						} else if(renderMap[r][c] != 0){
 							property = renderMap[r][c];
 							// always render the allies last
 							if((property & Room.ALLY) > 0) {
@@ -833,6 +833,7 @@ namespace com.robotacid.engine
 								entities.push(new Point(c, r));
 								continue;
 							}
+
 							renderProperty(c * SCALE, r * SCALE, property, renderer.bitmapData);
 							
 						} else if(checkView){
@@ -874,7 +875,6 @@ namespace com.robotacid.engine
 				if(uiManager.currentGroup > 0){
 					//renderer.guiBitmapData.copyPixels(renderer.darkBitmapData, renderer.darkBitmapData.rect, new Point(), null, null, true);
                     renderer.guiBitmapData.fillRect(renderer.darkBitmapData.rect, renderer.darkBitmapDataColor);
-
 
 					if(room.type == Room.ADVENTURE){
                         //CONVERSION

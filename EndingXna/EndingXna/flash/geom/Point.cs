@@ -1,6 +1,4 @@
-﻿using Number = System.Double;
-
-namespace flash.geom
+﻿namespace flash.geom
 {
     public class Point {
         public static readonly Point Zero = new Point(0, 0);
