@@ -42,21 +42,21 @@ namespace com.robotacid.util
 		}
 		
 		/* Returns a number from 0 - 1 */
-		public Number value() {
+		public double value() {
 			r ^= r << 21;
 			r ^= r >> 35; // >>> logical
 			r ^= r << 4;
 			return r * MAX_RATIO;
 		}
 		
-		public Number range(Number n) {
+		public double range(double n) {
 			r ^= r << 21;
 			r ^= r >> 35; // >>> logical
 			r ^= r << 4;
 			return r * MAX_RATIO * n;
 		}
 		
-		public int rangeInt(Number n) {
+		public int rangeInt(double n) {
 			r ^= r << 21;
 			r ^= r >> 35; // >>> logical
 			r ^= r << 4;

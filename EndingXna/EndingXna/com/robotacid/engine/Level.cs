@@ -49,8 +49,8 @@ namespace com.robotacid.engine
 		public Boolean tapControls;
 		public int animAccCount;
 		public int animDelay;
-		public Number moveStep;
-		public Number restStep;
+		public double moveStep;
+		public double restStep;
 		public int endingKillCount;
 		public int endingDir;
 		
@@ -70,8 +70,8 @@ namespace com.robotacid.engine
 		public const int ENEMY_PHASE = 1;
 		
 		
-		public static readonly Number SCALE = Game.SCALE;
-		public static readonly Number INV_SCALE = 1 / Game.SCALE;
+		public static readonly double SCALE = Game.SCALE;
+		public static readonly double INV_SCALE = 1 / Game.SCALE;
 		public const int ANIM_FRAMES_MAX = 3;
 		public const int ANIM_FRAMES_MIN = 2;
 		public const int ANIM_ACC_DELAY = 10;
@@ -157,8 +157,8 @@ namespace com.robotacid.engine
             Rectangle buttonRect = new Rectangle(0, 0, renderer.propertyButtonBlit.width, renderer.propertyButtonBlit.height);
             var buttonXs = UIManager.distributeRects(Game.WIDTH * 0.5, buttonRect.width, 4, 3);
             var buttonYs = UIManager.distributeRects(Game.HEIGHT * 0.5, buttonRect.height, 4, 2);
-            Number buttonX;// = Game.HEIGHT * 0.5 - Game.SCALE + border;
-            Number buttonY;// = Game.HEIGHT * 0.5 - Game.SCALE + border;
+            double buttonX;// = Game.HEIGHT * 0.5 - Game.SCALE + border;
+            double buttonY;// = Game.HEIGHT * 0.5 - Game.SCALE + border;
             buttonY = buttonYs[0];
             uiManager.addButton(buttonXs[0], buttonY, renderer.cancelButtonBlit, quit, buttonRect);
             uiManager.addButton(buttonXs[1], buttonY, renderer.resetButtonBlit, reset, buttonRect);
@@ -246,7 +246,7 @@ namespace com.robotacid.engine
 					
 					if(!uiManager.mouseLock && uiManager.currentGroup == 0) dir = getInput();
 					
-					var playerProperty = data.map[data.player.y][data.player.x];
+					var playerProperty = data.map[(int)data.player.y][(int)data.player.x];
 					// don't repeat a blocked move - no dry humping the walls
 					if(dir > 0 && !(((playerProperty & Room.BLOCKED) > 0) && ((playerProperty & dir) == dir))){
 						// accelerate animation length
@@ -255,7 +255,7 @@ namespace com.robotacid.engine
 						}
 						animAccCount = ANIM_ACC_DELAY;
 						data.playerTurn(dir);
-						if((data.map[data.player.y][data.player.x] & Room.BLOCKED) > 0){
+						if((data.map[(int)data.player.y][(int)data.player.x] & Room.BLOCKED) > 0){
 							game.soundQueue.addRandom("blocked", blockedSounds);
 						} else {
 							game.soundQueue.addRandom("step", stepSounds);
@@ -277,14 +277,14 @@ namespace com.robotacid.engine
 				if(animCount == 0){
 					state = IDLE;
 					//if(phase == PLAYER_PHASE && !((data.map[data.player.y][data.player.x] & Room.BLOCKED) == Room.BLOCKED)){
-                    if(phase == PLAYER_PHASE && !((data.map[data.player.y][data.player.x] & Room.BLOCKED) > 0)){
+                    if(phase == PLAYER_PHASE && !((data.map[(int)data.player.y][(int)data.player.x] & Room.BLOCKED) > 0)){
 						if(data.ended){
 							if(room.type == Room.PUZZLE){
 								game.puzzleWin();
 							} else if(room.type == Room.ADVENTURE){
 								state = ENDING_ANIM;
 								endingKillList.Clear();
-								data.fillPathMap(data.player.x, data.player.y, null, Room.ENEMY | Room.WALL, endingKillList, Room.DOOR);
+								data.fillPathMap((int)data.player.x, (int)data.player.y, null, Room.ENEMY | Room.WALL, endingKillList, Room.DOOR);
 								endingKillCount = ENDING_KILL_DELAY;
 							}
 						} else {
@@ -308,8 +308,8 @@ namespace com.robotacid.engine
 					if(endingKillCount == 0){
 						if(endingKillList.length > 0){
 							var p = endingKillList.pop();
-							data.kill(p.x, p.y, 0);
-							endingKillCount = ENDING_KILL_DELAY + Math.random() * ENDING_KILL_DELAY;
+							data.kill((int)p.x, (int)p.y, 0);
+							endingKillCount = (int)(ENDING_KILL_DELAY + Math.random() * ENDING_KILL_DELAY);
 						} else {
 							if((endingDir & Room.UP) > 0){
 								renderer.setSlide(0, SEGUE_SPEED);
@@ -382,13 +382,13 @@ namespace com.robotacid.engine
 		
 		public void push(int x, int y, int dir) {
 			if((dir & Room.UP) > 0){
-				renderer.glitchMap.pushCols(x * SCALE, (x + 1) * SCALE, -3);
+				renderer.glitchMap.pushCols((int)(x * SCALE), (int)((x + 1) * SCALE), -3);
 			} else if((dir & Room.RIGHT) > 0){
-				renderer.glitchMap.pushRows(y * SCALE, (y + 1) * SCALE, 3);
+				renderer.glitchMap.pushRows((int)(y * SCALE), (int)((y + 1) * SCALE), 3);
 			} else if((dir & Room.DOWN) > 0){
-				renderer.glitchMap.pushCols(x * SCALE, (x + 1) * SCALE, 3);
+				renderer.glitchMap.pushCols((int)(x * SCALE), (int)((x + 1) * SCALE), 3);
 			} else if((dir & Room.LEFT) > 0){
-				renderer.glitchMap.pushRows(y * SCALE, (y + 1) * SCALE, -3);
+				renderer.glitchMap.pushRows((int)(y * SCALE), (int)((y + 1) * SCALE), -3);
 			}
 			game.createDistSound(x, y, "push", pushSounds);
 		}
@@ -467,16 +467,16 @@ namespace com.robotacid.engine
 			var shakeX = 0;
             int shakeY = 0;
 			if((dir & Room.UP) > 0){
-				renderer.glitchMap.addGlitchCols(x * SCALE, (x + 1) * SCALE, -1);
+				renderer.glitchMap.addGlitchCols((int)(x * SCALE), (int)((x + 1)  * SCALE), -1);
 				shakeY = -2;
 			} else if((dir & Room.RIGHT) > 0){
-				renderer.glitchMap.addGlitchRows(y * SCALE, (y + 1) * SCALE, 1);
+				renderer.glitchMap.addGlitchRows((int)(y * SCALE), (int)((y + 1) * SCALE), 1);
 				shakeX = 2;
 			} else if((dir & Room.DOWN) > 0){
-				renderer.glitchMap.addGlitchCols(x * SCALE, (x + 1) * SCALE, 1);
+				renderer.glitchMap.addGlitchCols((int)(x * SCALE), (int)((x + 1) * SCALE), 1);
 				shakeY = 2;
 			} else if((dir & Room.LEFT) > 0){
-				renderer.glitchMap.addGlitchRows(y * SCALE, (y + 1) * SCALE, -1);
+				renderer.glitchMap.addGlitchRows((int)(y * SCALE), (int)((y + 1) * SCALE), -1);
 				shakeX = -2;
 			}
 			renderer.shake(shakeX, shakeY);
@@ -509,7 +509,7 @@ namespace com.robotacid.engine
             //renderer.addFX(0, 0, renderer.mapFadeBlits[revealDir], null, 0, false, false, false, true);
             //// create render old room contents
             //Bitmap bitmap;
-            //Number bx = 0, by = 0;
+            //double bx = 0, by = 0;
             //if(eraseDir == Room.NORTH){
             //    bitmap = new Bitmap(renderMapSection(0, 0, data.width, room.height - 1));
             //} else if(eraseDir == Room.EAST){
@@ -617,7 +617,7 @@ namespace com.robotacid.engine
 			return blit;
 		}
 		
-		public void renderProperty(Number x, Number y, int property, BitmapData bitmapData, Boolean renderCheck = true) {
+		public void renderProperty(double x, double y, int property, BitmapData bitmapData, Boolean renderCheck = true) {
 			BlitRect blit;
             Boolean displace = false;
             int frame = 0;
@@ -661,11 +661,11 @@ namespace com.robotacid.engine
 				blit = renderer.voidBlit;
 			} else return;
 			if(bitmapData == renderer.bitmapData){
-				blit.x = renderer.canvasPoint.x + x;
-				blit.y = renderer.canvasPoint.y + y;
+				blit.x = (int)(renderer.canvasPoint.x + x);
+				blit.y = (int)(renderer.canvasPoint.y + y);
 			} else {
-				blit.x = x;
-				blit.y = y;
+				blit.x = (int)x;
+				blit.y = (int)y;
 			}
 			// to create a neat square without a shadow we copy straight to the shadow bitmap
 			if((property & Room.VOID) > 0) {
@@ -681,12 +681,12 @@ namespace com.robotacid.engine
 				int displaceStep = 0;
 				if((property & (Room.ATTACK | Room.BLOCKED)) > 0) {
 					if((property & Room.ATTACK) > 0){
-						displaceStep = -restStep * (animCount + 1);
+						displaceStep = (int)(-restStep * (animCount + 1));
 					} else if((property & Room.BLOCKED) > 0){
-						displaceStep = -restStep * animCount;
+						displaceStep = (int)(-restStep * animCount);
 					}
 				} else {
-					displaceStep = moveStep * animCount;
+					displaceStep = (int)(moveStep * animCount);
 				}
 				if((property & Room.UP) > 0) {
 					blit.y += displaceStep;
@@ -700,13 +700,13 @@ namespace com.robotacid.engine
 			} else {
 				if((property & Room.KILLER) > 0) {
 					if((property & Room.UP) > 0) {
-						blit.y -= SCALE * 0.5;
+						blit.y -= (int)(SCALE * 0.5);
 					} else if((property & Room.RIGHT) > 0) {
-						blit.x += SCALE * 0.5;
+						blit.x += (int)(SCALE * 0.5);
 					} else if((property & Room.DOWN) > 0) {
-						blit.y += SCALE * 0.5;
+						blit.y += (int)(SCALE * 0.5);
 					} else if((property & Room.LEFT) > 0) {
-						blit.x -= SCALE * 0.5;
+						blit.x -= (int)(SCALE * 0.5);
 					}
 				}
 			}
@@ -737,10 +737,10 @@ namespace com.robotacid.engine
 						renderer.incrementBlit.render(bitmapData, game.frameCount % renderer.incrementBlit.totalFrames);
 						renderer.endingDistBlit.x = blit.x;
 						renderer.endingDistBlit.y = blit.y;
-						if((property & Room.M_UP) > 0) renderer.endingDistBlit.y -= SCALE;
-						else if((property & Room.M_RIGHT) > 0) renderer.endingDistBlit.x += SCALE;
-						else if((property & Room.M_DOWN) > 0) renderer.endingDistBlit.y += SCALE;
-						else if((property & Room.M_LEFT) > 0) renderer.endingDistBlit.x -= SCALE;
+						if((property & Room.M_UP) > 0) renderer.endingDistBlit.y -= (int)SCALE;
+						else if((property & Room.M_RIGHT) > 0) renderer.endingDistBlit.x += (int)SCALE;
+						else if((property & Room.M_DOWN) > 0) renderer.endingDistBlit.y += (int)SCALE;
+						else if((property & Room.M_LEFT) > 0) renderer.endingDistBlit.x -= (int)SCALE;
 						renderer.endingDistBlit.render(bitmapData, room.endingDist - 2);
 					}
 				}
@@ -755,8 +755,8 @@ namespace com.robotacid.engine
 				if(
 					state != ANIMATE && renderCheck && checkView && state == IDLE &&
 					!((property & (Room.TURNER | Room.GENERATOR | Room.VIRUS | Room.TRAP | Room.DOOR)) > 0) &&
-					((data.player.x + data.player.y * data.width) & 1) == 
-					(((x * INV_SCALE + y * INV_SCALE * data.width) >> 0) & 1)
+					(((int)(data.player.x + data.player.y * data.width)) & 1) == 
+					(((int)(x * INV_SCALE + y * INV_SCALE * data.width) >> 0) & 1)
 				){
 					renderer.checkMarkBlit.x = blit.x;
 					renderer.checkMarkBlit.y = blit.y;
@@ -815,8 +815,8 @@ namespace com.robotacid.engine
 			Array<Point> entities = new Array<Point>();
 			var renderMap = data.map;
 			
-			for(r = fromY; r < toY; r++){
-				for(c = fromX; c < toX; c++){
+			for(r = (int)fromY; r < toY; r++){
+				for(c = (int)fromX; c < toX; c++){
 					if(
 						(c >= 0 && r >= 0 && c < data.width && r < data.height)
 					){
@@ -837,8 +837,8 @@ namespace com.robotacid.engine
 							
 						} else if(checkView){
 							if(data.getCheck(c, r)){
-								renderer.checkMarkBlit.x = renderer.canvasPoint.x + c * Game.SCALE;
-								renderer.checkMarkBlit.y = renderer.canvasPoint.y + r * Game.SCALE;
+								renderer.checkMarkBlit.x = (int)(renderer.canvasPoint.x + c * Game.SCALE);
+								renderer.checkMarkBlit.y = (int)(renderer.canvasPoint.y + r * Game.SCALE);
 								renderer.checkMarkBlit.render(renderer.guiBitmapData);
 							}
 						}
@@ -849,11 +849,11 @@ namespace com.robotacid.engine
 			// render objects above the map so blocked movement goes over the walls
 			for(i = entities.length - 1; i > -1 ; i--){
 				p = entities[i];
-				property = renderMap[p.y][p.x];
+				property = renderMap[(int)p.y][(int)p.x];
 				// blink the player when in check and in checkView
-				if(((property & Room.PLAYER) > 0) && checkView && !blink && data.getCheck(p.x, p.y)){
-					renderer.checkMarkBlit.x = renderer.canvasPoint.x + p.x * Game.SCALE;
-					renderer.checkMarkBlit.y = renderer.canvasPoint.y + p.y * Game.SCALE;
+				if(((property & Room.PLAYER) > 0) && checkView && !blink && data.getCheck((int)p.x, (int)p.y)){
+					renderer.checkMarkBlit.x = (int)(renderer.canvasPoint.x + p.x * Game.SCALE);
+					renderer.checkMarkBlit.y = (int)(renderer.canvasPoint.y + p.y * Game.SCALE);
 					renderer.checkMarkBlit.render(renderer.guiBitmapData);
 				} else {
 					renderProperty(p.x * SCALE, p.y * SCALE, property, renderer.bitmapData);

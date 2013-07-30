@@ -10,8 +10,8 @@ namespace flash.display
     public class DisplayObject : EventDispatcher, IBitmapDrawable {
 
         /// <summary>Indicates the alpha transparency value of the object specified.</summary>
-        public Number alpha { get; set; }
-        public Number effectiveAlpha { get; set; }
+        public double alpha { get; set; }
+        public double effectiveAlpha { get; set; }
 
         public Stage stage { get { return XnaGame.Stage; } }
 
@@ -19,19 +19,19 @@ namespace flash.display
 
         public DisplayObjectContainer parent { get; internal set; }
 
-        public Number mouseX { get { return InputHelper.MousePos.X / XnaGame.Instance.Scale; } }
-        public Number mouseY { get { return InputHelper.MousePos.Y / XnaGame.Instance.Scale; } }
+        public double mouseX { get { return InputHelper.MousePos.X / XnaGame.Instance.Scale; } }
+        public double mouseY { get { return InputHelper.MousePos.Y / XnaGame.Instance.Scale; } }
 
         /// <summary>Whether or not the display object is visible.</summary>
         public Boolean visible { get; set; }
 
-        public Number x { get; set; }
-        public Number y { get; set; }
-        public Number z { get; set; }
+        public double x { get; set; }
+        public double y { get; set; }
+        public double z { get; set; }
 
-        public Number scaleX { get; set; }
-        public Number scaleY { get; set; }
-        public Number scaleZ { get; set; }
+        public double scaleX { get; set; }
+        public double scaleY { get; set; }
+        public double scaleZ { get; set; }
 
         //public Action addedToStage;
 

@@ -49,7 +49,7 @@ namespace com.robotacid.ui.editor
 			
 			// PALETTE
 			paletteRight = UserData.settings.paletteLeft;
-			back = uiManager.addButton(0, Game.SCALE + ((Game.HEIGHT * 0.5 - renderer.roomPaletteBlit.height * 0.5) >> 0), renderer.roomPaletteBlit, null, new Rectangle(0, 0, Game.SCALE * 4, Game.SCALE * 8));
+			back = uiManager.addButton(0, Game.SCALE + ((int)(Game.HEIGHT * 0.5 - renderer.roomPaletteBlit.height * 0.5) >> 0), renderer.roomPaletteBlit, null, new Rectangle(0, 0, Game.SCALE * 4, Game.SCALE * 8));
 			// properties
 			propertyLegal = true;
 			properties = new Array<BlitButton>();
@@ -96,7 +96,7 @@ namespace com.robotacid.ui.editor
 			uiManager.addButton(Game.WIDTH - renderer.settingsButtonBlit.width, 0, renderer.settingsButtonBlit, cancel);
 			var buttonXs = UIManager.distributeRects(Game.WIDTH * 0.5, buttonRect.width, 4, 4);
 			var buttonYs = UIManager.distributeRects(Game.HEIGHT * 0.5, buttonRect.height, 4, 2);
-			Number buttonY;// = Game.HEIGHT * 0.5 - Game.SCALE + border;
+			double buttonY;// = Game.HEIGHT * 0.5 - Game.SCALE + border;
 			buttonY = buttonYs[0];
 			uiManager.addButton(buttonXs[0], buttonY, renderer.cancelButtonBlit, quit, buttonRect);
 			uiManager.addButton(buttonXs[1], buttonY, renderer.loadButtonBlit, load, buttonRect);
@@ -126,7 +126,7 @@ namespace com.robotacid.ui.editor
 			uiManager.changeGroup(0);
 		}
 		
-		private BlitButton addPropertyButton(Number x, Number y, int property, int cancels, Boolean silent = false) {
+		private BlitButton addPropertyButton(double x, double y, int property, int cancels, Boolean silent = false) {
 			var button = uiManager.addButton(x, y + back.y, game.level.getPropertyBlit(property), propertySelect, new Rectangle(0, 0, Game.SCALE, Game.SCALE), false);
 			button.id = property;
 			button.active = false;
@@ -144,7 +144,7 @@ namespace com.robotacid.ui.editor
 			} else {
 				uiManager.update(game.mouseX, game.mouseY, game.mousePressed, game.mousePressedCount == game.frameCount);
 				renderer.camera.uiStopDrag = uiManager.mouseOver || uiManager.mouseLock;
-				playButton.visible = (game.level.data.map[game.level.data.player.y][game.level.data.player.x] & Room.PLAYER) == Room.PLAYER;
+				playButton.visible = (game.level.data.map[(int)game.level.data.player.y][(int)game.level.data.player.x] & Room.PLAYER) == Room.PLAYER;
 			}
 		}
 		
@@ -218,7 +218,7 @@ namespace com.robotacid.ui.editor
 		private void togglePaletteSide(Boolean saveSettings) {
 			int i;
             BlitButton button;
-			Number step = Game.WIDTH - Game.SCALE * 4;
+			double step = Game.WIDTH - Game.SCALE * 4;
 			paletteRight = !paletteRight;
 			if(!paletteRight) step = -step;
 			for(i = 0; i < paletteButtons.length; i++){
@@ -319,8 +319,8 @@ namespace com.robotacid.ui.editor
 				for(i = 0; i < properties.length; i++){
 					button = properties[i];
 					if(button.active){
-						renderer.propertySelectedBlit.x = button.x;
-						renderer.propertySelectedBlit.y = button.y;
+						renderer.propertySelectedBlit.x = (int)button.x;
+						renderer.propertySelectedBlit.y = (int)button.y;
 						renderer.propertySelectedBlit.render(renderer.guiBitmapData);
 						button.render(renderer.guiBitmapData);
 					}
@@ -329,17 +329,17 @@ namespace com.robotacid.ui.editor
 					game.level.renderProperty(propertyButton.x + 2, propertyButton.y + 2, property, renderer.guiBitmapData, false);
 				}
 				if(renderer.camera.dragScroll){
-					renderer.lockedBlit.x = propertyButton.x + 2;
-					renderer.lockedBlit.y = propertyButton.y + 2;
+					renderer.lockedBlit.x =(int) propertyButton.x + 2;
+					renderer.lockedBlit.y = (int)propertyButton.y + 2;
 					renderer.lockedBlit.render(renderer.guiBitmapData);
 				}
 				if(generatorButton.over){
-					renderer.timerCountBlit.x = generatorButton.x - 0;
-					renderer.timerCountBlit.y = generatorButton.y - 0;
+					renderer.timerCountBlit.x = (int)generatorButton.x - 0;
+					renderer.timerCountBlit.y = (int)generatorButton.y - 0;
 					renderer.timerCountBlit.render(renderer.guiBitmapData, getTimerFrame(generatorButton.id));
 					if(generatorButton.held && ((property & Room.GENERATOR) == Room.GENERATOR)){
-						renderer.timerCountBlit.x = propertyButton.x + 2;
-						renderer.timerCountBlit.y = propertyButton.y + 2;
+						renderer.timerCountBlit.x = (int)propertyButton.x + 2;
+						renderer.timerCountBlit.y = (int)propertyButton.y + 2;
 						renderer.timerCountBlit.render(renderer.guiBitmapData, getTimerFrame(property));
 					}
 				}

@@ -27,7 +27,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     private Game _game;
     
     public static Stage Stage { get; private set; }
-    public float Scale { get { return Instance._game.scaleRatio; } }
+    public float Scale { get { return (float)Instance._game.scaleRatio; } }
 
     #if XBOX360
         public const float DefaultZoomFactor = 0.0f;

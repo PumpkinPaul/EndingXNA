@@ -19,20 +19,20 @@ namespace com.robotacid.gfx
 		public Boolean dragScroll;
 		public Boolean uiStopDrag;
 		public Point canvas;
-		public Number canvasX, canvasY;
-		public Number lastCanvasX, lastCanvasY;
+		public double  canvasX, canvasY;
+		public double  lastCanvasX, lastCanvasY;
 		public Rectangle mapRect;
 		public Point targetPos;
-		public Number vx, vy;
+		public double  vx, vy;
 		public int count;
 		public Point delayedTargetPos;
-		public Number interpolation;
+		public double  interpolation;
 		
-		private Number viewWidth;
-		private Number viewHeight;
+		private double  viewWidth;
+		private double  viewHeight;
 		
-		public readonly static Number DEFAULT_INTERPOLATION = 0.2;
-		public readonly static Number DRAG_SCROLL_INTERPOLATION = 0.9;
+		public readonly static double  DEFAULT_INTERPOLATION = 0.2;
+		public readonly static double  DRAG_SCROLL_INTERPOLATION = 0.9;
 		
 		public const int UP = 1;
 		public const int RIGHT = 2;
@@ -53,13 +53,13 @@ namespace com.robotacid.gfx
 		}
 		
 		/* This sets where the screen will focus on - the coords are a point on the canvas you want centered on the map */
-		public void setTarget(Number x, Number y) {
+		public void setTarget(double  x, double  y) {
 			targetPos.x = (int)(-x + viewWidth * 0.5);
 			targetPos.y = (int)(-y + viewHeight * 0.5);
 		}
 		
 		/* This sets where the screen will focus on - the coords are a point on the canvas you want centered on the map */
-		public void displace(Number x, Number y) {
+		public void displace(double  x, double  y) {
 			targetPos.x -= x;
 			targetPos.y -= y;
 			canvasX -= x;
@@ -69,7 +69,7 @@ namespace com.robotacid.gfx
 		}
 		
 		/* Set a target to scroll to after a given delay */
-		public void setDelayedTarget(Number x, Number y, int delay) {
+		public void setDelayedTarget(double  x, double  y, int delay) {
 			delayedTargetPos = new Point(x, y);
 			count = delay;
 		}
@@ -134,8 +134,8 @@ namespace com.robotacid.gfx
 			canvasY += vy;
 			//back.move(vx, vy);
 			
-			canvas.x = Math.Round((double)canvasX) - renderer.shakeOffset.x;
-			canvas.y = Math.Round((double)canvasY) - renderer.shakeOffset.y;
+			canvas.x = Math.Round(canvasX) - renderer.shakeOffset.x;
+			canvas.y = Math.Round(canvasY) - renderer.shakeOffset.y;
 		}
 		
 		public void toggleDragScroll() {

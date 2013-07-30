@@ -1,16 +1,14 @@
-﻿using Number = System.Double;
-
-namespace flash.geom
+﻿namespace flash.geom
 {
     public class Rectangle {
-        public Number height;
-        public Number width;
-        public Number x;
-        public Number y;
+        public double height;
+        public double width;
+        public double x;
+        public double y;
 
         public Rectangle() { }
 
-        public Rectangle(Number x, Number y, Number width, Number height) {
+        public Rectangle(double x, double y, double width, double height) {
             this.x = x;
             this.y = y;
             this.width = width;

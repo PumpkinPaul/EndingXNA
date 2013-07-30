@@ -66,8 +66,8 @@ public class FlashRenderer
         var info = new RenderInfo
         {
             Texture = sourceBitmapData.texture,
-            Destination = new Microsoft.Xna.Framework.Rectangle(destPoint.x, destPoint.y, sourceRect.width, sourceRect.height),
-            Source = new Microsoft.Xna.Framework.Rectangle(sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height),
+            Destination = new Microsoft.Xna.Framework.Rectangle((int)destPoint.x, (int)destPoint.y, (int)sourceRect.width, (int)sourceRect.height),
+            Source = new Microsoft.Xna.Framework.Rectangle((int)sourceRect.x, (int)sourceRect.y, (int)sourceRect.width, (int)sourceRect.height),
             Color = Color.White
         };
 
@@ -85,7 +85,7 @@ public class FlashRenderer
         var info = new RenderInfo
         {
             Text = text,
-            Destination = new Microsoft.Xna.Framework.Rectangle(destPoint.x, destPoint.y, sourceRect.width, sourceRect.height),
+            Destination = new Microsoft.Xna.Framework.Rectangle((int)destPoint.x, (int)destPoint.y, (int)sourceRect.width, (int)sourceRect.height),
             Color = color
         };
 
@@ -99,7 +99,7 @@ public class FlashRenderer
         var info = new RenderInfo
         {
             Texture = _pixelTexture,
-            Destination = new Microsoft.Xna.Framework.Rectangle(rect.x, rect.y, rect.width, rect.height),
+            Destination = new Microsoft.Xna.Framework.Rectangle((int)rect.x, (int)rect.y, (int)rect.width, (int)rect.height),
             Source = null,
             Color = UIntToColor(color) * alpha
         };

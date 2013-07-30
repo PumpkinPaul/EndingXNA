@@ -27,7 +27,7 @@ namespace com.robotacid.gfx
 		public Boolean looped;
 		public Boolean killOffScreen;
 		
-		public FX(Number x, Number y, BlitRect blit, BitmapData bitmapData, Point canvasPoint, Point dir = null, int delay = 0, Boolean looped = false, Boolean killOffScreen = true) : base(x, y) {
+		public FX(double  x, double  y, BlitRect blit, BitmapData bitmapData, Point canvasPoint, Point dir = null, int delay = 0, Boolean looped = false, Boolean killOffScreen = true) : base(x, y) {
 			
 			this.blit = blit;
 			this.bitmapData = bitmapData;
@@ -41,8 +41,8 @@ namespace com.robotacid.gfx
 		
 		public void main() {
 			if(frame > -1){
-				blit.x = (canvasPoint.x) + x;
-				blit.y = (canvasPoint.y) + y;
+				blit.x = (int)((canvasPoint.x) + x);
+				blit.y = (int)((canvasPoint.y) + y);
 				// just trying to ease the collosal rendering requirements going on
 				if(blit.x + blit.dx + blit.width >= 0 &&
 					blit.y + blit.dy + blit.height >= 0 &&

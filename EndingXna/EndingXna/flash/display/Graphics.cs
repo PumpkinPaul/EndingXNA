@@ -21,7 +21,7 @@ namespace flash.display
            XnaGame.Instance.FlashRenderer.CopyPixels(null, bitmapData, bitmapData.rect, Point.Zero);//, alphaBitmapData, alphaPoint, mergeAlpha);
         }
          
-        public void drawRect(Number x, Number y, Number width, Number height) {
+        public void drawRect(double x, double y, double width, double height) {
             //Cache the commands for later to replay in the drawing phase
         }
          

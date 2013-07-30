@@ -14,7 +14,7 @@ namespace com.robotacid.gfx
 
         public BitmapData spriteSheet;
 		
-		public BlitSprite(BitmapData spriteSheet, Rectangle rect, int dx = 0, int dy = 0) : base(dx, dy, rect.width, rect.height) {
+		public BlitSprite(BitmapData spriteSheet, Rectangle rect, int dx = 0, int dy = 0) : base(dx, dy, (int)rect.width, (int)rect.height) {
 			this.spriteSheet = spriteSheet;
 			this.rect = rect;
 		}

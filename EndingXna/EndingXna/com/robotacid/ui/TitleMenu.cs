@@ -39,8 +39,8 @@ namespace com.robotacid.ui
 		private Rectangle levelButtonRect;
 		private int firstLevel;
 		private BlitButton buttonInHand;
-		private Number prevButtonX;
-		private Number prevButtonY;
+		private double prevButtonX;
+		private double prevButtonY;
 		private Library.LevelData sourceLevel;
 		private Library.LevelData targetLevel;
 		private int sourceId;
@@ -52,7 +52,7 @@ namespace com.robotacid.ui
 		public const int ADVENTURE = 2;
 		public const int EDITOR_LEVELS = 3;
 		
-		public readonly static Number BUTTON_HEIGHT = 12;
+		public readonly static double BUTTON_HEIGHT = 12;
 		
 		public const int LEVEL_BUTTONS_WIDE = 5;
 		public const int  LEVEL_BUTTONS_HIGH = 4;
@@ -75,8 +75,8 @@ namespace com.robotacid.ui
 			uiManager.addGroup();
 			uiManager.changeGroup(1);
 			levelButtons = new Array<BlitButton>();
-			Number buttonX = Game.WIDTH * 0.5 - ((LEVEL_BUTTONS_WIDE - 1) * LEVEL_BUTTON_GAP + levelButtonRect.width * LEVEL_BUTTONS_WIDE) * 0.5;
-			Number buttonY = Game.HEIGHT * 0.5 - ((LEVEL_BUTTONS_HIGH - 1) * LEVEL_BUTTON_GAP + levelButtonRect.height * LEVEL_BUTTONS_HIGH) * 0.5;
+			double buttonX = Game.WIDTH * 0.5 - ((LEVEL_BUTTONS_WIDE - 1) * LEVEL_BUTTON_GAP + levelButtonRect.width * LEVEL_BUTTONS_WIDE) * 0.5;
+			double buttonY = Game.HEIGHT * 0.5 - ((LEVEL_BUTTONS_HIGH - 1) * LEVEL_BUTTON_GAP + levelButtonRect.height * LEVEL_BUTTONS_HIGH) * 0.5;
 			BlitButton levelButton;
 			for(r = 0; r < LEVEL_BUTTONS_HIGH; r++){
 				for(c = 0; c < LEVEL_BUTTONS_WIDE; c++){
@@ -208,8 +208,8 @@ namespace com.robotacid.ui
 				buttonInHand.y = prevButtonY;
 				int i;
                 BlitButton overButton;
-				int x = Game.WIDTH * 0.5 - renderer.levelMovePanelBlit.width * 0.5;
-				int y = Game.HEIGHT * 0.5 - renderer.levelMovePanelBlit.height * 0.5;
+				int x = (int)(Game.WIDTH * 0.5 - renderer.levelMovePanelBlit.width * 0.5);
+				int y = (int)(Game.HEIGHT * 0.5 - renderer.levelMovePanelBlit.height * 0.5);
 				for(i = 0; i < uiManager.buttonsOver.length; i++){
 					overButton = uiManager.buttonsOver[i];
 					if(overButton != buttonInHand){
@@ -377,7 +377,7 @@ namespace com.robotacid.ui
 			//FileManager.save(JSON.stringify(Library.USER_LEVELS), "levels.json");
 		}
 		
-		public void renderPreview(Object obj, Number x, Number y, BitmapData target) {
+		public void renderPreview(Object obj, double x, double y, BitmapData target) {
             //BitmapData bitmapData = Level.getLevelBitmapData(obj.map, Level.ROOM_WIDTH, Level.ROOM_HEIGHT);
 			//var p:Point = new Point(x, y);
 			//target.copyPixels(bitmapData, bitmapData.rect, p);
@@ -407,14 +407,14 @@ namespace com.robotacid.ui
 						if(Library.levels[firstLevel + i] != null){
 							if(!game.editing){
 								if(!UserData.settings.completed[firstLevel + i]){
-									renderer.notCompletedBlit.x = button.x;
-									renderer.notCompletedBlit.y = button.y;
+									renderer.notCompletedBlit.x = (int)button.x;
+									renderer.notCompletedBlit.y = (int)button.y;
 									renderer.notCompletedBlit.render(renderer.guiBitmapData);
 								}
 							}
 							renderer.numberBlit.setValue(firstLevel + i);
-							renderer.numberBlit.x = button.x + 2;
-							renderer.numberBlit.y = button.y + 2;
+							renderer.numberBlit.x = (int)button.x + 2;
+							renderer.numberBlit.y = (int)button.y + 2;
 							renderer.numberBlit.renderNumbers(renderer.guiBitmapData);
 							
 						}
@@ -429,11 +429,11 @@ namespace com.robotacid.ui
 									button.render(renderer.guiBitmapData);
 									
                                     renderer.numberBlit.setValue(firstLevel + button.id);
-									renderer.numberBlit.x = button.x + 2;
-									renderer.numberBlit.y = button.y + 2;
+									renderer.numberBlit.x = (int)button.x + 2;
+									renderer.numberBlit.y = (int)button.y + 2;
 									renderer.numberBlit.renderNumbers(renderer.guiBitmapData);
-									renderer.levelPreviewPanelBlit.x = button.x;
-									renderer.levelPreviewPanelBlit.y = (
+									renderer.levelPreviewPanelBlit.x = (int)button.x;
+									renderer.levelPreviewPanelBlit.y = (int)(
 										button == buttonInHand ? button.y - (Level.ROOM_HEIGHT + 3) : button.y + button.blit.height
 									);
 									renderer.levelPreviewPanelBlit.render(renderer.guiBitmapData);
@@ -444,14 +444,14 @@ namespace com.robotacid.ui
 					} else {
 						if(sourceLevel != null || targetLevel != null){
 							button = UIManager.dialog.buttons[0];
-							renderer.levelPreviewPanelBlit.x = button.x + button.blit.width * 0.5 - renderer.levelPreviewPanelBlit.width * 0.5;
+							renderer.levelPreviewPanelBlit.x = (int)(button.x + button.blit.width * 0.5 - renderer.levelPreviewPanelBlit.width * 0.5);
 							if(sourceLevel != null){
-								renderer.levelPreviewPanelBlit.y = button.y - (Level.ROOM_HEIGHT + 3);
+								renderer.levelPreviewPanelBlit.y = (int)button.y - (Level.ROOM_HEIGHT + 3);
 								renderer.levelPreviewPanelBlit.render(renderer.guiBitmapData);
 								renderPreview(sourceLevel, renderer.levelPreviewPanelBlit.x + 1, renderer.levelPreviewPanelBlit.y + 1, renderer.guiBitmapData);
 							}
 							if(targetLevel != null){
-								renderer.levelPreviewPanelBlit.y = button.y + button.blit.height;
+								renderer.levelPreviewPanelBlit.y = (int)button.y + button.blit.height;
 								renderer.levelPreviewPanelBlit.render(renderer.guiBitmapData);
 								renderPreview(targetLevel, renderer.levelPreviewPanelBlit.x + 1, renderer.levelPreviewPanelBlit.y + 1, renderer.guiBitmapData);
 							}

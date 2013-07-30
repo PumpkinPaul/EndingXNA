@@ -19,7 +19,7 @@ namespace com.robotacid.sound
         public static Boolean active = true;
 		public static Dictionary<string, SoundEffect> sounds = new Dictionary<string, SoundEffect>();
         public static Dictionary<string, SoundEffectInstance> soundChannels = new Dictionary<string, SoundEffectInstance>();
-		public static Dictionary<string, Number> volumes = new Dictionary<string, Number>();
+		public static Dictionary<string, double > volumes = new Dictionary<string, double >();
 
         /* Reads values for music and sfx toggles from the SharedObject */
 		public static void init() {
@@ -40,7 +40,7 @@ namespace com.robotacid.sound
 			var soundTransform = volumes[name] * volume;
             var instance = sound.CreateInstance();
 			soundChannels[name] = sound.CreateInstance();
-            instance.Volume = soundTransform;
+            instance.Volume = (float)soundTransform;
             instance.Play();
 		}
 		

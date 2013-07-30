@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Diagnostics;
 using flash;
 using Array = System.Array;
-using Math = flash.Math;
+using Math = System.Math;
+using System = flash.Math;
 using XorRandom = com.robotacid.util.XorRandom;
 using Point = flash.geom.Point;
 using Rectangle = flash.geom.Rectangle;
@@ -181,7 +182,7 @@ namespace com.robotacid.engine
                         p = doors[i];
                         if(i == NORTH || i == SOUTH) doors[i].x = 1 + random.rangeInt(width - 2);
                         else if(i == EAST || i == WEST) doors[i].y = 1 + random.rangeInt(height - 2);
-                        length = (int)(Math.abs(p.x - door.x) + Math.abs(p.y - door.y));
+                        length = (int)(Math.Abs(p.x - door.x) + Math.Abs(p.y - door.y));
                         if(length > farthestLength){
                             farthestLength = length;
                             farthestIndex = i;
@@ -205,9 +206,9 @@ namespace com.robotacid.engine
                     continue;
                 }
                 p = doors[i];
-                map[p.y][p.x] = DOOR | ENEMY | (1 << (i + M_DIR_SHIFT));
+                map[(int)p.y][(int)p.x] = DOOR | ENEMY | (1 << (i + M_DIR_SHIFT));
                 if(endingDist <= 2 && value == INCREMENT) value = ENDING;
-                map[p.y][p.x] |= value;
+                map[(int)p.y][(int)p.x] |= value;
             }
             return doors;
         }
@@ -217,7 +218,7 @@ namespace com.robotacid.engine
             Point p;
             int r, c, x, y;
             // N S
-            x = doors[NORTH].x;
+            x = (int)doors[NORTH].x;
             p = doors[SOUTH];
             for(r = 1; r < height - 1; r++){
                 if(r == 1 || r == height - 2 || ((map[r][x] & WALL) == WALL)) map[r][x] = EMPTY;
@@ -232,7 +233,7 @@ namespace com.robotacid.engine
                 }
             }
             // W E
-            y = doors[WEST].y;
+            y = (int)doors[WEST].y;
             p = doors[EAST];
             for(c = 1; c < width - 1; c++){
                 if(c == 1 || c == width - 2 || ((map[y][c] & WALL) == WALL)) map[y][c] = EMPTY;
@@ -312,13 +313,13 @@ namespace com.robotacid.engine
             var points = new Array<Point> {p};
             int property = 0;
             int length = points.Count;
-            voidMap[p.y][p.x] = 1;
+            voidMap[(int)p.y][(int)p.x] = 1;
 			
             while(length > 0){
                 while((length--) > 0){
                     p = points.shift();
-                    x = p.x;
-                    y = p.y;
+                    x = (int)p.x;
+                    y = (int)p.y;
                     property = map[y][x];
                     if(((property & WALL) == WALL) && !((property & ENEMY) > 0)) continue;
                     // cardinals
@@ -375,7 +376,7 @@ namespace com.robotacid.engine
             // buffering to account for any overlap
             for(r = 0; r < rect.height; r++){
                 for(c = 0; c < rect.width; c++){
-                    buffer[r][c] = source[rect.y + r][rect.x + c];
+                    buffer[r][c] = source[(int)rect.y + r][(int)rect.x + c];
                 }
             }
             for(r = 0; r < rect.height; r++){
@@ -484,13 +485,7 @@ namespace com.robotacid.engine
                 }
             }
 
-            for(int i = 0, j = 0; i < 10; i++, j++) {
-                System.Diagnostics.Debug.Write("Fred");
-            }
-
             return a;
-
-            
         }
 
         public void randomiseArray<T>(Array<T> a) {
@@ -575,8 +570,8 @@ namespace com.robotacid.engine
             int bombSpice = 1 << 0;
             int wallSpice = 1 << 1;
             int generatorSpice = 1 << 2;
-            int recipeRange = System.Math.Min((DIST_TO_ENDING - endingDist) + 3, recipes.Length);
-            int spiceRange = System.Math.Min((DIST_TO_ENDING - endingDist) + 1, enemySpice.Length);
+            int recipeRange = Math.Min((DIST_TO_ENDING - endingDist) + 3, recipes.Length);
+            int spiceRange = Math.Min((DIST_TO_ENDING - endingDist) + 1, enemySpice.Length);
             int spice;
             int n;
             int generatorVirii = 0;

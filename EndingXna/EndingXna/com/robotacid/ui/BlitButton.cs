@@ -17,8 +17,8 @@ namespace com.robotacid.gfx
         public int id;
 		public int targetId;
 		
-		public Number x;
-		public Number y;
+		public double x;
+		public double y;
 		public BlitRect blit;
 		public Boolean over;
 		public Boolean active;
@@ -38,7 +38,7 @@ namespace com.robotacid.gfx
 		
 		public const int HELD_DELAY= 15;
 		
-		public BlitButton(Number x, Number y, BlitRect blit, Action callback, Rectangle area = null, Boolean states = true) {
+		public BlitButton(double x, double y, BlitRect blit, Action callback, Rectangle area = null, Boolean states = true) {
 			this.x = x;
 			this.y = y;
 			this.blit = blit;
@@ -52,8 +52,8 @@ namespace com.robotacid.gfx
 		}
 		
 		public void render(BitmapData bitmapData) {
-			blit.x = x;
-			blit.y = y;
+			blit.x = (int)x;
+			blit.y = (int)y;
 			if(states){
 				frame = over ? 1 : 0;
 				frame += active ? 2 : 0;

@@ -21,11 +21,11 @@ namespace com.robotacid.ui
 		
 		private TextBox textBox;
 		private int textCount;
-		private Number fadeInAlpha;
-		private Number fadeOutAlpha;
+		private double fadeInAlpha;
+		private double fadeOutAlpha;
 		private Boolean changeOverFrame;
 
-        public readonly static Number FADE_STEP = 1.0 / 10;
+        public readonly static double FADE_STEP = 1.0 / 10;
 		public const int TEXT_DELAY = 60;
 		
 		public Transition() {
@@ -66,7 +66,7 @@ namespace com.robotacid.ui
 				} else if(dir < 0){
 					alpha -= fadeOutAlpha;
 					fadeOut--;
-					if(alpha <= 0 || fadeOut <= 0){
+					if(alpha <= 0.0f || fadeOut <= 0.0f){
 						dir = 0;
 						alpha = 0;
 						visible = false;
@@ -78,7 +78,8 @@ namespace com.robotacid.ui
 		
 		/* Initiate a transition */
 		public void begin(Action changeOverCallback, int fadeIn = 10, int fadeOut = 10, String text = "", int textDelay = 0, Action completeCallback = null, int delayCount = 0) {
-			this.changeOverCallback = changeOverCallback;
+		
+            this.changeOverCallback = changeOverCallback;
 			this.fadeIn = fadeIn;
 			this.fadeOut = fadeOut;
 			this.delayCount = delayCount;

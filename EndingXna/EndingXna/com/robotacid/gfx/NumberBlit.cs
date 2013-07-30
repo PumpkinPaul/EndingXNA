@@ -3,7 +3,7 @@ using flash;
 using Microsoft.Xna.Framework;
 using Array = flash.Array;
 using BitmapData = flash.display.BitmapData;
-using Math = flash.Math;
+using Math = System.Math;
 using Rectangle = flash.geom.Rectangle;
 
 namespace com.robotacid.gfx
@@ -19,11 +19,11 @@ namespace com.robotacid.gfx
     public class NumberBlit : BlitSprite {
 
         public int spacing;
-		public Array<Number> drums;
+		public Array<double > drums;
 		public int digits;
-		public Number value;
-		public Number target;
-		public Number step;
+		public double  value;
+		public double  target;
+		public double  step;
 		
 		private int sourceY;
 		private int stepY;
@@ -31,8 +31,8 @@ namespace com.robotacid.gfx
 		// temps
 		private int i;
 		private String str;
-		private Number remainder;
-		private Number digit;
+		private double  remainder;
+		private double  digit;
 		private int valueI;
 		
 		public NumberBlit(BitmapData spriteSheet, Rectangle rect, int digits = 1, double step = 0.25, int dx = 0, int dy = 0, int spacing = 0, int stepY = 0) : base (spriteSheet, rect, dx, dy) {
@@ -40,11 +40,11 @@ namespace com.robotacid.gfx
 			this.digits = digits;
 			this.step = step;
 			if(stepY > 0) this.stepY = stepY;
-			else this.stepY = rect.width;
+			else this.stepY = (int)rect.width;
 			if(spacing > 0) this.spacing = spacing;
-			else this.spacing = rect.width;
-			sourceY = rect.y;
-			drums = new Array<Number>(new Number[digits]);
+			else this.spacing = (int)rect.width;
+			sourceY = (int)rect.y;
+			drums = new Array<double >(new double [digits]);
 			this.rect = new Rectangle(rect.x, rect.y, spacing, spacing + 1);
 		}
 		
@@ -53,11 +53,11 @@ namespace com.robotacid.gfx
 			if(value != target){
 				if(value < target) value += step;
 				if(value > target) value -= step;
-				if(Math.abs((double)(value - target)) < step){
-					setValue(target);
+				if(Math.Abs((value - target)) < step){
+					setValue((int)target);
 					return;
 				}
-				int valueI = value;
+				int valueI = (int)value;
 				remainder = value - valueI;
 				str = valueI + "";
 				if(digits > 0){
@@ -88,7 +88,7 @@ namespace com.robotacid.gfx
 		}
 		
 		public void renderNumbers(BitmapData bitmapData) {
-			Number yTemp = y;
+			double  yTemp = y;
 			Rectangle rectTemp = rect.clone();
 			for(i = 0; i < digits; i++){
 				rect.y = sourceY + drums[i] * stepY;

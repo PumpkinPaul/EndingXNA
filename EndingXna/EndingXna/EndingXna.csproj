@@ -164,12 +164,10 @@
     <Compile Include="flash\Extensions.cs" />
     <Compile Include="flash\geom\Rectangle.cs" />
     <Compile Include="flash\geom\Point.cs" />
-    <Compile Include="flash\Number.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="pumpkin\InputHelper.cs" />
     <Compile Include="XnaGame.cs" />
-    <Compile Include="pumpkin\Input.cs" />
     <Compile Include="UserData.cs" />
   </ItemGroup>
   <ItemGroup>

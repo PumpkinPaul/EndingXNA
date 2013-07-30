@@ -47,7 +47,7 @@ using Sprite = flash.display.Sprite;
 using flash;
 using Microsoft.Xna.Framework;
 using Array = flash.Array;
-using Math = flash.Math;
+using Math = System.Math;
 
 /// <summary>
 /// Ending
@@ -92,15 +92,15 @@ public class Game : Sprite
 	public Boolean mousePressed;
 	public int mousePressedCount;
 	public int mouseReleasedCount;
-	public Number mouseVx;
-	public Number mouseVy;
+	public double mouseVx;
+	public double mouseVy;
 	public int mouseSwipeSent;
 	public int mouseSwipeCount;
 	public int mouseSwipeDelay;
-	private Number lastMouseX;
-	private Number lastMouseY;
-	private Number mouseDownX;
-	private Number mouseDownY;
+	private double lastMouseX;
+	private double lastMouseY;
+	private double mouseDownX;
+	private double mouseDownY;
 	public Boolean paused;
 	public int shakeDirX;
 	public int shakeDirY;
@@ -112,11 +112,11 @@ public class Game : Sprite
 	public Library.LevelData currentLevelObj;
 	public Boolean editing;
 	public Boolean modifiedLevel;
-	public Number scaleRatio;
-	public Number defaultStageRatio;
-	public Number stageRatio;
-	public Number realStageWidth;
-	public Number realStageHeight;
+	public double scaleRatio;
+	public double defaultStageRatio;
+	public double stageRatio;
+	public double realStageWidth;
+	public double realStageHeight;
 	public int hideMouseFrames;
 		
 	public const int MOUSE_SWIPE_DELAY_DEFAULT = 4;
@@ -127,11 +127,11 @@ public class Game : Sprite
 		
 	// CONSTANTS
 		
-	public readonly static Number SCALE = 8;
-	public readonly static Number INV_SCALE = 1.0 / 8;
+	public readonly static double SCALE = 8;
+	public readonly static double INV_SCALE = 1.0 / 8;
 		
-	public readonly static Number DEFAULT_SCREEN_RATIO = 480 / 320;
-	public static Number SCREEN_RATIO;
+	public readonly static double DEFAULT_SCREEN_RATIO = 480 / 320;
+	public static double SCREEN_RATIO;
 		
 	// states
 	public const int GAME = 0;
@@ -140,8 +140,8 @@ public class Game : Sprite
 	public const int SEGUE = 3;
 	public const int UNFOCUSED = 4;
 		
-	public static Number WIDTH = 120;
-	public static Number HEIGHT = 80;
+	public static double WIDTH = 120;
+	public static double HEIGHT = 80;
 		
 	// game key properties
 	public const int UP_KEY = 0;
@@ -159,7 +159,7 @@ public class Game : Sprite
 	public static Boolean allowScriptAccess;
 		
 	public const int SOUND_DIST_MAX = 8;
-	public readonly static Number INV_SOUND_DIST_MAX = 1.0 / SOUND_DIST_MAX;
+	public readonly static double INV_SOUND_DIST_MAX = 1.0 / SOUND_DIST_MAX;
 
     public Game() {
 			
@@ -251,8 +251,8 @@ public class Game : Sprite
 			
 		transition = new Transition();
 			
-		x = (realStageWidth * 0.5 - WIDTH * scaleRatio * 0.5) >> 0;
-		y = (realStageHeight * 0.5 - HEIGHT * scaleRatio * 0.5) >> 0;
+		x = (int)(realStageWidth * 0.5 - WIDTH * scaleRatio * 0.5) >> 0;
+		y = (int)(realStageHeight * 0.5 - HEIGHT * scaleRatio * 0.5) >> 0;
 			
 		scaleX = scaleY = scaleRatio;
 			
@@ -521,7 +521,7 @@ public class Game : Sprite
 		
 	/* Play a sound at a volume based on the distance to the player */
 	public void createDistSound(int mapX, int mapY, String name, Array<string> names = null, double volume = 1.0) {
-		Number dist = Math.abs(level.data.player.x - mapX) + Math.abs(level.data.player.y - mapY);
+		double dist = Math.Abs(level.data.player.x - mapX) + Math.Abs(level.data.player.y - mapY);
 		if(dist < SOUND_DIST_MAX){
 			if(names != null) soundQueue.addRandom(name, names, (SOUND_DIST_MAX - dist) * INV_SOUND_DIST_MAX * volume);
 			else if(name != null) soundQueue.add(name, (SOUND_DIST_MAX - dist) * INV_SOUND_DIST_MAX * volume);
@@ -556,12 +556,12 @@ public class Game : Sprite
 		
 	public int getMouseSwipe() {
 		if(mouseSwipeSent == 0){
-			Number vx = mouseX - mouseDownX;
-			Number vy = mouseY - mouseDownY;
-			Number len = System.Math.Sqrt(vx * vx + vy * vy);
+			double vx = mouseX - mouseDownX;
+			double vy = mouseY - mouseDownY;
+			double len = System.Math.Sqrt(vx * vx + vy * vy);
 			if(len > 3){
 				mouseSwipeCount = mouseSwipeDelay = MOUSE_SWIPE_DELAY_DEFAULT;
-				if(Math.abs(vy) > Math.abs(vx)){
+				if(Math.Abs(vy) > Math.Abs(vx)){
 					if(vy > 0){
 						mouseSwipeSent = Room.DOWN;
 					} else {
@@ -604,12 +604,12 @@ public class Game : Sprite
 	}
 		
 	private void setMouseCorner() {
-		//var xSlope:Number = (WIDTH / HEIGHT) * mouseY;
-		//var ySlope:Number = HEIGHT - (HEIGHT / WIDTH) * mouseX;
-		Number x = mouseX - (WIDTH - HEIGHT) * 0.5;
-		Number y = mouseY;
-		Number xSlope = y;
-		Number ySlope = HEIGHT - x;
+		//var xSlope:double = (WIDTH / HEIGHT) * mouseY;
+		//var ySlope:double = HEIGHT - (HEIGHT / WIDTH) * mouseX;
+		double x = mouseX - (WIDTH - HEIGHT) * 0.5;
+		double y = mouseY;
+		double xSlope = y;
+		double ySlope = HEIGHT - x;
 		if(x > xSlope && y > ySlope){
 			mouseCorner = Room.RIGHT;
 		} else if(x > xSlope && y < ySlope){
@@ -619,7 +619,7 @@ public class Game : Sprite
 		} else if(x < xSlope && y < ySlope){
 			mouseCorner = Room.LEFT;
 		}
-		if(Math.abs(mouseX - WIDTH * 0.5) < SCALE * 0.75 && Math.abs(mouseY - HEIGHT * 0.5) < SCALE * 0.75){
+		if(Math.Abs(mouseX - WIDTH * 0.5) < SCALE * 0.75 && Math.Abs(mouseY - HEIGHT * 0.5) < SCALE * 0.75){
 			mouseCorner = 0;
 		}
 	}
@@ -633,14 +633,14 @@ public class Game : Sprite
 			scaleY = -scaleY;
 			scaleX = -scaleX;
 			UserData.settings.orientation = -1;
-			x = (realStageWidth * 0.5 + WIDTH * scaleRatio * 0.5) >> 0;
-			y = (realStageHeight * 0.5 + HEIGHT * scaleRatio * 0.5) >> 0;
+			x = (int)(realStageWidth * 0.5 + WIDTH * scaleRatio * 0.5) >> 0;
+			y = (int)(realStageHeight * 0.5 + HEIGHT * scaleRatio * 0.5) >> 0;
 		} else {
 			scaleY = -scaleY;
 			scaleX = -scaleX;
 			UserData.settings.orientation = 0;
-			x = (realStageWidth * 0.5 - WIDTH * scaleRatio * 0.5) >> 0;
-			y = (realStageHeight * 0.5 - HEIGHT * scaleRatio * 0.5) >> 0;
+			x = (int)(realStageWidth * 0.5 - WIDTH * scaleRatio * 0.5) >> 0;
+			y = (int)(realStageHeight * 0.5 - HEIGHT * scaleRatio * 0.5) >> 0;
 		}
 		UserData.push(true);
 	}

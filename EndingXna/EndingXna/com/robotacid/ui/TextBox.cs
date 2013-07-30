@@ -32,7 +32,7 @@ namespace com.robotacid.ui
 		
 		public BitmapData bitmapData;
 		public Array<Array<Rectangle>> lines;						// a 2D array of all the bitmapDatas used, in lines
-		public Array<Number> lineWidths;				// the width of each line of text (used for alignment)
+		public Array<double > lineWidths;				// the width of each line of text (used for alignment)
 		public Array<Array<char?>> textLines;					// a 2D array of the characters used (used for fetching offset and kerning data)
 		public int tracking;					// tracking: the spacing between letters
 		public String align;					// align: whether the text is centered, left or right aligned
@@ -41,7 +41,7 @@ namespace com.robotacid.ui
 		public Boolean wordWrap;				// turns wordWrap on and off
 		public uint backgroundCol;
 		public uint borderCol;
-		public Number backgroundAlpha;
+		public double  backgroundAlpha;
 		public int leading;
 		public int offsetX;
 		public int offsetY;
@@ -62,9 +62,9 @@ namespace com.robotacid.ui
 
         public Point _position = new Point();
 
-        public TextBox(Number _width, Number _height, uint backgroundCol = 0xFF111111, uint borderCol = 0xFF99999U) {
-            this._width = _width;
-			this._height = _height;
+        public TextBox(double  _width, double  _height, uint backgroundCol = 0xFF111111, uint borderCol = 0xFF99999U) {
+            this._width = (int)_width;
+			this._height = (int)_height;
 			this.backgroundCol = backgroundCol;
 			this.borderCol = borderCol;
 			align = "left";
@@ -82,7 +82,7 @@ namespace com.robotacid.ui
 			borderRect = new Rectangle(0, 0, _width, _height);
 			boundsRect = new Rectangle(0, 0, _width, _height);
 			maskRect = new Rectangle(0, 0, 1, 1);
-			bitmapData = new BitmapData(Renderer.GameSpriteSheet, _width, _height, true, 0x0);
+			bitmapData = new BitmapData(Renderer.GameSpriteSheet, (int)_width, (int)_height, true, 0x0);
             drawBorder();
         }
 
@@ -149,7 +149,7 @@ namespace com.robotacid.ui
 			
             // the lines property is public so it can be used to ticker text
             lines = new Array<Array<Rectangle>>();
-            lineWidths = new Array<Number>();
+            lineWidths = new Array<double >();
             textLines = new Array<Array<char?>>();
 			
             var currentLine = new Array<Rectangle>();
@@ -191,8 +191,8 @@ namespace com.robotacid.ui
                         currentLineWidth += tracking;
                         wordWidth += tracking;
                     }
-                    wordWidth += characters[c].width;
-                    currentLineWidth += characters[c].width;
+                    wordWidth += (int)characters[c].width;
+                    currentLineWidth += (int)characters[c].width;
                     currentLine.push(characters[c]);
                     currentTextLine.push(c);
 				
@@ -215,7 +215,7 @@ namespace com.robotacid.ui
                     // in the case where the word is larger than the text field we take back the last character
                     // and jump to a new line with it
                     if(wordBeginning == 0 && currentLine[currentLine.length - 1] != null){
-                        currentLineWidth -= tracking + currentLine[currentLine.length - 1].width;
+                        currentLineWidth -= tracking + (int)currentLine[currentLine.length - 1].width;
                         // now we take back the offending last character
                         var lastBitmapData = currentLine.pop();
                         var lastChar = currentTextLine.pop();
@@ -224,10 +224,10 @@ namespace com.robotacid.ui
                         textLines.push(currentTextLine);
                         lineWidths.push(currentLineWidth);
 						
-                        currentLineWidth = lastBitmapData.width;
+                        currentLineWidth = (int)lastBitmapData.width;
                         completeWordsWidth = 0;
                         wordBeginning = 0;
-                        wordWidth = lastBitmapData.width;
+                        wordWidth = (int)lastBitmapData.width;
                         currentLine = new Array<Rectangle>();   
                         currentLine.push(lastBitmapData);     
                         currentTextLine = new Array<char?>();   
@@ -282,9 +282,9 @@ namespace com.robotacid.ui
                     if(align == "left"){
                         alignX = 0;
                     } else if(align == "center"){
-                        alignX = _width * 0.5 - (lineWidths[i] * 0.5 + BORDER_ALLOWANCE);
+                        alignX = (int)(_width * 0.5 - (lineWidths[i] * 0.5 + BORDER_ALLOWANCE));
                     } else if(align == "right"){
-                        alignX = _width - lineWidths[i];
+                        alignX = (int)(_width - lineWidths[i]);
                     }
                     if(alignVert == "top"){
                         alignY = 0;
@@ -334,7 +334,7 @@ namespace com.robotacid.ui
                         } else {
                             //bitmapData.copyPixels(spriteSheet, charx, point, null, null, true);
                         }
-                        x += charx.width;
+                        x += (int)charx.width;
                     } else {
                         x += whitespaceLength;
                         wordBeginning = j + 1;
@@ -362,15 +362,15 @@ namespace com.robotacid.ui
 			//bitmapData.fillRect(borderRect, backgroundCol);
 		}
 		
-		public void renderTo(Number x, Number y, BitmapData target) {
+		public void renderTo(double  x, double  y, BitmapData target) {
             var p = new Point(x, y);
             target.copyPixels(bitmapData, bitmapData.rect, p, null, null, true);
 		}
 
         //TODO - remove
         protected internal override void OnDraw(RenderTarget2D sceneRenderTarget, GameTime gameTime) {
-            XnaGame.Instance.FlashRenderer.FillRect(null, bitmapData.rect, backgroundCol, effectiveAlpha);   
-            XnaGame.Instance.FlashRenderer.DrawText(null, text, bitmapData.rect, _position, _colorInt, effectiveAlpha);  
+            XnaGame.Instance.FlashRenderer.FillRect(null, bitmapData.rect, backgroundCol, (float)effectiveAlpha);   
+            XnaGame.Instance.FlashRenderer.DrawText(null, text, bitmapData.rect, _position, _colorInt, (float)effectiveAlpha);  
         }
     }
 }

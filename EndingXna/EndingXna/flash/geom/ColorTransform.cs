@@ -2,7 +2,7 @@
 {
     public class ColorTransform {
 
-        Number redMultiplier;
+        double redMultiplier;
 
         public int alphaMultiplier;
 

@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Array = flash.Array;
-using Math = flash.Math;
+using Math = System.Math;
 using Point = flash.geom.Point;
 using Rectangle = flash.geom.Rectangle;
 
@@ -142,8 +142,8 @@ namespace com.robotacid.gfx
 		public int shakeDirY;
 		public Boolean trackPlayer;
 		public Boolean refresh;
-		public Number slideX;
-		public Number slideY;
+		public double slideX;
+		public double slideY;
 		public Boolean sliding;
 		
 		// temp variables
@@ -154,13 +154,13 @@ namespace com.robotacid.gfx
         //public static var matrix:Matrix = new Matrix();
 		
 		// measurements from Game.as
-		public readonly static Number SCALE = Game.SCALE;
-		public readonly static Number INV_SCALE = Game.INV_SCALE;
-		public readonly static Number WIDTH = Game.WIDTH;
-		public readonly static Number HEIGHT = Game.HEIGHT;
+		public readonly static double SCALE = Game.SCALE;
+		public readonly static double INV_SCALE = Game.INV_SCALE;
+		public readonly static double WIDTH = Game.WIDTH;
+		public readonly static double HEIGHT = Game.HEIGHT;
 		
 		public const int SHAKE_DIST_MAX = 12;
-		public readonly static Number INV_SHAKE_DIST_MAX = 1.0 / SHAKE_DIST_MAX;
+		public readonly static double INV_SHAKE_DIST_MAX = 1.0 / SHAKE_DIST_MAX;
 		public readonly static ColorTransform WALL_COL_TRANSFORM = new ColorTransform(1, 1, 1, 1, -100, -100, -100);
 		public static ColorTransform WHITE_COL_TRANSFORM = new ColorTransform(1, 1, 1, 1, 255, 255, 255);
 		public const uint WALL_COL = 0xff9b9b9b;
@@ -190,11 +190,11 @@ namespace com.robotacid.gfx
             PresentationParameters pp = XnaGame.Instance.GraphicsDevice.PresentationParameters;
             SurfaceFormat format = pp.BackBufferFormat;
 
-            _defaultRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, Game.WIDTH, Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
-            _backgroundRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, Game.WIDTH, Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
-            _gameRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, Game.WIDTH, Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
-            _shadowRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, Game.WIDTH, Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
-            _guiRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, Game.WIDTH, Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
+            _defaultRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, (int)Game.WIDTH, (int)Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
+            _backgroundRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, (int)Game.WIDTH, (int)Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
+            _gameRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, (int)Game.WIDTH, (int)Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
+            _shadowRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, (int)Game.WIDTH, (int)Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
+            _guiRenderTarget = new RenderTarget2D(XnaGame.Instance.GraphicsDevice, (int)Game.WIDTH, (int)Game.HEIGHT, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
 
             XnaGame.Instance.FlashRenderer.Register(_defaultRenderTarget);
             XnaGame.Instance.FlashRenderer.Register(_backgroundRenderTarget);
@@ -218,11 +218,11 @@ namespace com.robotacid.gfx
             //CONVERSION - simply made this a texture in the Content project
 			//backgroundBitmapData.copyPixels(gameSpriteSheet, new Rectangle(0, 0, 16, 16), new Point());
 			
-			bitmapData = new BitmapData(WIDTH, HEIGHT, true, 0x0);
+			bitmapData = new BitmapData((int)WIDTH, (int)HEIGHT, true, 0x0);
 			bitmap = new Shape();
 			bitmapDataShadow = bitmapData.clone();
 			bitmapShadow = new Shape();
-			guiBitmapData = new BitmapData(WIDTH, HEIGHT, true, 0x0);
+			guiBitmapData = new BitmapData((int)WIDTH, (int)HEIGHT, true, 0x0);
 			guiBitmap = new Shape();
 			
 			canvas.addChild(backgroundShape);
@@ -352,7 +352,7 @@ namespace com.robotacid.gfx
 				
                 if(fx.length > 0) fx = fx.filter(fxFilterCallBack);
 				
-                glitchMap.apply(bitmapData, canvasPoint.x, canvasPoint.y);
+                glitchMap.apply(bitmapData, (int)canvasPoint.x, (int)canvasPoint.y);
                 glitchMap.update();
 				
                 //CONVERSION - handled below
@@ -411,11 +411,11 @@ namespace com.robotacid.gfx
             XnaGame.Instance.GraphicsDevice.SetRenderTarget(_backgroundRenderTarget);
             XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
             XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointWrap, null,null);
-            XnaGame.Instance.SpriteBatch.Draw(backgroundSpriteSheet.texture, new Vector2(0, 0), new Microsoft.Xna.Framework.Rectangle(-canvasPoint.x, -canvasPoint.y, Game.WIDTH, Game.HEIGHT), Color.White);
+            XnaGame.Instance.SpriteBatch.Draw(backgroundSpriteSheet.texture, new Vector2(0, 0), new Microsoft.Xna.Framework.Rectangle((int)-canvasPoint.x, (int)-canvasPoint.y, (int)Game.WIDTH, (int)Game.HEIGHT), Color.White);
             XnaGame.Instance.SpriteBatch.End();
 		}
 		
-		public void displace(Number x, Number y) {
+		public void displace(double x, double y) {
 			int i;
             FX item;
 			for(i = 0; i < fx.length; i++){
@@ -426,7 +426,7 @@ namespace com.robotacid.gfx
 			camera.displace(x, y);
 		}
 		
-		public void setSlide(Number x, Number y) {
+		public void setSlide(double x, double y) {
 			slideX = x;
 			slideY = y;
 			int i;
@@ -456,15 +456,15 @@ namespace com.robotacid.gfx
 			// sourced shakes drop off in intensity by distance
 			// it stops the player feeling like they're in a cocktail shaker
 			if(shakeSource != null){
-				Number dist = Math.abs(game.level.data.player.x - shakeSource.x) + Math.abs(game.level.data.player.x - shakeSource.y);
+				double dist = Math.Abs(game.level.data.player.x - shakeSource.x) + Math.Abs(game.level.data.player.x - shakeSource.y);
 				if(dist >= SHAKE_DIST_MAX) return;
-				x = x * (SHAKE_DIST_MAX - dist) * INV_SHAKE_DIST_MAX;
-				y = y * (SHAKE_DIST_MAX - dist) * INV_SHAKE_DIST_MAX;
+				x = x * (int)((SHAKE_DIST_MAX - dist) * INV_SHAKE_DIST_MAX);
+				y = y * (int)((SHAKE_DIST_MAX - dist) * INV_SHAKE_DIST_MAX);
 				if(x == 0 && y == 0) return;
 			}
 			// ignore lesser shakes
-			if(Math.abs(x) < Math.abs(shakeOffset.x)) return;
-			if(Math.abs(y) < Math.abs(shakeOffset.y)) return;
+			if(Math.Abs(x) < Math.Abs(shakeOffset.x)) return;
+			if(Math.Abs(y) < Math.Abs(shakeOffset.y)) return;
 			shakeOffset.x = x;
 			shakeOffset.y = y;
 			shakeDirX = x > 0 ? 1 : -1;
@@ -487,7 +487,7 @@ namespace com.robotacid.gfx
 		}
 		
 		/* Add to list */
-		public FX addFX(Number x, Number y, BlitRect blit, Point dir = null, int delay = 0, Boolean push = true, Boolean looped = false, Boolean killOffScreen = true, Boolean room = false) {
+		public FX addFX(double x, double y, BlitRect blit, Point dir = null, int delay = 0, Boolean push = true, Boolean looped = false, Boolean killOffScreen = true, Boolean room = false) {
 			var item = new FX(x, y, blit, bitmapData, canvasPoint, dir, delay, looped, killOffScreen);
 			if(room){
 				if(push) roomFx.push(item);
@@ -510,11 +510,11 @@ namespace com.robotacid.gfx
             var speedIndex = 0;
             Point compassPoint;
             var p = new Point();
-            Number debrisSpeed;
+            double debrisSpeed;
             uint u;
             for(r = 0; r < source.height; r++){
                 for(c = 0; c < source.width; c++){
-                    u = blit.spriteSheet.getPixel32(source.x + c, source.y + r);
+                    u = blit.spriteSheet.getPixel32((int)source.x + c, (int)source.y + r);
                     if(u == 0xFFFFFFFF || u == WALL_COL){
                     //u = 0xFFFFFFFF;
                         compassPoint = Room.compassPoints[compassIndex];
@@ -532,7 +532,7 @@ namespace com.robotacid.gfx
 		}
 
         /* A check to see if (x,y) is on screen plus a border */
-		public Boolean onScreen(Number x, Number y, Number border) {
+		public Boolean onScreen(double x, double y, double border) {
             return x + border >= -canvasPoint.x && y + border >= -canvasPoint.y && x - border < -canvasPoint.x + Game.WIDTH && y - border < -canvasPoint.y + Game.HEIGHT;
         }
 
@@ -616,7 +616,7 @@ namespace com.robotacid.gfx
 				new Rectangle(112, 24, 8, 8)
 			});
 			checkMarkBlit = new BlitSprite(gameSpriteSheet, new Rectangle(56, 32, 8, 8));
-			voidBlit = new BlitRect(0, 0, SCALE, SCALE, 0xFF000000);
+			voidBlit = new BlitRect(0, 0, (int)SCALE, (int)SCALE, 0xFF000000);
 			doorBlit = new BlitClip(gameSpriteSheet, new Array<Rectangle> {
 				new Rectangle(8, 24, 8, 8),
 				new Rectangle(16, 24, 8, 8),
@@ -807,16 +807,16 @@ namespace com.robotacid.gfx
 			
 			int fade_delay = 10;
 			mapFadeBlits = new Array<FadingBlitRect> {
-				new FadingBlitRect(0, 0, Level.MAP_WIDTH * SCALE, (Level.ROOM_HEIGHT - 1) * SCALE, fade_delay),
-				new FadingBlitRect(Level.ROOM_WIDTH * SCALE, 0, (Level.ROOM_WIDTH - 1) * SCALE, Level.MAP_HEIGHT * SCALE, fade_delay),
-				new FadingBlitRect(0, Level.ROOM_HEIGHT * SCALE, Level.MAP_WIDTH * SCALE, (Level.ROOM_HEIGHT - 1) * SCALE, fade_delay),
-				new FadingBlitRect(0, 0, (Level.ROOM_WIDTH - 1) * SCALE, Level.MAP_HEIGHT * SCALE, fade_delay),
+				new FadingBlitRect(0, 0, (int)(Level.MAP_WIDTH * SCALE), (int)((Level.ROOM_HEIGHT - 1) * SCALE), fade_delay),
+				new FadingBlitRect((int)(Level.ROOM_WIDTH * SCALE), 0, (int)((Level.ROOM_WIDTH - 1) * SCALE), (int)(Level.MAP_HEIGHT * SCALE), fade_delay),
+				new FadingBlitRect(0, (int)(Level.ROOM_HEIGHT * SCALE), (int)(Level.MAP_WIDTH * SCALE), (int)((Level.ROOM_HEIGHT - 1) * SCALE), fade_delay),
+				new FadingBlitRect(0, 0, (int)((Level.ROOM_WIDTH - 1) * SCALE), (int)(Level.MAP_HEIGHT * SCALE), fade_delay),
 			};
-			darkBitmapData = new BitmapData(Game.WIDTH, Game.HEIGHT, true, 0x88000000);
+			darkBitmapData = new BitmapData((int)Game.WIDTH, (int)Game.HEIGHT, true, 0x88000000);
 			
 			glitchMap = new GlitchMap();
 			
-			slideFade = new BlitSprite(new BitmapData(Game.WIDTH, Game.HEIGHT, true, 0x08000000), new Rectangle(0, 0, Game.WIDTH, Game.HEIGHT));
+			slideFade = new BlitSprite(new BitmapData((int)Game.WIDTH, (int)Game.HEIGHT, true, 0x08000000), new Rectangle(0, 0, Game.WIDTH, Game.HEIGHT));
 			
 			TextBox.init(new Array<Rectangle> { 
 				new Rectangle(1, 40, 6, 7),// a

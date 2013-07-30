@@ -15,12 +15,12 @@ namespace com.robotacid.sound
     /// </summary>
     public class SoundQueue {
 
-        public Dictionary<string, Number>  sounds;
+        public Dictionary<string, double >  sounds;
 		public new Dictionary<string, string> groups;
 		public Dictionary<string, int> delays;
 
         public SoundQueue(){
-			sounds = new Dictionary<string, Number>();
+			sounds = new Dictionary<string, double >();
 			groups = new Dictionary<string, string>();
 			delays = new Dictionary<string, int>();
 		}
@@ -41,14 +41,14 @@ namespace com.robotacid.sound
         /* Provides a means to play a from selection random sounds, but lock to one sound per frame and boost it's volume for multiple calls */
 		public void addRandom(String key, Array<string> choices, double volume = 1.0) {
 			if(groups.ContainsKey(key) == false){
-				groups[key] = choices[(Math.random() * choices.length) >> 0];
+				groups[key] = choices[(int)((Math.random() * choices.length)) >> 0];
 			}
 			add(groups[key], volume);
 		}
 
         /* Play a random sound immediately instead of waiting for the update */
 		public void playRandom(Array<string> choices, double volume = 1.0) {
-			var key = choices[(Math.random() * choices.length) >> 0];
+			var key = choices[(int)((Math.random() * choices.length)) >> 0];
 			SoundManager.playSound(key, volume);
 		}
 		

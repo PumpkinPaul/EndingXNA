@@ -2,8 +2,8 @@
 {
     public static class Capabilities {
        
-        public static Number screenResolutionX { get { return 420; } }
-        public static Number screenResolutionY { get { return 300; } }
+        public static double screenResolutionX { get { return 420; } }
+        public static double screenResolutionY { get { return 300; } }
         
     }
 }

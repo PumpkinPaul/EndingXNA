@@ -39,8 +39,8 @@ namespace com.robotacid.ui.editor
 
         public void main() {
             palette.main();
-            px = (renderer.canvas.mouseX - renderer.canvasPoint.x) * Game.INV_SCALE;
-            py = (renderer.canvas.mouseY - renderer.canvasPoint.y) * Game.INV_SCALE;
+            px = (int)((renderer.canvas.mouseX - renderer.canvasPoint.x) * Game.INV_SCALE);
+            py = (int)((renderer.canvas.mouseY - renderer.canvasPoint.y) * Game.INV_SCALE);
             if(!palette.uiManager.mouseLock && !renderer.camera.dragScroll && palette.uiManager.currentGroup == 0){
                 if(game.mousePressed){
                     paintCol = PAINT;
@@ -73,7 +73,7 @@ namespace com.robotacid.ui.editor
                                     (px == 0 && py == data.height - 1)
                                 )
                             ){
-                                data.map[endingPos.y][endingPos.x] = Room.WALL | Room.INDESTRUCTIBLE;
+                                data.map[(int)endingPos.y][(int)endingPos.x] = Room.WALL | Room.INDESTRUCTIBLE;
                                 endingPos.x = px;
                                 endingPos.y = py;
                                 data.map[py][px] = Room.ENEMY | Room.DOOR | Room.ENDING;
@@ -82,8 +82,8 @@ namespace com.robotacid.ui.editor
                             }
                         } else {
                             if((palette.property & Room.PLAYER) == Room.PLAYER){
-                                if((data.map[data.player.y][data.player.x] & Room.PLAYER) == Room.PLAYER){
-                                    data.map[data.player.y][data.player.x] = Room.EMPTY;
+                                if((data.map[(int)data.player.y][(int)data.player.x] & Room.PLAYER) == Room.PLAYER){
+                                    data.map[(int)data.player.y][(int)data.player.x] = Room.EMPTY;
                                 }
                                 data.player.x = px;
                                 data.player.y = py;
@@ -131,8 +131,8 @@ namespace com.robotacid.ui.editor
                         if(game.mousePressedCount != game.frameCount) return;
                     }
                     var blit = renderer.paintBlit;
-                    blit.x = renderer.canvasPoint.x + px * Game.SCALE;
-                    blit.y = renderer.canvasPoint.y + py * Game.SCALE;
+                    blit.x = (int)(renderer.canvasPoint.x + px * Game.SCALE);
+                    blit.y = (int)(renderer.canvasPoint.y + py * Game.SCALE);
                     blit.render(renderer.bitmapData, paintCol);
                 }
             }

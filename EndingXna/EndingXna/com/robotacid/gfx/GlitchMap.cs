@@ -22,7 +22,7 @@ namespace com.robotacid.gfx
 		private Point g;
 		private int glitchIndex;
 		
-		public readonly static Number TOLERANCE = 0.2;
+		public readonly static double TOLERANCE = 0.2;
 		public readonly static Array<int> GLITCH_STEPS = new Array<int> {0, 1, 2, 1, 4, 0, 2, 4, 0, 2, 1, 0, 4, 2, 1, 0, 2, 1, 4, 0, 2, 0, 1, 1, 0, 4, 1};
 		
 		public GlitchMap() {

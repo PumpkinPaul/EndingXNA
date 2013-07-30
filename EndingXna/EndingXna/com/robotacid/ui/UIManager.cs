@@ -62,7 +62,7 @@ namespace com.robotacid.ui
 			return dialog;
 		}
 		
-		public static UIManager confirmDialog(Number x, Number y, BlitRect panel, Action okayCallback, BlitRect okayBlit, BlitRect cancelBlit, Action cancelCallback = null, Action selectSoundCallback = null) {
+		public static UIManager confirmDialog(double x, double y, BlitRect panel, Action okayCallback, BlitRect okayBlit, BlitRect cancelBlit, Action cancelCallback = null, Action selectSoundCallback = null) {
 			dialog = new UIManager();
 			dialog.selectSoundCallback = selectSoundCallback;
 			cancelCallback = cancelCallback ?? closeDialog;
@@ -86,7 +86,7 @@ namespace com.robotacid.ui
 			dialog = null;
 		}
 		
-		public BlitButton addButton(Number x, Number y, BlitRect blit, Action callback = null, Rectangle area = null, Boolean states = true) {
+		public BlitButton addButton(double x, double y, BlitRect blit, Action callback = null, Rectangle area = null, Boolean states = true) {
 			var button = new BlitButton(x, y, blit, callback, area, states);
 			buttons.push(button);
 			return button;
@@ -106,7 +106,7 @@ namespace com.robotacid.ui
 			mouseLock = true;
 		}
 		
-		public void update(Number mouseX, Number mouseY, Boolean mousePressed, Boolean mouseClick, Boolean mouseReleased = false) {
+		public void update(double mouseX, double mouseY, Boolean mousePressed, Boolean mouseClick, Boolean mouseReleased = false) {
 			buttonsOver.length = 0;
 			if(!mousePressed){
 				mouseLock = false;
@@ -194,9 +194,9 @@ namespace com.robotacid.ui
 		}
 		
 		/* Returns a list of x positions for given widths and gaps spread out from cx */
-		public static Array<Number> distributeRects(Number cx, Number width, Number gap, int total) {
-			var list = new Array<Number>();
-			Number x = cx - (width * total + gap * (total - 1)) * 0.5;
+		public static Array<double> distributeRects(double cx, double width, double gap, int total) {
+			var list = new Array<double>();
+			double x = cx - (width * total + gap * (total - 1)) * 0.5;
 			for(; total > 0; total--){
 				list.push(x);
 				x += width + gap;

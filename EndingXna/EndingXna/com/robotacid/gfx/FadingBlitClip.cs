@@ -19,11 +19,11 @@ namespace com.robotacid.gfx
 			frames.Add(rect);
 			spriteSheets.Add(spriteSheet);
 			ColorTransform colorTransform = new ColorTransform();
-			Number alphaStep = 1.0 / fadeFrames;
+			double alphaStep = 1.0 / fadeFrames;
 			BitmapData bitmapData;
 			for(int i = 1; i < fadeFrames; i++){
 				frames.push(new Rectangle(0, 0, spriteSheet.width, spriteSheet.height));
-				colorTransform.alphaMultiplier -= alphaStep;
+				colorTransform.alphaMultiplier -= (int)alphaStep;
 				bitmapData = spriteSheet.clone();
 				bitmapData.colorTransform(rect, colorTransform);
 				spriteSheets.push(bitmapData);

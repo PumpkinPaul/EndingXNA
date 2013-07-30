@@ -69,7 +69,7 @@ namespace com.robotacid.engine
 			map = Room.create2DArray(width, height, Room.VOID);
 			copyBuffer = Room.create2DArray(room.width, room.height, Room.VOID);
 			room.copyTo(map, 0, 0);
-			map[player.y][player.x] = Room.PLAYER | Room.ALLY;
+			map[(int)player.y][(int)player.x] = Room.PLAYER | Room.ALLY;
 			food = FOOD_MAX;
 			active = true;
 			allies = new Array<Point>();
@@ -86,30 +86,30 @@ namespace com.robotacid.engine
         public void playerTurn(int dir) {
 			playerDir = dir;
 			// flush player status first, then clear the map for the enemies after the player has moved
-			map[player.y][player.x] &= ~(Room.UP_DOWN_LEFT_RIGHT | Room.ATTACK | Room.BLOCKED | Room.PUSHED);
-			oldPlayerX = player.x;
-			oldPlayerY = player.y;
-			player = move(player.x, player.y, playerDir, Room.ALLY);
+			map[(int)player.y][(int)player.x] &= ~(Room.UP_DOWN_LEFT_RIGHT | Room.ATTACK | Room.BLOCKED | Room.PUSHED);
+			oldPlayerX = (int)player.x;
+			oldPlayerY = (int)player.y;
+			player = move((int)player.x, (int)player.y, playerDir, Room.ALLY);
 			// a new room may have been created, or the player may have been pushed
 			if(playerPush != null){
 				player.x += playerPush.x;
 				player.y += playerPush.y;
-				oldPlayerX += playerPush.x;
-				oldPlayerY += playerPush.y;
+				oldPlayerX += (int)playerPush.x;
+				oldPlayerY += (int)playerPush.y;
 				playerPush = null;
 			}
-			int playerProperty = map[player.y][player.x];
+			int playerProperty = map[(int)player.y][(int)player.x];
 			int swapProperty = map[oldPlayerY][oldPlayerX];
-			flushStatus(player.x, player.y, ENEMY_ACTIVE_RADIUS + 2);
+			flushStatus((int)player.x, (int)player.y, ENEMY_ACTIVE_RADIUS + 2);
 			// reload player behaviour and swapped position behaviour
-			map[player.y][player.x] = playerProperty;
+			map[(int)player.y][(int)player.x] = playerProperty;
 			if((swapProperty & Room.SWAP) > 0) map[oldPlayerY][oldPlayerX] = swapProperty & ~(Room.ATTACK | Room.BLOCKED);
-			if(!((map[player.y][player.x] & Room.BLOCKED) > 0)){
+			if(!((map[(int)player.y][(int)player.x] & Room.BLOCKED) > 0)){
 				turns++;
 				food--;
 				allies.length = enemies.length = 0;
 				// entities need to act based on their distance to the player - hence we used the pathMap
-				fillPathMap(player.x, player.y, null, Room.ALLY, allies);
+				fillPathMap((int)player.x, (int)player.y, null, Room.ALLY, allies);
 				moveEntities(allies);
 			}
 		}
@@ -117,18 +117,18 @@ namespace com.robotacid.engine
         public void enemyTurn() {
 			enemies.length = allies.length = 0;
 			// entities need to act based on their distance to the player - hence we used the pathMap
-			fillPathMap(player.x, player.y, null, Room.ALLY, allies);
+			fillPathMap((int)player.x, (int)player.y, null, Room.ALLY, allies);
 			allies.push(player); // path map ignores the starting square
-			fillPathMap(player.x, player.y, allies.slice(), Room.ENEMY, enemies, Room.DOOR);
+			fillPathMap((int)player.x, (int)player.y, allies.slice(), Room.ENEMY, enemies, Room.DOOR);
 			moveEntities(enemies);
 			// the player turns to stone (swap block) when out of food
-			if(((map[player.y][player.x] & Room.PLAYER) == Room.PLAYER) && food == 0) map[player.y][player.x] = Room.SWAP | Room.WALL;
+			if(((map[(int)player.y][(int)player.x] & Room.PLAYER) == Room.PLAYER) && food == 0) map[(int)player.y][(int)player.x] = Room.SWAP | Room.WALL;
 		}
 		
 		/* Call to execute an entire turn without animation */
 		public void fullTurn(int dir) {
 			playerTurn(dir);
-			if(!((map[player.y][player.x] & Room.BLOCKED) > 0)) {
+			if(!((map[(int)player.y][(int)player.x] & Room.BLOCKED) > 0)) {
 				enemyTurn();
 			}
 		}
@@ -136,11 +136,11 @@ namespace com.robotacid.engine
         /* Player exists and is not surrounded by walls */
 		public Boolean alive() {
 			return ended || (
-				((map[player.y][player.x] & Room.PLAYER) > 0) && !(
-					(player.y == 0 || (((map[player.y - 1][player.x] & (Room.WALL | Room.VOID)) > 0) && !((map[player.y - 1][player.x] & Room.SWAP) > 0))) &&
-					(player.x == width - 1 || (((map[player.y][player.x + 1] & (Room.WALL | Room.VOID)) > 0) && !((map[player.y][player.x + 1] & Room.SWAP) > 0))) &&
-					(player.y == height - 1 || (((map[player.y + 1][player.x] & (Room.WALL | Room.VOID)) > 0) && !((map[player.y + 1][player.x] & Room.SWAP) > 0))) &&
-					(player.x == 0 || (((map[player.y][player.x - 1] & (Room.WALL | Room.VOID)) > 0) && !((map[player.y][player.x - 1] & Room.SWAP) > 0)))
+				((map[(int)player.y][(int)player.x] & Room.PLAYER) > 0) && !(
+					(player.y == 0 || (((map[(int)player.y - 1][(int)player.x] & (Room.WALL | Room.VOID)) > 0) && !((map[(int)player.y - 1][(int)player.x] & Room.SWAP) > 0))) &&
+					(player.x == width - 1 || (((map[(int)player.y][(int)player.x + 1] & (Room.WALL | Room.VOID)) > 0) && !((map[(int)player.y][(int)player.x + 1] & Room.SWAP) > 0))) &&
+					(player.y == height - 1 || (((map[(int)player.y + 1][(int)player.x] & (Room.WALL | Room.VOID)) > 0) && !((map[(int)player.y + 1][(int)player.x] & Room.SWAP) > 0))) &&
+					(player.x == 0 || (((map[(int)player.y][(int)player.x - 1] & (Room.WALL | Room.VOID)) > 0) && !((map[(int)player.y][(int)player.x - 1] & Room.SWAP) > 0)))
 				) &&
 				food > 0
 			);
@@ -183,10 +183,10 @@ namespace com.robotacid.engine
         /* Check if a player movement would be blocked */
 		public Boolean blockedDir(int dir){
 			return (
-				(dir == Room.UP && (player.y == 0 || (((map[player.y - 1][player.x] & (Room.WALL | Room.VOID)) > 0) && !((map[player.y - 1][player.x] & Room.SWAP) > 0)))) ||
-				(dir == Room.RIGHT && (player.x == width - 1 || (((map[player.y][player.x + 1] & (Room.WALL | Room.VOID)) > 0) && !((map[player.y][player.x + 1] & Room.SWAP) > 0)))) ||
-				(dir == Room.DOWN && (player.y == height - 1 || (((map[player.y + 1][player.x] & (Room.WALL | Room.VOID)) > 0) && !((map[player.y + 1][player.x] & Room.SWAP) > 0)))) ||
-				(dir == Room.LEFT && (player.x == 0 || (((map[player.y][player.x - 1] & (Room.WALL | Room.VOID)) > 0)) && !((map[player.y][player.x - 1] & Room.SWAP) > 0)))
+				(dir == Room.UP && (player.y == 0 || (((map[(int)player.y - 1][(int)player.x] & (Room.WALL | Room.VOID)) > 0) && !((map[(int)player.y - 1][(int)player.x] & Room.SWAP) > 0)))) ||
+				(dir == Room.RIGHT && (player.x == width - 1 || (((map[(int)player.y][(int)player.x + 1] & (Room.WALL | Room.VOID)) > 0) && !((map[(int)player.y][(int)player.x + 1] & Room.SWAP) > 0)))) ||
+				(dir == Room.DOWN && (player.y == height - 1 || (((map[(int)player.y + 1][(int)player.x] & (Room.WALL | Room.VOID)) > 0) && !((map[(int)player.y + 1][(int)player.x] & Room.SWAP) > 0)))) ||
+				(dir == Room.LEFT && (player.x == 0 || (((map[(int)player.y][(int)player.x - 1] & (Room.WALL | Room.VOID)) > 0)) && !((map[(int)player.y][(int)player.x - 1] & Room.SWAP) > 0)))
 			);
 		}
 		
@@ -212,8 +212,8 @@ namespace com.robotacid.engine
         public Library.LevelData saveData(Boolean saveFood = false) {
   
             var obj = saveObject(width, height);
-            obj.player.x = player.x;
-            obj.player.y = player.y;
+            obj.player.x = (int)player.x;
+            obj.player.y = (int)player.y;
             if(saveFood) obj.food = food;
             if(room.type == Room.ADVENTURE){
                 obj.endingDist = room.endingDist;
@@ -281,7 +281,7 @@ namespace com.robotacid.engine
                 player.x = room.startX;
                 player.y = room.startY;
             }
-            map[player.y][player.x] = Room.PLAYER | Room.ALLY;
+            map[(int)player.y][(int)player.x] = Room.PLAYER | Room.ALLY;
         }
 
         /* Is a given move empty? */
@@ -628,8 +628,8 @@ namespace com.robotacid.engine
 			//trace("list", list);
 			for(i = 0; i < list.length; i++){
 				p = list[i];
-				mx = p.x;
-				my = p.y;
+				mx = (int)p.x;
+				my = (int)p.y;
 				property = map[my][mx];
 				// any entity that has already moved must be the player or has been swapped - forfeiting their turn
 				// viruses cannot move without a generator
@@ -642,8 +642,8 @@ namespace com.robotacid.engine
 				}
 				friendly = property & (Room.ALLY | Room.ENEMY);
 				type = property & (Room.VIRUS | Room.MOVER | Room.TURNER | Room.TRAP | Room.ALLY);
-				px = mx - (player.x - ENEMY_ACTIVE_RADIUS);
-				py = my - (player.y - ENEMY_ACTIVE_RADIUS);
+				px = mx - (int)(player.x - ENEMY_ACTIVE_RADIUS);
+				py = my - (int)(player.y - ENEMY_ACTIVE_RADIUS);
 				best = int.MaxValue;
 				dir = 0;
 				// advance timers
@@ -652,27 +652,27 @@ namespace com.robotacid.engine
 					map[my][mx] = property;
 				}
 				if((type & Room.ALLY) == Room.ALLY){
-					if(((playerDir & Room.UP) == Room.UP) && my > 0 && !((map[my - 1][mx] & Room.DOOR) == Room.DOOR)){
+					if(((playerDir & Room.UP) == Room.UP) && my > 0 && !((map[my - 1][mx] & Room.DOOR) > 0)){
 						p = move(mx, my, Room.UP, friendly);
-					} else if(((playerDir & Room.RIGHT) == Room.RIGHT) && mx < width - 1 && !((map[my][mx + 1] & Room.DOOR) == Room.DOOR)){
+					} else if(((playerDir & Room.RIGHT) == Room.RIGHT) && mx < width - 1 && !((map[my][mx + 1] & Room.DOOR) > 0)){
 						p = move(mx, my, Room.RIGHT, friendly);
-					} else if(((playerDir & Room.DOWN) == Room.DOWN) && my < height - 1 && !((map[my + 1][mx] & Room.DOOR) == Room.DOOR)){
+					} else if(((playerDir & Room.DOWN) == Room.DOWN) && my < height - 1 && !((map[my + 1][mx] & Room.DOOR) > 0)){
 						p = move(mx, my, Room.DOWN, friendly);
-					} else if(((playerDir & Room.LEFT) == Room.LEFT) && mx > 0 && !((map[my][mx - 1] & Room.DOOR) == Room.DOOR)){
+					} else if(((playerDir & Room.LEFT) == Room.LEFT) && mx > 0 && !((map[my][mx - 1] & Room.DOOR) > 0)){
 						p = move(mx, my, Room.LEFT, friendly);
 					}
-					if(((map[p.y][p.x] & Room.BLOCKED) == Room.BLOCKED) && blockedCallback != null){
-						blockedCallback(p.x, p.y, playerDir);
+					if(((map[(int)p.y][(int)p.x] & Room.BLOCKED) == Room.BLOCKED) && blockedCallback != null){
+						blockedCallback((int)p.x, (int)p.y, playerDir);
 					}
-				} else if(((type & Room.TRAP) == Room.TRAP) && !((property & Room.GENERATOR) == Room.GENERATOR)){
+				} else if(((type & Room.TRAP) == Room.TRAP) && !((property & Room.GENERATOR) > 0)){
 					// traps just hit the player when they are next to their m_dirs
-					if(((property & Room.M_UP) == Room.M_UP) && my > 0 && ((map[my - 1][mx] & Room.ALLY) == Room.ALLY)){
+					if(((property & Room.M_UP) == Room.M_UP) && my > 0 && ((map[my - 1][mx] & Room.ALLY) > 0)){
 						move(mx, my, Room.UP, friendly);
-					} else if(((property & Room.M_RIGHT) == Room.M_RIGHT) && mx < width - 1 && ((map[my][mx + 1] & Room.ALLY) == Room.ALLY)){
+					} else if(((property & Room.M_RIGHT) == Room.M_RIGHT) && mx < width - 1 && ((map[my][mx + 1] & Room.ALLY) > 0)){
 						move(mx, my, Room.RIGHT, friendly);
-					} else if(((property & Room.M_DOWN) == Room.M_DOWN) && my < height - 1 && ((map[my + 1][mx] & Room.ALLY) == Room.ALLY)){
+					} else if(((property & Room.M_DOWN) == Room.M_DOWN) && my < height - 1 && ((map[my + 1][mx] & Room.ALLY) > 0)){
 						move(mx, my, Room.DOWN, friendly);
-					} else if(((property & Room.M_LEFT) == Room.M_LEFT) && mx > 0 && ((map[my][mx - 1] & Room.ALLY) == Room.ALLY)){
+					} else if(((property & Room.M_LEFT) == Room.M_LEFT) && mx > 0 && ((map[my][mx - 1] & Room.ALLY) > 0)){
 						move(mx, my, Room.LEFT, friendly);
 					}
 				} else {
@@ -683,7 +683,7 @@ namespace com.robotacid.engine
 							my > 0 &&
 							!((dest & (Room.WALL | friendly)) > 0) &&
 							value != PATH_WALL && value < best &&
-							!(((type & Room.MOVER) == Room.MOVER) && !((property & Room.M_UP) == Room.M_UP))
+							!(((type & Room.MOVER) == Room.MOVER) && !((property & Room.M_UP) > 0))
 						){
 							dir = Room.UP;
 							//trace("UP", value);
@@ -697,7 +697,7 @@ namespace com.robotacid.engine
 							mx < width - 1 &&
 							!((dest & (Room.WALL | friendly)) > 0) &&
 							value != PATH_WALL && value < best &&
-							!(((type & Room.MOVER) == Room.MOVER) && !((property & Room.M_RIGHT) == Room.M_RIGHT))
+							!(((type & Room.MOVER) == Room.MOVER) && !((property & Room.M_RIGHT) > 0))
 						){
 							dir = Room.RIGHT;
 							//trace("RIGHT", value);
@@ -711,7 +711,7 @@ namespace com.robotacid.engine
 							my < height - 1 &&
 							!((dest & (Room.WALL | friendly)) > 0) &&
 							value != PATH_WALL && value < best &&
-							!(((type & Room.MOVER) == Room.MOVER) && !((property & Room.M_DOWN) == Room.M_DOWN))
+							!(((type & Room.MOVER) == Room.MOVER) && !((property & Room.M_DOWN) > 0))
 						){
 							dir = Room.DOWN;
 							//trace("DOWN", value);
@@ -725,7 +725,7 @@ namespace com.robotacid.engine
 							mx > 0 &&
 							!((dest & (Room.WALL | friendly)) > 0) &&
 							value != PATH_WALL && value < best &&
-							!(((type & Room.MOVER) == Room.MOVER) && !((property & Room.M_LEFT) == Room.M_LEFT))
+							!(((type & Room.MOVER) == Room.MOVER) && !((property & Room.M_LEFT) > 0))
 						){
 							dir = Room.LEFT;
 							//trace("LEFT", value);
@@ -762,7 +762,7 @@ namespace com.robotacid.engine
 				//trace(points);
 				while((i--) > 0){
 					p = points[i];
-					if((map[p.y][p.x] & (Room.WALL | Room.VOID)) > 0){
+					if((map[(int)p.y][(int)p.x] & (Room.WALL | Room.VOID)) > 0){
 						points.splice(i, 1);
 						continue;
 					}
@@ -772,7 +772,7 @@ namespace com.robotacid.engine
 						continue;
 					}
 					points[i] = p;
-					pathMap[p.y][p.x] = 0;
+					pathMap[(int)p.y][(int)p.x] = 0;
 				}
 			}
 			int length = points.length;
@@ -780,8 +780,8 @@ namespace com.robotacid.engine
 			while((length) > 0) {
 				while((length--) > 0){
 					p = points.shift();
-					px = p.x;
-					py = p.y;
+					px = (int)p.x;
+					py = (int)p.y;
 					mx = x + px - ENEMY_ACTIVE_RADIUS;
 					my = y + py - ENEMY_ACTIVE_RADIUS;
 					if(my > 0 && py > 0){
@@ -846,8 +846,8 @@ namespace com.robotacid.engine
 		public void kill(int x, int y, int dir, int explosion = 0) {
 			int property = map[y][x];
 			// player receives food for kills next to them
-			int vx = x - player.x;
-			int vy = y - player.y;
+			int vx = x - (int)player.x;
+			int vy = y - (int)player.y;
 			if(
 				(vx == 0 && (vy == 1 || vy == -1)) ||
 				(vy == 0 && (vx == 1 || vx == -1))
@@ -863,8 +863,8 @@ namespace com.robotacid.engine
 					int value = 0;
 					if((property & Room.INCREMENT) == Room.INCREMENT) value++;
 					Point p = createRoom(x, y, dir, value);
-					x = p.x;
-					y = p.y;
+					x = (int)p.x;
+					y = (int)p.y;
 				}
 			}
 			if(killCallback != null) killCallback(x, y, dir, property, (explosion > 0 || (((property & Room.BOMB) == Room.BOMB)) ? 1 : 0));
@@ -884,8 +884,8 @@ namespace com.robotacid.engine
 			int roomsWide = (int)Math.Ceiling((double)width / room.width);
 			int roomsHigh = (int)Math.Ceiling((double)height / room.height);
 			// current quadrant
-			int qx = player.x / room.width;
-			int qy = player.y / room.height;
+			int qx = (int)(player.x / room.width);
+			int qy = (int)(player.y / room.height);
 			Rectangle qRect = new Rectangle((qx * room.width) - qx, (qy * room.width) - qy, room.width, room.height);
 			// target quadrant
 			int tx = qx;
@@ -939,8 +939,8 @@ namespace com.robotacid.engine
 			if(displaceCallback != null){
 				int pushX = 0, pushY = 0;
 				if(playerPush != null){
-					pushX = playerPush.x;
-					pushY = playerPush.y;
+					pushX = (int)playerPush.x;
+					pushY = (int)playerPush.y;
 				}
 				displaceCallback(pushX, pushY, revealDir, eraseDir);
 			}
@@ -970,12 +970,12 @@ namespace com.robotacid.engine
 			var blackOutMap = Room.create2DArray(width, height, 0);
 			Array<Point> points = new Array<Point> { p };
 			int length = points.length;
-			blackOutMap[p.y][p.x] = 1;
+			blackOutMap[(int)p.y][(int)p.x] = 1;
 			while(length > 0){
 				while((length--) > 0){
 					p = points.shift();
-					x = p.x;
-					y = p.y;
+					x = (int)p.x;
+					y = (int)p.y;
 					if((map[y][x] & Room.INDESTRUCTIBLE) == Room.INDESTRUCTIBLE) continue;
 					// cardinals
 					if(y > 0 && blackOutMap[y - 1][x] == 0){
@@ -1016,7 +1016,7 @@ namespace com.robotacid.engine
 			}
 			
 			// if the player is blacked-out, the blackout map is useless
-			if(blackOutMap[player.y][player.x] == 0) return null;
+			if(blackOutMap[(int)player.y][(int)player.x] == 0) return null;
 			
 			return blackOutMap;
 		}
