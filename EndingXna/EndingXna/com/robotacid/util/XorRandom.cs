@@ -17,7 +17,7 @@ namespace com.robotacid.util
     /// </summary>
     public class XorRandom
     {
-        public const double MAX_RATIO = 1 / uint.MaxValue;
+        public const double MAX_RATIO = 1.0 / uint.MaxValue;
 		public uint r;
 		public uint seed;
 		
@@ -35,7 +35,7 @@ namespace com.robotacid.util
 		
 		/* Get a seed using a Date object */
 		public static uint seedFromDate() {
-			uint r = ((uint)(new DateTime().TimeOfDay.TotalMilliseconds) % uint.MaxValue);
+			uint r = ((uint)(DateTime.Now.TimeOfDay.TotalMilliseconds) % uint.MaxValue);
 			// once in a blue moon we can roll a zero from sourcing the seed from the Date
 			if(r == 0) r = (uint)(new Random().Next() * MAX_RATIO);
 			return r;

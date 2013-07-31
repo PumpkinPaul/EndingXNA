@@ -62,6 +62,10 @@ namespace com.robotacid.ui
 
         public Point _position = new Point();
 
+        private readonly List<string> _stringLines = new List<string>();
+        private readonly List<int> _alignXs = new List<int>();
+        private readonly Point TEMP_POINT = new Point();
+
         public TextBox(double  _width, double  _height, uint backgroundCol = 0xFF111111, uint borderCol = 0xFF99999U) {
             this._width = (int)_width;
 			this._height = (int)_height;
@@ -116,18 +120,14 @@ namespace com.robotacid.ui
         public uint color {
             get { return _colorInt; }
 		    set {
-			_colorInt = value;
-			if(value == 0xFFFFFF) {
-				_color = null;
-			} else {
-				_color = new ColorTransform(
-					((value >> 16) % 256) / 255,
-					((value >> 8) % 256) / 255,
-					(value % 256) / 255
-				);
-			}
-
-			if(_color != null) transform.colorTransform = _color;
+			    _colorInt = value;
+			    if(value == 0xFFFFFF) 
+				    _color = null;
+			    else 
+				    _color = new ColorTransform(((value >> 16) % 256) / 255, ((value >> 8) % 256) / 255, (value % 256) / 255);
+			    
+			    if(_color != null) 
+                    transform.colorTransform = _color;
             }
 		}
 
@@ -144,6 +144,9 @@ namespace com.robotacid.ui
         /* Calculates an array of BitmapDatas needed to render the text */
 		protected void updateText() {
 		
+            _stringLines.Clear();
+            _stringLines.Add("");
+
             // we create an array called lines that holds references to all of the
             // bitmapDatas needed and structure it like the text
 			
@@ -181,11 +184,15 @@ namespace com.robotacid.ui
                     wordWidth = 0;
                     currentLine = new Array<Rectangle>();
                     currentTextLine = new Array<char?>();
-                    continue;
+
+                    _stringLines.Add("");
+                    continue;  
                 }
+                 
+                _stringLines[_stringLines.Count - 1] += c;
 				
                 // push a character into the array
-                if(characters[c] != null){
+                if(characters.ContainsKey(c)){
                     // check we're in the middle of a word - spaces are null
                     if(currentLine.length > 0 && currentLine[currentLine.length -1] != null){
                         currentLineWidth += tracking;
@@ -257,7 +264,7 @@ namespace com.robotacid.ui
 		/* Render */
 		public void draw() {
 			
-            //TODO
+            _alignXs.Clear();
             drawBorder();
 			
             int i, j;
@@ -339,16 +346,18 @@ namespace com.robotacid.ui
                         x += whitespaceLength;
                         wordBeginning = j + 1;
                     }
+
+                    
                 }
                 y += lineSpacing;
-
+                _alignXs.Add(alignX);
                 _position.x = alignX;
                 _position.y = alignY;
             }
 			
             if(_color != null) transform.colorTransform = _color;
 			
-            //TODO
+            //CONVERSION - rendered in OnDraw now.
             //graphics.clear();
             //graphics.lineStyle(0, 0, 0);
             //graphics.beginBitmapFill(bitmapData);
@@ -357,7 +366,7 @@ namespace com.robotacid.ui
 		}
 		
 		public void drawBorder() {
-            //TODO: put back
+            //CONVERSION - rendered in OnDraw now.
 			//bitmapData.fillRect(bitmapData.rect, borderCol);
 			//bitmapData.fillRect(borderRect, backgroundCol);
 		}
@@ -369,8 +378,16 @@ namespace com.robotacid.ui
 
         //TODO - remove
         protected internal override void OnDraw(RenderTarget2D sceneRenderTarget, GameTime gameTime) {
+            //XnaGame.Instance.FlashRenderer.FillRect(null, bitmapData.rect, 0xFF7e0000, (float)effectiveAlpha);  
             XnaGame.Instance.FlashRenderer.FillRect(null, bitmapData.rect, backgroundCol, (float)effectiveAlpha);   
-            XnaGame.Instance.FlashRenderer.DrawText(null, text, bitmapData.rect, _position, _colorInt, (float)effectiveAlpha);  
+          
+            double y = _position.y;
+            for(int i = 0; i < _stringLines.Count; i++) {
+                TEMP_POINT.x = _alignXs[i];
+                TEMP_POINT.y = y;
+                XnaGame.Instance.FlashRenderer.DrawText(null, _stringLines[i], bitmapData.rect, TEMP_POINT, _colorInt, (float)effectiveAlpha);  
+                y += lineSpacing;
+            }
         }
     }
 }

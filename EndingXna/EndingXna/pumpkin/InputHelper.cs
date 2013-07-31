@@ -116,10 +116,10 @@ namespace pumpkin
             }
         }
 
+#if WINDOWS
         /// <summary>
         /// X and y movements of the mouse this frame
         /// </summary>
-#if WINDOWS
         private static float mouseXMovement, mouseYMovement;
         private static float lastMouseXMovement, lastMouseYMovement;
 #endif
@@ -362,50 +362,6 @@ namespace pumpkin
         {
             Mouse.SetPosition(x, y);
         }
-
-//        /// <summary>
-//        /// Mouse in box
-//        /// </summary>
-//        /// <param name="rect">Rectangle</param>
-//        /// <returns>Bool</returns>
-//        public static bool MouseInBox(Rectangle rect)
-//        {
-//#if !XBOX360
-//            bool ret = mouseState.X >= rect.X &&
-//                       mouseState.Y >= rect.Y &&
-//                       mouseState.X < rect.Right &&
-//                       mouseState.Y < rect.Bottom;
-//            bool lastRet = mouseStateLastFrame.X >= rect.X &&
-//                           mouseStateLastFrame.Y >= rect.Y &&
-//                           mouseStateLastFrame.X < rect.Right &&
-//                           mouseStateLastFrame.Y < rect.Bottom;
-
-//            // Highlight happend?
-//            if (ret &&
-//                lastRet == false)
-//                Sound.Play(Sound.Sounds.Highlight);
-
-//            return ret;
-//#else
-//            return false;
-//#endif
-//        }
-
-        ///// <summary>
-        ///// Mouse in box relative
-        ///// </summary>
-        ///// <param name="rect">Rectangle</param>
-        ///// <returns>Bool</returns>
-        //public static bool MouseInBoxRelative(Rectangle rect)
-        //{
-        //    float widthFactor = BaseGame.Width / 1024.0f;
-        //    float heightFactor = BaseGame.Height / 640.0f;
-        //    return MouseInBox(new Rectangle(
-        //        (int)Math.Round(rect.X * widthFactor),
-        //        (int)Math.Round(rect.Y * heightFactor),
-        //        (int)Math.Round(rect.Right * widthFactor),
-        //        (int)Math.Round(rect.Bottom * heightFactor)));
-        //}
         #endregion
 
         #region Keyboard Properties
@@ -426,7 +382,7 @@ namespace pumpkin
             // All keys except A-Z, 0-9 and `-\[];',./= (and space) are special keys.
             // With shift pressed this also results in this keys:
             // ~_|{}:"<>? !@#$%^&*().
-            int keyNum = (int)key;
+            var keyNum = (int)key;
             if ((keyNum >= (int)Keys.A && keyNum <= (int)Keys.Z) ||
                 (keyNum >= (int)Keys.D0 && keyNum <= (int)Keys.D9) ||
                 key == Keys.Space || // well, space ^^
@@ -447,31 +403,24 @@ namespace pumpkin
         }
 
         /// <summary>
-        /// Key to char helper conversion method.
+        /// Key to char helper method.
         /// Note: If the keys are mapped other than on a default QWERTY
         /// keyboard, this method will not work properly. Most keyboards
         /// will return the same for A-Z and 0-9, but the special keys
         /// might be different.
         /// </summary>
         /// <param name="key">Key</param>
+        /// <param name="shiftPressed"></param>
         /// <returns>Char</returns>
         public static char KeyToChar(Keys key, bool shiftPressed)
         {
             // If key will not be found, just return space
-            char ret = ' ';
-            int keyNum = (int)key;
+            var ret = ' ';
+            var keyNum = (int)key;
             if (keyNum >= (int)Keys.A && keyNum <= (int)Keys.Z)
-            {
-                if (shiftPressed)
-                    ret = key.ToString()[0];
-                else
-                    ret = key.ToString().ToLower()[0];
-            }
-            else if (keyNum >= (int)Keys.D0 && keyNum <= (int)Keys.D9 &&
-                shiftPressed == false)
-            {
-                ret = (char)((int)'0' + (keyNum - (int)Keys.D0));
-            }
+                ret = shiftPressed ? key.ToString()[0] : key.ToString().ToLower()[0];
+            else if (keyNum >= (int)Keys.D0 && keyNum <= (int)Keys.D9 && shiftPressed == false)
+                ret = (char)('0' + (keyNum - (int)Keys.D0));
             else if (key == Keys.D1 && shiftPressed)
                 ret = '!';
             else if (key == Keys.D2 && shiftPressed)
@@ -1096,26 +1045,14 @@ namespace pumpkin
             DisableGamepadThisFrame[2] = false;
             DisableGamepadThisFrame[3] = false;
 
-            //if (CaptureMouse)
-            //{
-            //    int mouseX = MousePos.X;
-            //    int mouseY = MousePos.Y;
-            //    MathHelper.Clamp(mouseX, 0, GameBase.getWidth());
-            //    MathHelper.Clamp(mouseY, 0, GameBase.getHeight());
-            //    InputHelper.SetMousePosition(mouseX, mouseY);
-            //}
-
             // Handle mouse input variables
             mouseStateLastFrame = mouseState;
-            mouseState = Microsoft.Xna.Framework.Input.Mouse.GetState();
+            mouseState = Mouse.GetState();
 
             // Update mouseXMovement and mouseYMovement
             lastMouseXMovement += mouseState.X - mouseStateLastFrame.X;
             lastMouseYMovement += mouseState.Y - mouseStateLastFrame.Y;
-            //mouseXMovement = lastMouseXMovement / 2.0f;
-            //mouseYMovement = lastMouseYMovement / 2.0f;
-            //lastMouseXMovement -= lastMouseXMovement / 2.0f;
-            //lastMouseYMovement -= lastMouseYMovement / 2.0f;
+
             mouseXMovement = lastMouseXMovement;
             mouseYMovement = lastMouseYMovement;
             lastMouseXMovement -= lastMouseXMovement;
@@ -1123,35 +1060,21 @@ namespace pumpkin
 
             if (MouseLeftButtonPressed == false)
                 startDraggingPos = MousePos;
+
             mouseWheelDelta = mouseState.ScrollWheelValue - mouseWheelValue;
             mouseWheelValue = mouseState.ScrollWheelValue;
 
-            // If we are in the game and don't show the mouse cursor anyway,
-            // reset it to the center to allow moving it around.
-            ////////if (RacingGameManager.InMenu == false &&
-            ////////    // App must be active
-            ////////    RacingGameManager.IsAppActive)
-            ////////{
-            ////////    Microsoft.Xna.Framework.Input.Mouse.SetPosition(
-            ////////        BaseGame.Width / 2, BaseGame.Height / 2);
-            ////////    // Also use this for the current mouse pos for next frame,
-                // else the mouseXMovement is messed up!
-                mouseState = Microsoft.Xna.Framework.Input.Mouse.GetState();
-            ////////}
+            mouseState = Mouse.GetState();
 
             // Check if mouse was moved this frame if it is not detected yet.
             // This allows us to ignore the mouse even when it is captured
             // on a windows machine if just the gamepad or keyboard is used.
-            if (mouseDetected == false)// &&
+            if (mouseDetected == false)
                 //always returns false: Microsoft.Xna.Framework.Input.Mouse.IsCaptured)
                 mouseDetected = mouseState.X != mouseStateLastFrame.X ||
                     mouseState.Y != mouseStateLastFrame.Y ||
                     mouseState.LeftButton != mouseStateLastFrame.LeftButton;
 #endif
-
-            // Handle keyboard input
-            //keysPressedLastFrame.Clear();
-            //keysPressedLastFrame.AddRange(keyboardState.GetPressedKeys());
 
             keyboardState = Microsoft.Xna.Framework.Input.Keyboard.GetState();
 

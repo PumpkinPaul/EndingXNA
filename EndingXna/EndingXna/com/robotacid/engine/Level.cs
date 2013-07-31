@@ -190,7 +190,7 @@ namespace com.robotacid.engine
             scoreTextBox.align = "center";
 		}
 		
-		private void resume() {
+		private void resume() { 
 			uiManager.changeGroup(0);
 		}
 		
@@ -206,7 +206,7 @@ namespace com.robotacid.engine
 				str = (game.currentLevel < 10 ? "0" : "") + game.currentLevel;
 				time = 30;
 			} else {
-				str = "everything was beautiful\nand nothing hurt";
+				str = "everything was\nbeautiful\nand nothing hurt";
 				time = 45;
 			}
 			game.transition.begin(game.resetGame, Game.DEATH_FADE_COUNT, Game.DEATH_FADE_COUNT, str, time);
@@ -416,7 +416,7 @@ namespace com.robotacid.engine
 			if(property > 0){
 				var blit = getPropertyBlit(property) as BlitSprite;
 				var dirs = (~Room.rotateBits(dir, 2, Room.UP_DOWN_LEFT_RIGHT, 4)) & Room.UP_DOWN_LEFT_RIGHT;
-				if((property & Room.ENDING) > 0){
+				if((property & Room.ENDING) != 0){
 					dirs = dir;
 				}
 				renderer.bitmapDebris(blit, x, y, dirs);
@@ -426,13 +426,13 @@ namespace com.robotacid.engine
 				
 				if((property & Room.TURNER) > 0){
 					game.createDistSound(x, y, moverKillSounds[soundStep - 1]);
-				} else if((property & Room.VIRUS) > 0){
+				} else if((property & Room.VIRUS) != 0){
 					game.createDistSound(x, y, "virus", virusSounds);
 				} else if(((property & Room.ALLY) > 0) && !((property & Room.PLAYER) > 0)){
 					game.createDistSound(x, y, allySounds[soundStep - 1]);
 				} else if((property & Room.TRAP) > 0) {
 					game.createDistSound(x, y, "rattle", rattleSounds);
-				} else if((property & Room.ENDING) > 0) {
+				} else if((property & Room.ENDING) != 0) {
 					if(room.type == Room.PUZZLE) game.createDistSound(x, y, endingSounds[soundStep - 1]);
 					else {
 						game.soundQueue.add("twangKill");
@@ -731,7 +731,7 @@ namespace com.robotacid.engine
 					}
 				}
 				if(room.type == Room.ADVENTURE && ((property & Room.DOOR) > 0)){
-					if((property & (Room.ENDING | Room.INCREMENT)) > 0){
+					if((property & (Room.ENDING | Room.INCREMENT)) != 0){
 						renderer.incrementBlit.x = blit.x;
 						renderer.incrementBlit.y = blit.y;
 						renderer.incrementBlit.render(bitmapData, game.frameCount % renderer.incrementBlit.totalFrames);
