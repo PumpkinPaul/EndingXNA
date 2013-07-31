@@ -125,7 +125,7 @@ public class FlashRenderer
             if (info.Texture != null)
                 spriteBatch.Draw(info.Texture, destination, info.Source , color ?? info.Color);    
             else
-                spriteBatch.DrawString(XnaGame.Instance.SpriteFont, info.Text, new Vector2(destination.X-1, destination.Y-1), color ?? info.Color);    
+                spriteBatch.DrawString(XnaGame.Instance.SpriteFont, info.Text, new Vector2(destination.X, destination.Y-1), color ?? info.Color);    
         }
     }
 
