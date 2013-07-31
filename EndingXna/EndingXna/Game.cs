@@ -462,7 +462,7 @@ public class Game : Sprite
 			String str = (currentLevel < 10 ? "0" : "") + currentLevel;
 			transition.begin(nextLevel, DEATH_FADE_COUNT, DEATH_FADE_COUNT, str, 15, null, 20);
 		} else {
-			transition.begin(quit, DEATH_FADE_COUNT, DEATH_FADE_COUNT, "\"poo-tee-weet?\"", 90, null, 30);
+			transition.begin(quit, DEATH_FADE_COUNT, DEATH_FADE_COUNT, "\"poo-tee-weet!\"", 90, null, 30);
 		}
 	}
 		

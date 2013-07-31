@@ -410,10 +410,10 @@ namespace com.robotacid.engine
 		}
 		
 		public void kill(int x, int y, int dir, int property = 0, int explosion = 0) {
-			if(explosion > 0){
+			if(explosion != 0){
 				renderer.addFX(x * SCALE, y * SCALE, renderer.explosionBlit, null, explosion);
 			}
-			if(property > 0){
+			if(property != 0){
 				var blit = getPropertyBlit(property) as BlitSprite;
 				var dirs = (~Room.rotateBits(dir, 2, Room.UP_DOWN_LEFT_RIGHT, 4)) & Room.UP_DOWN_LEFT_RIGHT;
 				if((property & Room.ENDING) != 0){
@@ -433,7 +433,8 @@ namespace com.robotacid.engine
 				} else if((property & Room.TRAP) > 0) {
 					game.createDistSound(x, y, "rattle", rattleSounds);
 				} else if((property & Room.ENDING) != 0) {
-					if(room.type == Room.PUZZLE) game.createDistSound(x, y, endingSounds[soundStep - 1]);
+					if(room.type == Room.PUZZLE) 
+                        game.createDistSound(x, y, endingSounds[soundStep - 1]);
 					else {
 						game.soundQueue.add("twangKill");
 					}

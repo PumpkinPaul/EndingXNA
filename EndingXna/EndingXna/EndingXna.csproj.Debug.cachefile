@@ -73,4 +73,10 @@ Content\sound\twang-kill.xnb
 Content\sound\twang-move.xnb
 Content\textures\background.xnb
 Content\textures\font-sprites.xnb
+Content\effects\BloomCombine.xnb
+Content\effects\BloomExtract.xnb
+Content\effects\GaussianBlur.xnb
+Content\effects\Scanlines.xnb
+Content\effects\BarrelDistortion.xnb
+Content\textures\scanline.xnb
 levels.json
