@@ -160,8 +160,7 @@
     <Compile Include="Game.cs" />
     <Compile Include="Library.cs" />
     <Compile Include="flash\Array.cs" />
-    <Compile Include="flash\trace.cs" />
-    <Compile Include="flash\Extensions.cs" />
+    <Compile Include="flash\Language.cs" />
     <Compile Include="flash\geom\Rectangle.cs" />
     <Compile Include="flash\geom\Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

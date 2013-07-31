@@ -244,7 +244,7 @@ public class Game : Sprite
 		// GRAPHICS INIT
 			
 		setStageRatio();
-		language.trace("new width/height:", WIDTH + "/" + HEIGHT);
+		Language.trace("new width/height:", WIDTH + "/" + HEIGHT);
 			
 		renderer = new Renderer(this);
 		renderer.init();

@@ -21,16 +21,11 @@ namespace flash.display
         public uint fillColor { get; private set; }
 
         public BitmapData(int width, int height, Boolean transparent = true, uint fillColor = 0xFFFFFFFF) {
-            //TODO
             this.width = width;
             this.height = height;
             this.transparent = transparent;
             this.fillColor = fillColor;
 
-            if (width == 0)
-            {
-                int x = 1;
-            }
             rect = new Rectangle(0, 0, width, height);          
         }
 
@@ -40,7 +35,7 @@ namespace flash.display
         }
 
         public void colorTransform(Rectangle rect, ColorTransform colorTransform) {
-            //TODO
+
         }
 
         public void copyPixels(BitmapData sourceBitmapData, Rectangle sourceRect, Point destPoint, BitmapData alphaBitmapData = null, Point alphaPoint = null, Boolean mergeAlpha = false) {

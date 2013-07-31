@@ -1034,9 +1034,9 @@ namespace com.robotacid.engine
 					if(c < size - 1) str += ",";
 					line += str;
 				}
-				language.trace(line);
+				Language.trace(line);
 			}
-			language.trace("");
+			Language.trace("");
 		}
     }
 }

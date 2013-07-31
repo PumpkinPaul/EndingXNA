@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace flash
 {
+    /// Basic implementation of the flash Keyboard class.
     public static class Keyboard {
         
         public const int SHIFT = (int)Keys.LeftShift;
