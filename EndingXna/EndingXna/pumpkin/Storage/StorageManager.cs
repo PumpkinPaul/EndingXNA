@@ -1,13 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
+using KiloWatt.Runtime.Support;
 using Microsoft.Xna.Framework.Storage;
 
 namespace pumpkin
 {
     public class StorageManager
     {
+        private struct SaveInfo 
+        {
+            public object Data { get; set; }
+            public string Filename { get; set; }
+        }
+
+        private Queue<SaveInfo> _saveQueue = new Queue<SaveInfo>();
+
         private StorageContainer _storageContainer;
         
         /// <summary>
@@ -54,6 +64,7 @@ namespace pumpkin
             this.ContainerName = gameName + " Saved Data";
         }
 
+
         /// <summary>
         /// Updates the storage manager.
         /// </summary>
@@ -69,6 +80,8 @@ namespace pumpkin
                 //Raise the event
                 this.NotifyStorageDeviceAction();
             }
+
+            MaybeSaveDataInternal();
          }
 
         /// <summary>
@@ -154,8 +167,8 @@ namespace pumpkin
         /// Saves the data to the storage device.
         /// </summary>
         /// <param name="data">The object to save.</param>
-        /// <param name="fileName">Name of the file to save.</param>
-        public void Save(object data, string fileName)
+        /// <param name="filename">Name of the file to save.</param>
+        public void Save(object data, string filename)
         {
             try
             {
@@ -168,10 +181,47 @@ namespace pumpkin
                 if (this._storageDevice.IsConnected == false)
                     return;
 
-                using (var storageContainer = this.OpenStorageContainer(this._storageDevice))
-                    this.SaveFile(storageContainer, data, fileName);
+                //Push a new packet onto the queue
+                lock(_saveQueue) {
+                    _saveQueue.Enqueue(new SaveInfo {
+                        Data = data,
+                        Filename = filename
+                    });
+                }
             }
             catch 
+            {
+                //Catch the error and swallow it! Nom nom.
+            }
+        }
+
+        private void MaybeSaveDataInternal() {
+            
+            try
+            {
+                if (this.StorageEnabled == false)
+                    return;
+
+                if (this._storageDevice == null)
+                    return;
+
+                if (this._storageDevice.IsConnected == false)
+                    return;
+
+                var saveRequired = false;
+                var info = new SaveInfo();
+                lock(_saveQueue) 
+                {
+                    saveRequired = _saveQueue.Count > 0; 
+                }
+
+                if (saveRequired == false)
+                    return;
+
+                //Sync the cached file system (asynchronously)
+                XnaGame.Instance.ThreadPoolComponent.AddTask(ThreadTarget.Core1Thread3, SaveQueuedData, null, null);
+            }
+            catch
             {
                 //Catch the error and swallow it! Nom nom.
             }
@@ -275,21 +325,25 @@ namespace pumpkin
             return this._xmlSerializers[type.Name];
         }
 
-        /// <summary>
-        /// Saves the file.
-        /// </summary>
-        /// <param name="storageContainer">A reference to the game.</param>
-        /// <param name="data">The data to save.</param>
-        /// <param name="filename">The full location and name of the file.</param>
-        private void SaveFile(StorageContainer storageContainer, object data, string filename)
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        private void SaveQueuedData()
         {
-            Type type = data.GetType();
-
-            using (var fileStream = storageContainer.OpenFile(filename, FileMode.Create))
+            SaveInfo info;
+            lock (_saveQueue)
             {
-                XmlSerializer x = this.GetSerializer(type);
-                x.Serialize(fileStream, data);
-            }  
+                info = _saveQueue.Dequeue();
+            }
+
+            var type = info.Data.GetType();
+
+            using (var storageContainer = this.OpenStorageContainer(this._storageDevice))
+            {
+                using (var fileStream = storageContainer.OpenFile(info.Filename, FileMode.Create))
+                {
+                    var x = this.GetSerializer(type);
+                    x.Serialize(fileStream, info.Data);
+                }  
+            }
         }
 
         public StorageContainer OpenStorageContainer() 

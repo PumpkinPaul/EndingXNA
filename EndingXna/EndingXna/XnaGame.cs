@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using KiloWatt.Runtime.Support;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using com.robotacid.gfx;
@@ -19,6 +20,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
      
     private readonly GraphicsDeviceManager _graphics;
     public StorageManager StorageManager { get; private set; }
+    public ThreadPoolComponent ThreadPoolComponent { get; private set; }
     
     public SpriteFont SpriteFont { get; private set; }
     public SpriteBatch SpriteBatch { get; private set; }
@@ -96,6 +98,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         });
 
         Components.Add(new GamerServicesComponent(this));
+        Components.Add(ThreadPoolComponent = new ThreadPoolComponent(this));
     }
 
     /// <summary>
