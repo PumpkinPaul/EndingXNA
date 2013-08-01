@@ -6,6 +6,7 @@ using flash.display;
 using flash.events;
 using flash.system;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Storage;
 using Renderer = com.robotacid.gfx.Renderer;
 using FX = com.robotacid.gfx.FX;
 //using PNGEncoder = com.robotacid.gfx.PNGEncoder;
@@ -189,9 +190,11 @@ public class Game : Sprite
 		// init UserData
 		UserData.initSettings();
 		UserData.initGameState();
-		UserData.pull();
-		// check the game is alive
-		if(UserData.gameState.dead) UserData.initGameState();
+
+        //CONVERSION - too early for this - need to load from StorageManager
+        //UserData.pull();
+        //// check the game is alive
+        //if(UserData.gameState.dead) UserData.initGameState();
 			
 		state = TEST_BED_INIT ? GAME : MENU;
 			
@@ -202,6 +205,13 @@ public class Game : Sprite
 		if (stage != null) addedToStage();
 		else addEventListener(Event.ADDED_TO_STAGE, addedToStage);
 	}
+
+    public static void LoadFromUserStorage(StorageContainer storageContainer) {
+        UserData.pull(storageContainer);
+		// check the game is alive
+		if(UserData.gameState.dead) 
+            UserData.initGameState();
+    }
 
     /* Determine scaling and extra rows/cols for different devices */
 	private void setStageRatio() {

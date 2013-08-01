@@ -137,6 +137,7 @@
     <Compile Include="com\robotacid\ui\LevelButtonData.cs" />
     <Compile Include="com\robotacid\ui\TitleMenu.cs" />
     <Compile Include="com\robotacid\util\XorRandom.cs" />
+    <Compile Include="pumpkin\DialogAction.cs" />
     <Compile Include="FlashRenderer.cs" />
     <Compile Include="flash\display\Graphics.cs" />
     <Compile Include="flash\events\EventDispatcher.cs" />
@@ -165,6 +166,8 @@
     <Compile Include="flash\geom\Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="pumpkin\Storage\StorageDeviceActionEventArgs.cs" />
+    <Compile Include="pumpkin\Storage\StorageManager.cs" />
     <Compile Include="pumpkin\InputHelper.cs" />
     <Compile Include="pumpkin\postprocess\BaseProcessor.cs" />
     <Compile Include="pumpkin\postprocess\BloomProcessor.cs" />

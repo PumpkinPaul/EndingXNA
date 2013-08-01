@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.Xna.Framework.Input;
 using com.robotacid.gfx;
 using flash;
+using Microsoft.Xna.Framework.Storage;
 using Array = System.Array;
 
 /// <summary>
@@ -54,9 +56,19 @@ public class UserData
 		
     private static int i;
 
+    private const string SettingsFilename = "settings.dat";
+    private const string GameStateFilename = "gameState.dat";
+    
+
     public static void push(Boolean settingsOnly = false) {
-        //if(disabled) return;
-			
+        if(disabled) 
+            return;
+		
+        XnaGame.Instance.StorageManager.Save(settings, SettingsFilename);
+
+        if (!settingsOnly)
+            XnaGame.Instance.StorageManager.Save(gameState, GameStateFilename);	
+
         //var sharedObject:SharedObject = SharedObject.getLocal("ending");
         //// SharedObject.data has a nasty habit of writing direct to the file
         //// even when you're not asking it to. So we offload into a ByteArray instead.
@@ -79,23 +91,30 @@ public class UserData
         //}
     }
 
-    public static void pull() {
-        //TODO
+    public static void pull(StorageContainer storageContainer) {
+        if(disabled) 
+            return;
+
+        var settingsNew = XnaGame.Instance.StorageManager.Load<Settings>(storageContainer, SettingsFilename);
+        var gameStateNew = XnaGame.Instance.StorageManager.Load<GameState>(storageContainer, GameStateFilename);
+			
+        if (settingsNew != null)
+            settings = settingsNew;
+
+        if (gameStateNew != null)
+            gameState = gameStateNew;
     }
 
     public static void reset() {
-        //TODO
 		initSettings();
 		initGameState();
 		push();
     }
 
     /* Overwrites matching variable names with source to target */
-	public static void overwrite(Array target, Array source) {
-        //TODO
-        //foreach(var key in source){
-        //    target[key] = source[key];
-        //}
+	public static void overwrite(ref object target, ref object source) {
+        //CONVERSION - just blat it - maybe look to reflect over fields (maybe)
+        target = source;
 	}
 		
 	/* This is populated on the fly by com.robotacid.level.Content */
@@ -105,15 +124,13 @@ public class UserData
 			data = null,
 			previousData = null
 		};
-			
 	}
 		
 	public static void saveGameState() {
-        //TODO
-        //if(game.level != null){
-        //    gameState.data = game.level.data.saveData();
-        //    push();
-        //}
+        if(game.level != null){
+            gameState.data = game.level.data.saveData();
+            push();
+        }
 	}
 		
 	/* Create the default settings object to initialise the game from */
@@ -140,22 +157,11 @@ public class UserData
 		
 	/* Saves the settings to a file */
 	public static void saveSettingsFile() {
-		//settingsBytes = new ByteArray();
-		//settingsBytes.writeObject(settings);
-		//FileManager.save(settingsBytes, "settings.dat");
-		//settingsBytes = null;
+        XnaGame.Instance.StorageManager.Save(settings, SettingsFilename);
 	}
 		
-	/* Loads settings and executes a callback when finished */
-	public static void loadSettingsFile(Action callback = null) {
-		//loadSettingsCallback = callback;
-		//FileManager.load(loadSettingsFileComplete, null, [FileManager.DAT_FILTER]);
-	}
-	private static void loadSettingsFileComplete() {
-		//settingsBytes = FileManager.data;
-		//overwrite(settings, settingsBytes.readObject());
-		//if(Boolean(loadSettingsCallback)) loadSettingsCallback();
-		//loadSettingsCallback = null;
+	public static void loadSettingsFile(StorageContainer storageContainer) {
+        settings = XnaGame.Instance.StorageManager.Load<Settings>(storageContainer, SettingsFilename);
 	}
 }
 

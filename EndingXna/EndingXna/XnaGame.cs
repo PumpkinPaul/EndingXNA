@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using com.robotacid.gfx;
 using com.robotacid.sound;
@@ -16,6 +18,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     public static XnaGame Instance { get; private set; }
      
     private readonly GraphicsDeviceManager _graphics;
+    public StorageManager StorageManager { get; private set; }
     
     public SpriteFont SpriteFont { get; private set; }
     public SpriteBatch SpriteBatch { get; private set; }
@@ -53,6 +56,8 @@ public class XnaGame : Microsoft.Xna.Framework.Game
 
     public XnaGame()
     {
+        Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+
         Instance = this;
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
@@ -68,6 +73,15 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         //Make 30 FPS or put a key limiter on KeyDown!
         TargetElapsedTime = TimeSpan.FromSeconds(1/30.0f);
 
+        StorageManager = new StorageManager("EndingXNA");
+        StorageManager.ShowStorageGuide();
+        StorageManager.StorageDeviceAction += (sender, e) => {
+            if (e.DialogAction == DialogAction.Select)
+                //UserData.loadSettingsFile(e.StorageContainer);
+                Game.LoadFromUserStorage(e.StorageContainer);
+        };
+        
+
         FlashRenderer = new FlashRenderer();
 
         PostProcess = new PostProcess(this, null);
@@ -80,6 +94,8 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         PostProcess.AddProcessor(new ScanlinesProcessor(this) { 
             Active = true, ScanlinesValue = 0.25f
         });
+
+        Components.Add(new GamerServicesComponent(this));
     }
 
     /// <summary>
@@ -154,7 +170,11 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     /// <param name="gameTime">Provides a snapshot of timing values.</param>
     protected override void Update(GameTime gameTime)
     {
+        if (Guide.IsVisible)
+            return;
+
         InputHelper.Update();
+        StorageManager.Update();
 
         // Allows the game to exit
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
@@ -243,6 +263,8 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     protected override void OnActivated(object sender, EventArgs args) {
         base.OnActivated(sender, args);
 
+        //This event seems to be firing lots of times making the whole app quite unresponsive
+        //Do nothing for now.
         return;
                                                      
         if (_game.activateActions != null)
@@ -255,6 +277,8 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     protected override void OnDeactivated(object sender, EventArgs args) {
         base.OnDeactivated(sender, args);
 
+        //This event seems to be firing lots of times making the whole app quite unresponsive
+        //Do nothing for now.
         return;
 
         if (_game.deactivateActions != null)

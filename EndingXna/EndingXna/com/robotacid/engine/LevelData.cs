@@ -233,7 +233,7 @@ namespace com.robotacid.engine
             var obj = new Library.LevelData();
             obj.map = new Array<Array<int>>();
             obj.playerDir = Room.UP;
-            obj.player = new Library.Point();
+            obj.player = new Point();
             obj.player.x = (int)(width * 0.5) >> 0; 
             obj.player.y = (int)(height * 0.5) >> 0;
             
