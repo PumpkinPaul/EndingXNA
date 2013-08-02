@@ -286,7 +286,7 @@ namespace com.robotacid.ui.editor
 		}
 		
 		private void levelLoaded() {
-            //TODO
+            //CONVERSION - this is never actually called.
 			////game.level.data.loadData(JSON.parse(FileManager.data.readUTFBytes(FileManager.data.length)));
             //game.level.data.loadData(JsonConvert.DeserializeObject<Library.JsonData[]>(data));
 		}

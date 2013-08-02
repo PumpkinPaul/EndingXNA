@@ -503,7 +503,7 @@ namespace com.robotacid.gfx
 		/* Cyclically throw off pixel debris from where white pixels used to be on the blit
 		 * use dir to specify bitwise flags for directions able to throw debris in */
 		public void bitmapDebris(BlitSprite blit, int x, int y, int dir = 15) {
-            //TODO
+
             int r, c;
             var blitClip = blit as BlitClip;
             var source = blitClip != null ? blitClip.frames[blitClip.frame] : blit.rect;
@@ -549,7 +549,7 @@ namespace com.robotacid.gfx
 		public void init() {
 			
 			FX.renderer = this;
-            //TODO
+            //TODO - set food clock renderer
             //FoodClockFX.renderer = this;
 			Level.renderer = this;
 			TitleMenu.renderer = this;

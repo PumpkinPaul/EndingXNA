@@ -81,5 +81,22 @@ namespace flash.display
             var pd = PixelData[texture];
             return pd[(y * texture.Width) + x].PackedValue;
         }
+
+        public void setPixel32(int x, int y, uint color) {
+            //Hmmmm, hacky much - haha
+
+            if (PixelData.ContainsKey(texture) == false) {
+                var pixelData = new Color[texture.Width * texture.Height];
+                texture.GetData(pixelData);
+                PixelData[texture] = pixelData;
+            }
+
+            PixelData[texture][(y * texture.Width) + x] = FlashRenderer.UIntToColor(color);
+        }
+
+        public void setData() {
+            var pixelData = PixelData[texture];
+            texture.SetData(pixelData);   
+        }
     }
 }

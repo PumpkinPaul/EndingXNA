@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using com.robotacid.engine;
 using KiloWatt.Runtime.Support;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
@@ -153,6 +154,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
 
         Renderer.LoadContent(Content);
         SoundLibrary.LoadContent(Content);
+        Level.LoadContent(Content);
 
         PostProcess.LoadContent();
     }

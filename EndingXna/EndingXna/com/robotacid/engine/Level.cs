@@ -3,10 +3,14 @@ using com.robotacid.gfx;
 using com.robotacid.sound;
 using com.robotacid.ui;
 using flash.display;
-using flash.geom;
 using flash;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using Array = flash.Array;
 using Math = flash.Math;
+using Point = flash.geom.Point;
+using Rectangle = flash.geom.Rectangle;
 
 namespace com.robotacid.engine
 {
@@ -138,10 +142,10 @@ namespace com.robotacid.engine
             data.blockedCallback = blocked;
             keyDown = false;
             blink = true;
-            //TODO
+            //TODO - copy player pixels
             // copy player gfx buffer
             //renderer.gameSpriteSheet.copyPixels(renderer.gameSpriteSheet, renderer.playerBuffer.rect, new Point(renderer.playerBlit.rect.x, renderer.playerBlit.rect.y));
-            //TODO
+            //TODO - create food clock
             //foodClockGfx = new FoodClockFX(renderer.playerBlit, Renderer.WALL_COL);
             renderer.numberBlit.setValue(data.food);
 			
@@ -293,7 +297,7 @@ namespace com.robotacid.engine
 						}
 						
 					} else if(phase == ENEMY_PHASE){
-                        //TODO:
+                        //TODO - set food clock
 						//foodClockGfx.setFood(data.food, LevelData.FOOD_MAX, data.player.x * SCALE, data.player.y * SCALE);
 						if(!data.alive()){
 							active = false;
@@ -505,7 +509,7 @@ namespace com.robotacid.engine
 		}
 		
 		public void displaceCamera(int x, int y, int revealDir, int eraseDir) {
-            //TODO
+            //TODO - implement Level.displaceCamera
             //renderer.displace(x * SCALE, y * SCALE);
             //renderer.addFX(0, 0, renderer.mapFadeBlits[revealDir], null, 0, false, false, false, true);
             //// create render old room contents
@@ -527,7 +531,7 @@ namespace com.robotacid.engine
 		}
 		
 		public BitmapData renderMapSection(int x, int y, int width, int height) {
-            //TODO
+            //TODO - implement Level.renderMapSection
             return new BitmapData(width, height);
             //var bitmapData = new BitmapData(width * SCALE, height * SCALE, true, 0x0);
             //var background = new Shape();
@@ -905,29 +909,51 @@ namespace com.robotacid.engine
 			}
 		}
 		
+        private static Texture2D _levelTexture;
+        private readonly static BitmapData _levelBitmapData = new BitmapData(13, 13, true, 0xFF282828); 
+        private static Array<Array<int>> _previousMap;
+        public static void LoadContent(ContentManager contentManager) {
+            _levelTexture = new Texture2D(XnaGame.Instance.GraphicsDevice, 13, 13);
+            //var pixelData = new Color[1];
+            //_levelTexture.GetData(pixelData);
+            //pixelData[0] = Color.White;
+            //_levelTexture.SetData(pixelData);
+
+            _levelBitmapData.texture = _levelTexture;
+
+        }
+        
 		/* Creates a minimap of a level (used to preview levels in editor mode) */
-		public static BitmapData getLevelBitmapData(Array map, int width, int height) {
-            //TODO?
-            return new BitmapData(0,0);
-            //var r:int, c:int;
-            //var col:uint, property:int;
-            //var bitmapData:BitmapData = new BitmapData(width, height, true, 0xFF282828);
-            //for(r = 0; r < height; r++){
-            //    for(c = 0; c < width; c++){
-            //        property = map[r][c];
-            //        if(property & Room.ENEMY){
-            //            bitmapData.setPixel32(c, r, 0xFFFFFFFF);
-            //        } else if(property & Room.WALL){
-            //            bitmapData.setPixel32(c, r, Renderer.WALL_COL);
-            //        } else if(property & Room.ALLY){
-            //            bitmapData.setPixel32(c, r, Renderer.UI_COL);
-            //        } else if(c + r * width & 1){
-            //            bitmapData.setPixel32(c, r, 0xFF3A3A3A);
-            //        }
-            //    }
-            //}
-            //return bitmapData;
+		public static BitmapData getLevelBitmapData(Array<Array<int>> map, int width, int height) {
+            
+            if (_previousMap != null && map == _previousMap) 
+                return _levelBitmapData;
+
+            int r, c;
+            uint col;
+            int property;
+            var bitmapData =_levelBitmapData;
+            for(r = 0; r < height; r++){
+                for(c = 0; c < width; c++){
+                    property = map[r][c];
+                    if((property & Room.ENEMY) != 0) {
+                        bitmapData.setPixel32(c, r, 0xFFFFFFFF);
+                    } else if((property & Room.WALL) != 0) {
+                        bitmapData.setPixel32(c, r, Renderer.WALL_COL);
+                    } else if((property & Room.ALLY) != 0) {
+                        bitmapData.setPixel32(c, r, Renderer.UI_COL);
+                    } else if((c + r * width & 1) != 0){
+                        bitmapData.setPixel32(c, r, 0xFF3A3A3A);
+                    } else {
+                        bitmapData.setPixel32(c, r, 0xFF282828);
+                    }
+                }
+            }
+
+            bitmapData.setData();
+
+            _previousMap = map;
+            return bitmapData;
 		}
-		
 	}
 }

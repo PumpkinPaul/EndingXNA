@@ -301,7 +301,7 @@ namespace com.robotacid.ui
 		}
 		
 		private void confirmWrite() {
-            //TODO
+            //CONVERSION - converted this ok but I don't think it's called
 			LevelData.writeToObject(sourceLevel, targetLevel, Level.ROOM_WIDTH, Level.ROOM_HEIGHT);
 			Library.levels[targetId] = (Library.LevelData)targetLevel;
 			if(Library.saveUserLevelsCallback != null) Library.saveUserLevelsCallback();
@@ -382,10 +382,10 @@ namespace com.robotacid.ui
 			
 		}
 		
-		public void renderPreview(Object obj, double x, double y, BitmapData target) {
-            //BitmapData bitmapData = Level.getLevelBitmapData(obj.map, Level.ROOM_WIDTH, Level.ROOM_HEIGHT);
-			//var p:Point = new Point(x, y);
-			//target.copyPixels(bitmapData, bitmapData.rect, p);
+		public void renderPreview(Library.LevelData obj, double x, double y, BitmapData target) {
+            BitmapData bitmapData = Level.getLevelBitmapData(obj.map, Level.ROOM_WIDTH, Level.ROOM_HEIGHT);
+			var p = new Point(x, y);
+			target.copyPixels(bitmapData, bitmapData.rect, p);
 		}
 		
 		public void render() {

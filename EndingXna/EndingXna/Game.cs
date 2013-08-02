@@ -673,7 +673,7 @@ public class Game : Sprite
 			}
 		}
 
-        //TODO:
+        //CONVERSION - screenshot code - not bothering with this - sorry
         //if(Key.isDown(Key.P)){
         //    //var tempBitmap:BitmapData = new BitmapData(WIDTH * scaleX, HEIGHT * scaleY, true, 0x0);
         //    var tempBitmap = new BitmapData(stage.stageWidth, stage.stageHeight, true, 0x0);
