@@ -376,9 +376,9 @@ namespace com.robotacid.ui
             target.copyPixels(bitmapData, bitmapData.rect, p, null, null, true);
 		}
 
-        //TODO - remove
+  
         protected internal override void OnDraw(RenderTarget2D sceneRenderTarget, GameTime gameTime) {
-            //XnaGame.Instance.FlashRenderer.FillRect(null, bitmapData.rect, 0xFF7e0000, (float)effectiveAlpha);  
+          
             XnaGame.Instance.FlashRenderer.FillRect(null, bitmapData.rect, backgroundCol, (float)effectiveAlpha);   
           
             double y = _position.y;

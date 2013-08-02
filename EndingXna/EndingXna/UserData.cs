@@ -68,27 +68,6 @@ public class UserData
 
         if (!settingsOnly)
             XnaGame.Instance.StorageManager.Save(gameState, GameStateFilename);	
-
-        //var sharedObject:SharedObject = SharedObject.getLocal("ending");
-        //// SharedObject.data has a nasty habit of writing direct to the file
-        //// even when you're not asking it to. So we offload into a ByteArray instead.
-        //settingsBytes = new ByteArray();
-        //settingsBytes.writeObject(settings);
-        //sharedObject.data.settingsBytes = settingsBytes;
-        //if(!settingsOnly){
-        //    gameStateBytes = new ByteArray();
-        //    gameStateBytes.writeObject(gameState);
-        //    sharedObject.data.gameStateBytes = gameStateBytes;
-        //}
-        //settingsBytes = null;
-        //gameStateBytes = null;
-        //// wrapper to send users to manage their shared object settings if blocked
-        //try{
-        //    sharedObject.flush();
-        //    sharedObject.close();
-        //} catch(e:Error){
-        //    navigateToURL(new URLRequest("http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager03.html"));
-        //}
     }
 
     public static void pull(StorageContainer storageContainer) {

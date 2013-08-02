@@ -1,6 +1,7 @@
 ﻿using System;
 using com.robotacid.gfx;
 using flash;
+using Newtonsoft.Json;
 using Array = flash.Array;
 using Level = com.robotacid.engine.Level;
 using LevelData = com.robotacid.engine.LevelData;
@@ -357,24 +358,28 @@ namespace com.robotacid.ui
 		}
 		
 		private void loadFromDesktop() {
-            //TODO
-			//FileManager.load(levelsLoaded);
+            levelsLoaded();
 		}
 		
 		private void levelsLoaded() {
-            //TODO
-            //if(FileManager.data){
-            //    try{
-            //        Library.USER_LEVELS = JSON.parse(FileManager.data.readUTFBytes(FileManager.data.length)) as Array;
-            //        Library.levels = Library.USER_LEVELS;
-            //    } catch(e:Error){
-            //    }
-            //};
+            
+            var data = XnaGame.Instance.StorageManager.Load<string>("user_levels.json");
+            
+            if (data == null)
+                return;
+
+            var deserializedLevels = JsonConvert.DeserializeObject<Library.LevelData[]>(data);
+
+            Library.USER_LEVELS = new Array<Library.LevelData>(deserializedLevels);
+            Library.levels = Library.USER_LEVELS;
 		}
 		
 		private void saveToDesktop() {
-            //TODO
-			//FileManager.save(JSON.stringify(Library.USER_LEVELS), "levels.json");
+            
+            var data = JsonConvert.SerializeObject(Library.USER_LEVELS);
+            
+            XnaGame.Instance.StorageManager.Save(data, "user_levels.json");
+			
 		}
 		
 		public void renderPreview(Object obj, double x, double y, BitmapData target) {

@@ -236,7 +236,7 @@ namespace KiloWatt.Runtime.Support
  
             //let some thread know their time has come
             _workEvent.Set();
-            //todo: wait for each thread
+            //T0D0: wait for each thread
             //deliver all completed items
             DeliverComplete();
         }

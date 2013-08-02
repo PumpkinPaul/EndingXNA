@@ -81,7 +81,7 @@ namespace com.robotacid.gfx
 			if(digits > 0){
 				while(str.Length < digits) str = "0" + str;
 			}
-            //TODO
+
 			for(i = 0; i < digits; i++){
 				drums[i] = (int)(str[i]) - (int)'0';
 			}

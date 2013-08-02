@@ -33,14 +33,14 @@ namespace com.robotacid.gfx
         public const int L = (int)Keys.L;
         public const int R = (int)Keys.R;
 
+        public static Array<Keys> custom;
+
         /**
         * Returns true or false if the key represented by the
         * custom key index is being pressed
         */
         public static Boolean customDown(int index) {
-            //TODO:
-            //return !lockOut && custom != null && Boolean(keysDown[custom[index]]);
-            return false;
+            return !lockOut && custom != null && isDown((int)custom[index]);
         }
 
         public static bool isDown(int key) {

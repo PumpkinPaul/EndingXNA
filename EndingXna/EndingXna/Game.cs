@@ -174,7 +174,7 @@ public class Game : Sprite
 		RoomPainter.game = this;
 		RoomPalette.game = this;
 			
-        //TODO
+        //CONVERSION - nothing really to do here
 		// detect allowScriptAccess for tracking
         //allowScriptAccess = ExternalInterface.available;
         //if(allowScriptAccess){
@@ -242,12 +242,12 @@ public class Game : Sprite
 
     private void addedToStage(Event e = null) {
         removeEventListener(Event.ADDED_TO_STAGE, init);
-			
-        //TODO:
-        //// KEYS INIT
+		
+        //CONVERSION - this is about all I need to do here for custom keys.	
+        // KEYS INIT
         //if(!Key.initialized){
         //    Key.init(stage);
-        //    Key.custom = UserData.settings.customKeys.slice();
+            Key.custom = UserData.settings.customKeys.slice();
         //    Key.hotKeyTotal = 10;
         //}
 			
@@ -266,7 +266,7 @@ public class Game : Sprite
 			
 		scaleX = scaleY = scaleRatio;
 			
-        //TODO:
+        //CONVERSION - no need to do owt 'ere
 		//stage.quality = StageQuality.LOW;
 		visible = true;
 			
@@ -340,7 +340,6 @@ public class Game : Sprite
 	}
 		
 	private void addListeners() {
-        //TODO
 		stage.addEventListener(Event.DEACTIVATE, onFocusLost);
 		stage.addEventListener(Event.ACTIVATE, onFocus);
 		stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
