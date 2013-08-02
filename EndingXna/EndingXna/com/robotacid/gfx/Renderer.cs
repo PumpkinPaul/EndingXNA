@@ -549,8 +549,7 @@ namespace com.robotacid.gfx
 		public void init() {
 			
 			FX.renderer = this;
-            //TODO - set food clock renderer
-            //FoodClockFX.renderer = this;
+            FoodClockFX.renderer = this;
 			Level.renderer = this;
 			TitleMenu.renderer = this;
 			RoomPainter.renderer = this;

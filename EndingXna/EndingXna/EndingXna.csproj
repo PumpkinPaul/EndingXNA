@@ -118,6 +118,7 @@
     <Compile Include="com\robotacid\gfx\BlitSprite.cs" />
     <Compile Include="com\robotacid\gfx\BlitRect.cs" />
     <Compile Include="com\robotacid\gfx\CanvasCamera.cs" />
+    <Compile Include="com\robotacid\gfx\FoodClockFX.cs" />
     <Compile Include="com\robotacid\gfx\NumberBlit.cs" />
     <Compile Include="com\robotacid\gfx\FadingBlitRect.cs" />
     <Compile Include="com\robotacid\gfx\FadingBlitClip.cs" />

@@ -35,7 +35,7 @@ namespace com.robotacid.engine
 		public Array<Point> endingKillList = new Array<Point>();
 		
 		public UIManager uiManager;
-		//public FoodClockFX foodClockGfx;
+        public FoodClockFX foodClockGfx;
 		public BlitButton checkButton;
 		public BlitButton settingsButton;
 		public BlitButton controlsButton;
@@ -142,11 +142,10 @@ namespace com.robotacid.engine
             data.blockedCallback = blocked;
             keyDown = false;
             blink = true;
-            //TODO - copy player pixels
             // copy player gfx buffer
+            //TODO - Foodclock 
             //renderer.gameSpriteSheet.copyPixels(renderer.gameSpriteSheet, renderer.playerBuffer.rect, new Point(renderer.playerBlit.rect.x, renderer.playerBlit.rect.y));
-            //TODO - create food clock
-            //foodClockGfx = new FoodClockFX(renderer.playerBlit, Renderer.WALL_COL);
+            foodClockGfx = new FoodClockFX(renderer.playerBlit, Renderer.WALL_COL);
             renderer.numberBlit.setValue(data.food);
 			
             uiManager = new UIManager();
@@ -297,8 +296,7 @@ namespace com.robotacid.engine
 						}
 						
 					} else if(phase == ENEMY_PHASE){
-                        //TODO - set food clock
-						//foodClockGfx.setFood(data.food, LevelData.FOOD_MAX, data.player.x * SCALE, data.player.y * SCALE);
+						foodClockGfx.setFood(data.food, LevelData.FOOD_MAX, data.player.x * SCALE, data.player.y * SCALE);
 						if(!data.alive()){
 							active = false;
 							game.death();
@@ -509,10 +507,11 @@ namespace com.robotacid.engine
 		}
 		
 		public void displaceCamera(int x, int y, int revealDir, int eraseDir) {
-            //TODO - implement Level.displaceCamera
-            //renderer.displace(x * SCALE, y * SCALE);
-            //renderer.addFX(0, 0, renderer.mapFadeBlits[revealDir], null, 0, false, false, false, true);
-            //// create render old room contents
+            
+            renderer.displace(x * SCALE, y * SCALE);
+            renderer.addFX(0, 0, renderer.mapFadeBlits[revealDir], null, 0, false, false, false, true);
+            // create render old room contents
+            //CONVERSION - Not going to bother fading the new sections in - sorry (but feel free to implement)
             //Bitmap bitmap;
             //double bx = 0, by = 0;
             //if(eraseDir == Room.NORTH){
@@ -531,8 +530,8 @@ namespace com.robotacid.engine
 		}
 		
 		public BitmapData renderMapSection(int x, int y, int width, int height) {
-            //TODO - implement Level.renderMapSection
-            return new BitmapData(width, height);
+            //CONVERSION - Not going to bother fading the new sections in - sorry (but feel free to implement)
+            return null;
             //var bitmapData = new BitmapData(width * SCALE, height * SCALE, true, 0x0);
             //var background = new Shape();
             //var matrix:Matrix = new Matrix();
