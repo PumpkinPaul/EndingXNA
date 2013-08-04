@@ -1,7 +1,9 @@
 ﻿using System;
 using com.robotacid.gfx;
 using flash;
+#if JSON
 using Newtonsoft.Json;
+#endif
 using Array = flash.Array;
 using Level = com.robotacid.engine.Level;
 using LevelData = com.robotacid.engine.LevelData;
@@ -59,6 +61,12 @@ namespace com.robotacid.ui
 		public const int  LEVEL_BUTTONS_HIGH = 4;
 		public const int  PAGE_LEVELS = LEVEL_BUTTONS_WIDE * LEVEL_BUTTONS_HIGH;
 		public const int  LEVEL_BUTTON_GAP = 2;
+
+        #if JSON
+        private const string _userLevelsFilename = "user_levels.json";
+        #else
+        private const string _userLevelsFilename = "user_levels.xml";
+        #endif
 
         public TitleMenu() {
 			uiManager = new UIManager();
@@ -146,7 +154,7 @@ namespace com.robotacid.ui
         private void adventurePressed() {
 			game.editing = false;
 			game.setNextGame(Room.ADVENTURE);
-			game.transition.begin(game.initLevel, 10, 10, "@", 15);
+			game.transition.begin(game.initLevel, Transition.DEFAULT_TRANSITION_TICKS, Transition.DEFAULT_TRANSITION_TICKS, "@", 15);
 		}
 		
 		private void puzzlePressed() {
@@ -165,7 +173,7 @@ namespace com.robotacid.ui
 				int n = UserData.settings.puzzleLevel;
 				String str = (n < 10 ? "0" : "") + n;
 				game.setNextGame(Room.PUZZLE, n);
-				game.transition.begin(game.initLevel, 10, 10, str, 15);
+				game.transition.begin(game.initLevel, Transition.DEFAULT_TRANSITION_TICKS, Transition.DEFAULT_TRANSITION_TICKS, str, 15);
 			} else {
 				if(firstLevel > Library.maxLevel) firstLevel = 0;
 				if(firstLevel == 0){
@@ -191,7 +199,7 @@ namespace com.robotacid.ui
 				int n = uiManager.lastButton.id + firstLevel;
 				String str = (n < 10 ? "0" : "") + n;
 				game.setNextGame(Room.PUZZLE, n);
-				game.transition.begin(game.initLevel, 10, 10, str, 15);
+				game.transition.begin(game.initLevel, Transition.DEFAULT_TRANSITION_TICKS, Transition.DEFAULT_TRANSITION_TICKS, str, 15);
 			} else {
 				buttonInHand = uiManager.lastButton;
 				sourceId = buttonInHand.id + firstLevel;
@@ -270,7 +278,7 @@ namespace com.robotacid.ui
 				int n = uiManager.lastButton.id + firstLevel;
 				String str = (n < 10 ? "0" : "") + n;
 				game.setNextGame(Room.PUZZLE, n);
-				game.transition.begin(game.initLevel, 10, 10, str, 30);
+				game.transition.begin(game.initLevel, Transition.DEFAULT_TRANSITION_TICKS, Transition.DEFAULT_TRANSITION_TICKS, str, 30);
 			}
 		}
 		
@@ -363,23 +371,33 @@ namespace com.robotacid.ui
 		
 		private void levelsLoaded() {
             
-            var data = XnaGame.Instance.StorageManager.Load<string>("user_levels.json");
-            
+            #if JSON
+            var data = XnaGame.Instance.StorageManager.Load<string>(_userLevelsFilename);
+            #else
+            var data = XnaGame.Instance.StorageManager.Load<Library.LevelData[]>(_userLevelsFilename);
+            #endif
+
             if (data == null)
                 return;
 
+            #if JSON
             var deserializedLevels = JsonConvert.DeserializeObject<Library.LevelData[]>(data);
-
+            #else
+            var deserializedLevels = data;//XnaGame.Instance.StorageManager.DeserializeObject<Library.LevelData[]>(data);
+            #endif
             Library.USER_LEVELS = new Array<Library.LevelData>(deserializedLevels);
             Library.levels = Library.USER_LEVELS;
 		}
 		
 		private void saveToDesktop() {
             
+            #if JSON
             var data = JsonConvert.SerializeObject(Library.USER_LEVELS);
+            #else
+            var data = Library.USER_LEVELS;
+            #endif
             
-            XnaGame.Instance.StorageManager.Save(data, "user_levels.json");
-			
+            XnaGame.Instance.StorageManager.Save(data, _userLevelsFilename);
 		}
 		
 		public void renderPreview(Library.LevelData obj, double x, double y, BitmapData target) {

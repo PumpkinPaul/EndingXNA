@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -5,8 +6,24 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 #endif
 
+#if !WINDOWS
+using MouseState = pumpkin.MouseState;
+#endif
+
 namespace pumpkin
 {
+#if !WINDOWS
+    public struct MouseState
+    {
+        public int X;
+        public int Y;
+        public ButtonState LeftButton;
+        public ButtonState MiddleButton;
+        public ButtonState RightButton;
+        public int ScrollWheelValue;
+    }
+#endif
+
     /// <summary>
     /// Input helper class, captures all the mouse, keyboard and XBox 360
     /// controller input and provides some nice helper methods and properties.
@@ -19,6 +36,9 @@ namespace pumpkin
 
         public static PlayerIndex PlayerIndex = PlayerIndex.One;
 
+        private const int MousePosScale = 10;
+        private const float ThumbstickThreshold = 0.35f;
+
         public static void Initialize()
         {
 #if WINDOWS_PHONE
@@ -29,12 +49,12 @@ namespace pumpkin
 
         #region Variables
 
-#if WINDOWS
+
         /// <summary>
         /// Mouse state, set every frame in the Update method.
         /// </summary>
         private static MouseState mouseState, mouseStateLastFrame;
-#endif
+
 
         /// <summary>
         /// Was a mouse detected? Returns true if the user moves the mouse.
@@ -73,9 +93,7 @@ namespace pumpkin
         /// </summary>
         /// <returns>0</returns>
         private static int mouseWheelDelta = 0;
-#if WINDOWS
         private static int mouseWheelValue = 0;
-#endif
 
         /// <summary>
         /// Start dragging pos, will be set when we just pressed the left
@@ -94,10 +112,7 @@ namespace pumpkin
         /// <returns>Bool</returns>
         public static bool MouseDetected
         {
-            get
-            {
-                return mouseDetected;
-            }
+            get { return mouseDetected; }
         }
 
         /// <summary>
@@ -106,23 +121,16 @@ namespace pumpkin
         /// <returns>Point</returns>
         public static Point MousePos
         {
-            get
-            {
-#if WINDOWS
-                return new Point(mouseState.X, mouseState.Y);
-#else
-                return Point.Zero;
-#endif
-            }
+            get { return new Point(mouseState.X, mouseState.Y); }
         }
 
-#if WINDOWS
+
         /// <summary>
         /// X and y movements of the mouse this frame
         /// </summary>
         private static float mouseXMovement, mouseYMovement;
         private static float lastMouseXMovement, lastMouseYMovement;
-#endif
+
 
         /// <summary>
         /// Mouse x movement
@@ -130,14 +138,7 @@ namespace pumpkin
         /// <returns>Float</returns>
         public static float MouseXMovement
         {
-            get
-            {
-#if WINDOWS
-                return mouseXMovement;
-#else
-                return 0;
-#endif
-            }
+            get { return mouseXMovement; }
         }
 
         /// <summary>
@@ -146,14 +147,7 @@ namespace pumpkin
         /// <returns>Float</returns>
         public static float MouseYMovement
         {
-            get
-            {
-#if WINDOWS
-                return mouseYMovement;
-#else
-                    return 0;
-#endif
-            }
+            get { return mouseYMovement; } 
         }
 
         /// <summary>
@@ -162,14 +156,7 @@ namespace pumpkin
         /// <returns>Boolean</returns>
         public static bool HasMouseMoved
         {
-            get
-            {
-#if WINDOWS
-                if (MouseXMovement > 1 || MouseYMovement > 1)
-                    return true;
-#endif
-                return false;
-            }
+            get { return MouseXMovement != 0 || MouseYMovement != 0; }
         }
 
         /// <summary>
@@ -182,6 +169,9 @@ namespace pumpkin
             {
 #if WINDOWS
                 return mouseState.LeftButton == ButtonState.Pressed;
+#elif XBOX360
+                //Spoof the mouse button
+                return GamePadAPressed(PlayerIndex);
 #else
                 return false;
 #endif
@@ -230,6 +220,8 @@ namespace pumpkin
             {
 #if WINDOWS
                 return mouseState.LeftButton == ButtonState.Pressed && mouseStateLastFrame.LeftButton == ButtonState.Released;
+#elif XBOX360
+                return GamePadAJustPressed(PlayerIndex);
 #else
                 return false;
 #endif
@@ -282,6 +274,8 @@ namespace pumpkin
             {
 #if WINDOWS
                 return mouseState.LeftButton == ButtonState.Released && mouseStateLastFrame.LeftButton == ButtonState.Pressed;
+#elif XBOX360
+                return GamePadAJustReleased(PlayerIndex);     
 #else
                 return false;
 #endif
@@ -319,13 +313,6 @@ namespace pumpkin
 #endif
             }
         }
-
-
-
-
-
-
-
 
         /// <summary>
         /// Mouse dragging amount
@@ -810,7 +797,7 @@ namespace pumpkin
             if (DisableGamepadThisFrame[(int)playerIndex]) return false;
 
             return gamePadState[(int)playerIndex].DPad.Left == ButtonState.Pressed ||
-                    gamePadState[(int)playerIndex].ThumbSticks.Left.X < -0.75f;
+                    gamePadState[(int)playerIndex].ThumbSticks.Left.X < -ThumbstickThreshold;
         }
 
         /// <summary>
@@ -822,7 +809,7 @@ namespace pumpkin
             if (DisableGamepadThisFrame[(int)playerIndex]) return false;
 
             return gamePadState[(int)playerIndex].DPad.Right == ButtonState.Pressed ||
-                    gamePadState[(int)playerIndex].ThumbSticks.Left.X > 0.75f;
+                    gamePadState[(int)playerIndex].ThumbSticks.Left.X > ThumbstickThreshold;
         }
 
         /// <summary>
@@ -847,8 +834,8 @@ namespace pumpkin
 
             return (gamePadState[(int)playerIndex].DPad.Left == ButtonState.Pressed &&
                     gamePadStateLastFrame[(int)playerIndex].DPad.Left == ButtonState.Released) ||
-                    (gamePadState[(int)playerIndex].ThumbSticks.Left.X < -0.75f &&
-                    gamePadStateLastFrame[(int)playerIndex].ThumbSticks.Left.X > -0.75f);
+                    (gamePadState[(int)playerIndex].ThumbSticks.Left.X < -ThumbstickThreshold &&
+                    gamePadStateLastFrame[(int)playerIndex].ThumbSticks.Left.X > -ThumbstickThreshold);
         }
 
         /// <summary>
@@ -861,8 +848,8 @@ namespace pumpkin
 
             return (gamePadState[(int)playerIndex].DPad.Right == ButtonState.Pressed &&
                     gamePadStateLastFrame[(int)playerIndex].DPad.Right == ButtonState.Released) ||
-                    (gamePadState[(int)playerIndex].ThumbSticks.Left.X > 0.75f &&
-                    gamePadStateLastFrame[(int)playerIndex].ThumbSticks.Left.X < 0.75f);
+                    (gamePadState[(int)playerIndex].ThumbSticks.Left.X > ThumbstickThreshold &&
+                    gamePadStateLastFrame[(int)playerIndex].ThumbSticks.Left.X < ThumbstickThreshold);
         }
 
         /// <summary>
@@ -875,8 +862,8 @@ namespace pumpkin
 
             return (gamePadState[(int)playerIndex].DPad.Up == ButtonState.Pressed &&
                     gamePadStateLastFrame[(int)playerIndex].DPad.Up == ButtonState.Released) ||
-                    (gamePadState[(int)playerIndex].ThumbSticks.Left.Y > 0.75f &&
-                    gamePadStateLastFrame[(int)playerIndex].ThumbSticks.Left.Y < 0.75f);
+                    (gamePadState[(int)playerIndex].ThumbSticks.Left.Y > ThumbstickThreshold &&
+                    gamePadStateLastFrame[(int)playerIndex].ThumbSticks.Left.Y < ThumbstickThreshold);
         }
 
         /// <summary>
@@ -889,8 +876,8 @@ namespace pumpkin
 
             return (gamePadState[(int)playerIndex].DPad.Down == ButtonState.Pressed &&
                     gamePadStateLastFrame[(int)playerIndex].DPad.Down == ButtonState.Released) ||
-                    (gamePadState[(int)playerIndex].ThumbSticks.Left.Y < -0.75f &&
-                    gamePadStateLastFrame[(int)playerIndex].ThumbSticks.Left.Y > -0.75f);
+                    (gamePadState[(int)playerIndex].ThumbSticks.Left.Y < -ThumbstickThreshold &&
+                    gamePadStateLastFrame[(int)playerIndex].ThumbSticks.Left.Y > -ThumbstickThreshold);
         }
 
         /// <summary>
@@ -902,7 +889,7 @@ namespace pumpkin
             if (DisableGamepadThisFrame[(int)playerIndex]) return false;
 
             return gamePadState[(int)playerIndex].DPad.Up == ButtonState.Pressed ||
-                    gamePadState[(int)playerIndex].ThumbSticks.Left.Y > 0.75f;
+                    gamePadState[(int)playerIndex].ThumbSticks.Left.Y > ThumbstickThreshold;
         }
 
         /// <summary>
@@ -914,7 +901,7 @@ namespace pumpkin
             if (DisableGamepadThisFrame[(int)playerIndex]) return false;
 
             return gamePadState[(int)playerIndex].DPad.Down == ButtonState.Pressed ||
-                    gamePadState[(int)playerIndex].ThumbSticks.Left.Y < -0.75f;
+                    gamePadState[(int)playerIndex].ThumbSticks.Left.Y < -ThumbstickThreshold;
         }
 
         /// <summary>
@@ -1027,6 +1014,70 @@ namespace pumpkin
             return gamePadState[(int)playerIndex].Triggers.Left > 0 &&
                     gamePadStateLastFrame[(int)playerIndex].Triggers.Left == 0.0f;
         }
+
+        /// <summary>
+        /// Game pad a just pressed
+        /// </summary>
+        /// <returns>Bool</returns>
+        public static bool GamePadAJustReleased(PlayerIndex playerIndex)
+        {
+            if (DisableGamepadThisFrame[(int)playerIndex]) return false;
+
+            return gamePadState[(int)playerIndex].Buttons.A == ButtonState.Released &&
+                    gamePadStateLastFrame[(int)playerIndex].Buttons.A == ButtonState.Pressed;
+        }
+
+        /// <summary>
+        /// Game pad up pressed
+        /// </summary>
+        /// <returns>Bool</returns>
+        public static bool GamePadDpadUpPressed(PlayerIndex playerIndex)
+        {
+            if (DisableGamepadThisFrame[(int)playerIndex]) return false;
+
+            return gamePadState[(int)playerIndex].DPad.Up == ButtonState.Pressed;
+        }
+
+        /// <summary>
+        /// Game pad up pressed
+        /// </summary>
+        /// <returns>Bool</returns>
+        public static bool GamePadDpadDownPressed(PlayerIndex playerIndex)
+        {
+            if (DisableGamepadThisFrame[(int)playerIndex]) return false;
+
+            return gamePadState[(int)playerIndex].DPad.Down == ButtonState.Pressed;
+        }
+
+        /// <summary>
+        /// Game pad up pressed
+        /// </summary>
+        /// <returns>Bool</returns>
+        public static bool GamePadDpadLeftPressed(PlayerIndex playerIndex)
+        {
+            if (DisableGamepadThisFrame[(int)playerIndex]) return false;
+
+            return gamePadState[(int)playerIndex].DPad.Left == ButtonState.Pressed;
+        }
+
+        /// <summary>
+        /// Game pad up pressed
+        /// </summary>
+        /// <returns>Bool</returns>
+        public static bool GamePadDpadRightPressed(PlayerIndex playerIndex)
+        {
+            if (DisableGamepadThisFrame[(int)playerIndex]) return false;
+
+            return gamePadState[(int)playerIndex].DPad.Right == ButtonState.Pressed;
+        }
+
+        public static bool GamePadPressed(PlayerIndex playerIndex) 
+        {
+            return (GamePadUpPressed(PlayerIndex) || GamePadDownPressed(PlayerIndex) || GamePadLeftPressed(PlayerIndex) || GamePadRightPressed(PlayerIndex) ||
+                (GamePad(PlayerIndex).ThumbSticks.Left.X > 0.35f || GamePad(PlayerIndex).ThumbSticks.Left.X < -0.35f || GamePad(PlayerIndex).ThumbSticks.Left.Y > 0.35f || GamePad(PlayerIndex).ThumbSticks.Left.Y < -0.35f) ||
+                (GamePad(PlayerIndex).ThumbSticks.Right.X > 0.35f || GamePad(PlayerIndex).ThumbSticks.Right.X < -0.35f || GamePad(PlayerIndex).ThumbSticks.Right.Y > 0.35f || GamePad(PlayerIndex).ThumbSticks.Right.Y < -0.35f) ||
+                GamePadAJustPressed(PlayerIndex) || GamePadBJustPressed(PlayerIndex) || GamePadXJustPressed(PlayerIndex) || GamePadYJustPressed(PlayerIndex));
+        }
         #endregion
 
         #region Update
@@ -1036,18 +1087,30 @@ namespace pumpkin
         /// </summary>
         public static void Update()
         {
-#if !WINDOWS
-            // No mouse support on the XBox360 yet :(
-            mouseDetected = false;
-#else
+
             DisableGamepadThisFrame[0] = false;
             DisableGamepadThisFrame[1] = false;
             DisableGamepadThisFrame[2] = false;
             DisableGamepadThisFrame[3] = false;
 
+            for (int i = 0; i < 4; ++i)
+            {
+                gamePadStateLastFrame[i] = gamePadState[i];
+                gamePadState[i] = Microsoft.Xna.Framework.Input.GamePad.GetState((PlayerIndex)i);
+            }
+
             // Handle mouse input variables
             mouseStateLastFrame = mouseState;
+
+#if WINDOWS  
             mouseState = Mouse.GetState();
+#elif XBOX360
+            //Spoof mouse with gamepad!
+            mouseState = new pumpkin.MouseState();
+            mouseState.X = (int)MathHelper.Clamp(mouseStateLastFrame.X + (int)(GamePad(PlayerIndex).ThumbSticks.Right.X * MousePosScale), 0, XnaGame.Instance.Window.ClientBounds.Width);
+            mouseState.Y = (int)MathHelper.Clamp(mouseStateLastFrame.Y - (int)(GamePad(PlayerIndex).ThumbSticks.Right.Y * MousePosScale), 0, XnaGame.Instance.Window.ClientBounds.Height);
+            mouseState.LeftButton = GamePad(PlayerIndex).Buttons.A;
+#endif
 
             // Update mouseXMovement and mouseYMovement
             lastMouseXMovement += mouseState.X - mouseStateLastFrame.X;
@@ -1064,26 +1127,14 @@ namespace pumpkin
             mouseWheelDelta = mouseState.ScrollWheelValue - mouseWheelValue;
             mouseWheelValue = mouseState.ScrollWheelValue;
 
-            mouseState = Mouse.GetState();
-
             // Check if mouse was moved this frame if it is not detected yet.
             // This allows us to ignore the mouse even when it is captured
             // on a windows machine if just the gamepad or keyboard is used.
             if (mouseDetected == false)
                 //always returns false: Microsoft.Xna.Framework.Input.Mouse.IsCaptured)
-                mouseDetected = mouseState.X != mouseStateLastFrame.X ||
-                    mouseState.Y != mouseStateLastFrame.Y ||
-                    mouseState.LeftButton != mouseStateLastFrame.LeftButton;
-#endif
+                mouseDetected = mouseState.X != mouseStateLastFrame.X || mouseState.Y != mouseStateLastFrame.Y || mouseState.LeftButton != mouseStateLastFrame.LeftButton;
 
             keyboardState = Microsoft.Xna.Framework.Input.Keyboard.GetState();
-
-            // And finally catch the XBox Controller input 
-            for (int i = 0; i < 4; ++i)
-            {
-                gamePadStateLastFrame[i] = gamePadState[i];
-                gamePadState[i] = Microsoft.Xna.Framework.Input.GamePad.GetState((PlayerIndex)i);
-            }
         }
         #endregion
     }

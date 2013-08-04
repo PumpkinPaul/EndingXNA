@@ -36,7 +36,7 @@ namespace flash
         public Array(int capacity) : base(capacity) { }
 
         public override string ToString() {
-            _sb.Clear();
+            _sb.Length = 0;
             bool isFirst = true;
             foreach(var item in this) {
                 if (!isFirst)

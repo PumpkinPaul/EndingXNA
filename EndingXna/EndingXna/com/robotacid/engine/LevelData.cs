@@ -34,7 +34,7 @@ namespace com.robotacid.engine
 		public int height;
 		public Array<Array<int>> map;/*Array*/
 		public Array<Array<int>> copyBuffer;/*Array*/
-		public Action<int, int, int, int, int> killCallback;
+		public Action5<int, int, int, int, int> killCallback;
 		public Action<int, int, int> pushCallback;
 		public Action<int, int, int> swapCallback;
 		public Action<int, int> generateCallback;

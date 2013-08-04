@@ -7,6 +7,7 @@ using flash;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using pumpkin;
 using Array = flash.Array;
 using Math = flash.Math;
 using Point = flash.geom.Point;
@@ -199,7 +200,7 @@ namespace com.robotacid.engine
 		
 		private void quit() {
 			active = false;
-			game.transition.begin(game.quit, 10, 10);
+			game.transition.begin(game.quit, Transition.DEFAULT_TRANSITION_TICKS, Transition.DEFAULT_TRANSITION_TICKS);
 		}
 		
 		private void reset() {
@@ -361,14 +362,44 @@ namespace com.robotacid.engine
 			fullscreenButton.active = game.roomPainter.palette.fullscreenButton.active = game.stage.displayState != "normal";
 		}
 		
+        int inputFames;
+        static bool usingKeys;
+        static bool usingGamepad;
 		public int getInput() {
+
+            if (InputHelper.Keyboard.GetPressedKeys().Length > 0) {
+                usingKeys = true;
+                usingGamepad = false;
+            }
+            else if (InputHelper.GamePadPressed(InputHelper.PlayerIndex))
+            {
+                usingKeys = false;
+                usingGamepad = true;
+            }
+
+            if ((usingKeys && InputHelper.Keyboard.GetPressedKeys().Length == 0) || (usingGamepad && InputHelper.GamePadPressed(InputHelper.PlayerIndex) == false)) 
+                inputFames = 0;
+            else {
+                if (inputFames > 0) {
+                    inputFames--;
+                    return 0;
+                }
+
+                inputFames = 8;
+            }
+
 			var dir = 0;
 			//if(Key.keysPressed == 1){
 				if(Key.isDown(Keyboard.UP) || Key.isDown(Key.K) || Key.customDown(Game.UP_KEY) || Key.isDown(Key.NUMBER_8)) dir |= Room.UP;
 				if(Key.isDown(Keyboard.LEFT) || Key.isDown(Key.H) || Key.customDown(Game.LEFT_KEY) || Key.isDown(Key.NUMBER_4)) dir |= Room.LEFT;
 				if(Key.isDown(Keyboard.RIGHT) || Key.isDown(Key.L) || Key.customDown(Game.RIGHT_KEY) || Key.isDown(Key.NUMBER_6)) dir |= Room.RIGHT;
 				if(Key.isDown(Keyboard.DOWN) || Key.isDown(Key.J) || Key.customDown(Game.DOWN_KEY) || Key.isDown(Key.NUMBER_2)) dir |= Room.DOWN;
-			//}
+
+                if (InputHelper.GamePadUpPressed(InputHelper.PlayerIndex)) dir |= Room.UP;
+                if (InputHelper.GamePadDownPressed(InputHelper.PlayerIndex)) dir |= Room.DOWN;
+                if (InputHelper.GamePadLeftPressed(InputHelper.PlayerIndex)) dir |= Room.LEFT;
+                if (InputHelper.GamePadRightPressed(InputHelper.PlayerIndex)) dir |= Room.RIGHT;
+			//})
 			if(game.mousePressed){
 				if(tapControls){
 					if((game.mouseCorner & Room.UP) > 0) dir |= Room.UP;

@@ -1,7 +1,9 @@
 using System;
 using System.IO;
 using Microsoft.Xna.Framework;
+#if JSON
 using Newtonsoft.Json;
+#endif
 using flash;
 
 /// <summary>
@@ -34,17 +36,27 @@ public class Library
 	public static Array<LevelData> USER_LEVELS;
 	public static int maxLevel;
 		
-	public const int TOTAL_LEVELS = 100;   
+	public const int TOTAL_LEVELS = 100;  
+    
+    #if JSON
+    private const string _levelsFilename = "levels.json";
+    #else
+    private const string _levelsFilename = "levels.xml";
+    #endif
     
     public static void initLevels() {
         string data = null;
-        using (var fs = TitleContainer.OpenStream("levels.json")) {
+        using (var fs = TitleContainer.OpenStream(_levelsFilename)) {
             using (var sr = new StreamReader(fs))
                 data = sr.ReadToEnd();
         }
         
+        #if JSON
         var deserializedLevels = JsonConvert.DeserializeObject<LevelData[]>(data);
-        
+        #else
+        var deserializedLevels = XnaGame.Instance.StorageManager.DeserializeObject<LevelData[]>(data);
+        #endif
+
         if (PERMANENT_LEVELS == null)
             PERMANENT_LEVELS = new Array<LevelData>(deserializedLevels);
 

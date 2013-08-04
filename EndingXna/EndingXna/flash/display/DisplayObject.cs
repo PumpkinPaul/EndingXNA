@@ -19,8 +19,8 @@ namespace flash.display
 
         public DisplayObjectContainer parent { get; internal set; }
 
-        public double mouseX { get { return InputHelper.MousePos.X / XnaGame.Instance.Scale; } }
-        public double mouseY { get { return InputHelper.MousePos.Y / XnaGame.Instance.Scale; } }
+        public double mouseX { get { return XnaGame.Instance.MousePosition.X / XnaGame.Instance.Scale; } }
+        public double mouseY { get { return XnaGame.Instance.MousePosition.Y / XnaGame.Instance.Scale; } }
 
         /// <summary>Whether or not the display object is visible.</summary>
         public Boolean visible { get; set; }

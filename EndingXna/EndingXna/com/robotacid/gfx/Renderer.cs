@@ -398,11 +398,17 @@ namespace com.robotacid.gfx
             XnaGame.Instance.GraphicsDevice.SetRenderTarget(sceneRenderTarget);
             XnaGame.Instance.GraphicsDevice.Clear(Color.Transparent);
             XnaGame.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, blendState, SamplerState.PointClamp, null, null);
-            XnaGame.Instance.SpriteBatch.Draw(_backgroundRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White);
-            XnaGame.Instance.SpriteBatch.Draw(_shadowRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White);
-            XnaGame.Instance.SpriteBatch.Draw(_gameRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White);
-            XnaGame.Instance.SpriteBatch.Draw(_guiRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White);
-            XnaGame.Instance.SpriteBatch.Draw(_defaultRenderTarget, Vector2.Zero, XnaGame.Instance.GraphicsDevice.Viewport.Bounds, Color.White);
+            //XnaGame.Instance.SpriteBatch.Draw(_backgroundRenderTarget, Vector2.Zero, null, Color.White,0, Vector2.Zero, XnaGame.Instance.Scale, SpriteEffects.None, 0);
+            //XnaGame.Instance.SpriteBatch.Draw(_shadowRenderTarget, Vector2.Zero, null, Color.White,0, Vector2.Zero, XnaGame.Instance.Scale, SpriteEffects.None, 0);
+            //XnaGame.Instance.SpriteBatch.Draw(_gameRenderTarget, Vector2.Zero, null, Color.White,0, Vector2.Zero, XnaGame.Instance.Scale, SpriteEffects.None, 0);
+            //XnaGame.Instance.SpriteBatch.Draw(_guiRenderTarget, Vector2.Zero, null, Color.White,0, Vector2.Zero, XnaGame.Instance.Scale, SpriteEffects.None, 0);
+            //XnaGame.Instance.SpriteBatch.Draw(_defaultRenderTarget, Vector2.Zero, null, Color.White,0, Vector2.Zero, XnaGame.Instance.Scale, SpriteEffects.None, 0);
+
+            XnaGame.Instance.SpriteBatch.Draw(_backgroundRenderTarget, Vector2.Zero, Color.White);
+            XnaGame.Instance.SpriteBatch.Draw(_shadowRenderTarget, Vector2.Zero, Color.White);
+            XnaGame.Instance.SpriteBatch.Draw(_gameRenderTarget, Vector2.Zero, Color.White);
+            XnaGame.Instance.SpriteBatch.Draw(_guiRenderTarget, Vector2.Zero, Color.White);
+            XnaGame.Instance.SpriteBatch.Draw(_defaultRenderTarget, Vector2.Zero, Color.White);
             XnaGame.Instance.SpriteBatch.End();
         }
 

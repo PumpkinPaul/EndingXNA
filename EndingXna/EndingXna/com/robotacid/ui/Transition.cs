@@ -25,8 +25,10 @@ namespace com.robotacid.ui
 		private double fadeOutAlpha;
 		private Boolean changeOverFrame;
 
-        public readonly static double FADE_STEP = 1.0 / 10;
+        public readonly static double FADE_STEP = 1.0 / 20;
 		public const int TEXT_DELAY = 60;
+
+        public const int DEFAULT_TRANSITION_TICKS = 20; //10 for 30 fps, 20 for 60 fps
 		
 		public Transition() {
 			dir = 0;
@@ -77,7 +79,7 @@ namespace com.robotacid.ui
 		}
 		
 		/* Initiate a transition */
-		public void begin(Action changeOverCallback, int fadeIn = 10, int fadeOut = 10, String text = "", int textDelay = 0, Action completeCallback = null, int delayCount = 0) {
+		public void begin(Action changeOverCallback, int fadeIn = 20, int fadeOut = 20, String text = "", int textDelay = 0, Action completeCallback = null, int delayCount = 0) {
 		
             this.changeOverCallback = changeOverCallback;
 			this.fadeIn = fadeIn;

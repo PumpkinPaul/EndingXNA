@@ -23,6 +23,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     public StorageManager StorageManager { get; private set; }
     public ThreadPoolComponent ThreadPoolComponent { get; private set; }
     
+    private Texture2D _mousepointerTexture;
     public SpriteFont SpriteFont { get; private set; }
     public SpriteBatch SpriteBatch { get; private set; }
     private RenderTarget2D _sceneRenderTarget;
@@ -35,6 +36,20 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     public static Stage Stage { get; private set; }
     public float Scale { get { return (float)Instance._game.scaleRatio; } }
 
+    private bool _mousepointer = true;
+    public bool MouseVisible 
+    {
+        get { return _mousepointer; }
+        set { _mousepointer = value; }
+    }
+
+    private Vector2 _mousePosition;
+    public Vector2 MousePosition
+    {
+        get { return _mousePosition; }
+        set { _mousePosition = value; }
+    }
+
     /// <summary></summary>
     protected PostProcess PostProcess;
 
@@ -42,8 +57,8 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         public const float DefaultZoomFactor = 0.0f;
         public const int TitleSafeTestOffset = 0;
     #else
-        public const float DefaultZoomFactor = 1.0f;
-        public const int TitleSafeTestOffset = 50;
+        public const float DefaultZoomFactor = 0.0f;
+        public const int TitleSafeTestOffset = 96;
     #endif
 
     private float _zoomFactor = DefaultZoomFactor;
@@ -55,7 +70,10 @@ public class XnaGame : Microsoft.Xna.Framework.Game
             this.SetRenderViewport();
         } 
     }
+
+    public Rectangle GameWindow { get; set; }
     public Viewport RenderViewport { get; private set; }
+    public Viewport FullscreenViewport { get; private set; }
 
     public XnaGame()
     {
@@ -66,36 +84,39 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         Content.RootDirectory = "Content";
 
         IsFixedTimeStep = true;
+        IsMouseVisible = false;
 
-        _graphics.PreferredBackBufferWidth = 480;
-        _graphics.PreferredBackBufferHeight = 320;
-
-        _graphics.PreferredBackBufferWidth = 960;
-        _graphics.PreferredBackBufferHeight = 640;
+        //#if WINDOWS
+        //_graphics.PreferredBackBufferWidth = 960;
+        //_graphics.PreferredBackBufferHeight = 640;
+        //#elif XBOX360
+        _graphics.PreferredBackBufferWidth = 1280;
+        _graphics.PreferredBackBufferHeight = 720;
+        //#endif
 
         //Make 30 FPS or put a key limiter on KeyDown!
-        TargetElapsedTime = TimeSpan.FromSeconds(1/30.0f);
+        TargetElapsedTime = TimeSpan.FromSeconds(1/60.0f);
 
         StorageManager = new StorageManager("EndingXNA");
         StorageManager.ShowStorageGuide();
         StorageManager.StorageDeviceAction += (sender, e) => {
             if (e.DialogAction == DialogAction.Select)
-                //UserData.loadSettingsFile(e.StorageContainer);
                 Game.LoadFromUserStorage(e.StorageContainer);
         };
         
 
         FlashRenderer = new FlashRenderer();
 
+        //Post processing effects for bloom, fisheye and scanlines...
         PostProcess = new PostProcess(this, null);
         PostProcess.AddProcessor(new BloomProcessor(this) { 
             Active = true, Settings = BloomProcessor.BloomSettings.PresetSettings[7]
         });
         PostProcess.AddProcessor(new BarrelDistortionProcessor(this) { 
-            Active = true
+            Active = false
         });
         PostProcess.AddProcessor(new ScanlinesProcessor(this) { 
-            Active = true, ScanlinesValue = 0.25f
+            Active = false, ScanlinesValue = 0.25f
         });
 
         Components.Add(new GamerServicesComponent(this));
@@ -112,27 +133,31 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     {
         base.Initialize();
 
+        //Initialise the final rendering viewport - this will allow the user to size the rendered image to match their display device
+        SetRenderViewport();
+        PostProcess.Initialize();
+
         Stage = new Stage();
         _game = new Game();
 
         Stage.addChild(_game);
-
-        IsMouseVisible = true;
-
-        PostProcess.Initialize();
-
-        //Initialise the final rendering viewport - this will allow the user to size the rendered image to match their display device
-        SetRenderViewport();
     }
 
-    private void SetRenderViewport()
+    public void SetRenderViewport()
     {
-        //Specify offset to test Titlesafe on Windows...
+        FullscreenViewport = GraphicsDevice.Viewport;
+
+        //Stage is 960 x 480 aspect ratio (1.5) - we want to mimic that in current resolution.
+        int ratioPixelsX = (int)((FullscreenViewport.Width - FullscreenViewport.Height * 1.5f) / 2.0f);
+
+        //Create the final render viewport repecting the titlesafe and above aspect ratio
         RenderViewport = new Viewport(
-                (int)MathHelper.Lerp(GraphicsDevice.Viewport.TitleSafeArea.X + TitleSafeTestOffset, GraphicsDevice.Viewport.X, ZoomFactor),
-                (int)MathHelper.Lerp(GraphicsDevice.Viewport.TitleSafeArea.Y + TitleSafeTestOffset, GraphicsDevice.Viewport.Y, ZoomFactor),
-                (int)MathHelper.Lerp(GraphicsDevice.Viewport.TitleSafeArea.Width - (TitleSafeTestOffset * 2), GraphicsDevice.Viewport.Width, ZoomFactor),
-                (int)MathHelper.Lerp(GraphicsDevice.Viewport.TitleSafeArea.Height - (TitleSafeTestOffset * 2), GraphicsDevice.Viewport.Height, ZoomFactor));
+                (int)MathHelper.Lerp(GraphicsDevice.Viewport.TitleSafeArea.X + TitleSafeTestOffset + ratioPixelsX, FullscreenViewport.X, ZoomFactor),
+                (int)MathHelper.Lerp(GraphicsDevice.Viewport.TitleSafeArea.Y + TitleSafeTestOffset, FullscreenViewport.Y, ZoomFactor),
+                (int)MathHelper.Lerp(GraphicsDevice.Viewport.TitleSafeArea.Width - ((TitleSafeTestOffset + ratioPixelsX) * 2), FullscreenViewport.Width, ZoomFactor),
+                (int)MathHelper.Lerp(GraphicsDevice.Viewport.TitleSafeArea.Height - (TitleSafeTestOffset * 2), FullscreenViewport.Height, ZoomFactor));
+
+        GameWindow = new Rectangle(0, 0, (int)(FullscreenViewport.Height * 1.5f), FullscreenViewport.Height);
     }
 
     /// <summary>
@@ -145,6 +170,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         SurfaceFormat format = pp.BackBufferFormat;
 
         SpriteFont = Content.Load<SpriteFont>("textures/font-sprites");
+        _mousepointerTexture = Content.Load<Texture2D>("textures/Mousepointer");
 
         SpriteBatch = new SpriteBatch(GraphicsDevice);
         _sceneRenderTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.DiscardContents);
@@ -185,6 +211,11 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
             Exit();
 
+        //#if WINDOWS
+        _mousePosition.X = InputHelper.MousePos.X;
+        _mousePosition.Y = InputHelper.MousePos.Y;
+        //#endif
+
         //Send event to flash objects
         DispatchEvents();
 
@@ -196,7 +227,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     /// </summary>
     private void DispatchEvents()
     {
-        if (GraphicsDevice.Viewport.Bounds.Contains(InputHelper.MousePos)) {
+        if (GraphicsDevice.Viewport.Bounds.Contains(new Point((int)MousePosition.X, (int)MousePosition.Y))) {
             if (InputHelper.HasMouseMoved) 
             {
                 if (_game.mouseMoveActions != null)
@@ -248,16 +279,27 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     {
         CanDraw = true;
 
+        //Ending wants a 1.5 aspect ratio - the default 1280x720 Xbox ratio is 1.7777 - therefore we'll add a modifier to the render viewport and the 
+        //mouseposition to fix along the x-axis by the correct amount.
+        float xScale = ((FullscreenViewport.Width / (float)FullscreenViewport.Height) / 1.5f);
+        _mousePosition.X = (int)(MousePosition.X * xScale);
+
         Stage.Draw(_sceneRenderTarget, gameTime);
    
         this.PostProcess.PreRender();
-        //GraphicsDevice.SetRenderTarget(null);
+       
         GraphicsDevice.Clear(Color.Black);
-        //...now apply the scaling to the final image - use point sampling for a nice clean look with none of the fuzziness that linear causes. 
         SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null,null);
-        SpriteBatch.Draw(_sceneRenderTarget, Vector2.Zero, GraphicsDevice.Viewport.Bounds, Color.White, 0, Vector2.Zero, Scale, SpriteEffects.None, 0);
+        SpriteBatch.Draw(_sceneRenderTarget, Vector2.Zero, null, Color.White, 0, Vector2.Zero, new Vector2(Scale * xScale, Scale) , SpriteEffects.None, 0);
         SpriteBatch.End();
         
+        if (_mousepointer) 
+        {
+            SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null,null);
+            SpriteBatch.Draw(_mousepointerTexture, MousePosition, null, Color.White, 0, new Vector2(64), 1.0f, SpriteEffects.None, 1.0f);
+            SpriteBatch.End();
+        }
+
         base.Draw(gameTime);
 
         this.PostProcess.PostRender();

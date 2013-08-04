@@ -163,6 +163,15 @@ namespace pumpkin
             return obj;
         }
 
+        public T DeserializeObject<T>(string data)
+        {
+            using (var tr = new StringReader(data))
+            {
+                var x = GetSerializer(typeof(T));
+                return (T)x.Deserialize(tr);
+            }
+        }
+
         /// <summary>
         /// Saves the data to the storage device.
         /// </summary>

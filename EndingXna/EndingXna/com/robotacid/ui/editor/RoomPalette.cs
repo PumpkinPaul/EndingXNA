@@ -4,7 +4,9 @@ using com.robotacid.gfx;
 using flash;
 using flash.geom;
 using Array = flash.Array;
+#if JSON
 using Newtonsoft.Json;
+#endif
 
 namespace com.robotacid.ui.editor
 {
@@ -297,7 +299,7 @@ namespace com.robotacid.ui.editor
 		
 		private void quit() {
 			
-			game.transition.begin(game.quit, 10, 10);
+			game.transition.begin(game.quit, Transition.DEFAULT_TRANSITION_TICKS, Transition.DEFAULT_TRANSITION_TICKS);
 		}
 		
 		private int getTimerFrame(int n) {

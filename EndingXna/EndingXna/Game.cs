@@ -153,8 +153,8 @@ public class Game : Sprite
 	public const int MAX_LEVEL = 20;
 		
 	public const int TURN_FRAMES = 2;
-	public const int HIDE_MOUSE_FRAMES = 60;
-	public const int DEATH_FADE_COUNT = 10;
+	public const int HIDE_MOUSE_FRAMES = 120;
+	public const int DEATH_FADE_COUNT = 20; //10 for 30 fps, 20 for 60 
 		
 	public static Boolean fullscreenToggled;
 	public static Boolean allowScriptAccess;
@@ -203,7 +203,7 @@ public class Game : Sprite
 		soundQueue = new SoundQueue();
 			
 		if (stage != null) addedToStage();
-		else addEventListener(Event.ADDED_TO_STAGE, addedToStage);
+		else addEventListener(Event.ADDED_TO_STAGE, (Action1<Event>)addedToStage);
 	}
 
     public static void LoadFromUserStorage(StorageContainer storageContainer) {
@@ -227,21 +227,21 @@ public class Game : Sprite
 		defaultStageRatio = WIDTH / HEIGHT;
 			
 		// pad extra rows/cols to fill aspect ratio better
-		if(stageRatio > defaultStageRatio){
-			scaleRatio = realStageHeight / HEIGHT;
-			while((WIDTH + SCALE) * scaleRatio < realStageWidth){
-				WIDTH += SCALE;
-			}
-		} else {
-			scaleRatio = realStageWidth / WIDTH;
-			while((HEIGHT + SCALE) * scaleRatio < realStageHeight){
-				HEIGHT += SCALE;
-			}
-		}
+        if(stageRatio > defaultStageRatio){
+            scaleRatio = realStageHeight / HEIGHT;
+            while((WIDTH + SCALE) * scaleRatio < realStageWidth){
+                WIDTH += SCALE;
+            }
+        } else {
+            scaleRatio = realStageWidth / WIDTH;
+            while((HEIGHT + SCALE) * scaleRatio < realStageHeight){
+                HEIGHT += SCALE;
+            }
+        }
 	}
 
     private void addedToStage(Event e = null) {
-        removeEventListener(Event.ADDED_TO_STAGE, init);
+        removeEventListener(Event.ADDED_TO_STAGE, (Action1<Event>)init);
 		
         //CONVERSION - this is about all I need to do here for custom keys.	
         // KEYS INIT
@@ -322,10 +322,10 @@ public class Game : Sprite
 	public void reset(Boolean newGame = true) {
 		removeEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
 		removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
-		removeEventListener(Event.ENTER_FRAME, main);
+		removeEventListener(Event.ENTER_FRAME, (Action1<Event>)main);
 		stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
-		stage.removeEventListener(Event.DEACTIVATE, onFocusLost);
-		stage.removeEventListener(Event.ACTIVATE, onFocus);
+		stage.removeEventListener(Event.DEACTIVATE, (Action1<Event>)onFocusLost);
+		stage.removeEventListener(Event.ACTIVATE, (Action1<Event>)onFocus);
 		stage.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
 		//removeEventListener(TouchEvent.TOUCH_BEGIN, touchBegin);
 		while(numChildren > 0){
@@ -340,13 +340,13 @@ public class Game : Sprite
 	}
 		
 	private void addListeners() {
-		stage.addEventListener(Event.DEACTIVATE, onFocusLost);
-		stage.addEventListener(Event.ACTIVATE, onFocus);
+		stage.addEventListener(Event.DEACTIVATE, (Action1<Event>)onFocusLost);
+		stage.addEventListener(Event.ACTIVATE,(Action1<Event>) onFocus);
 		stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
 		stage.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
 		stage.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
 		stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
-		addEventListener(Event.ENTER_FRAME, main);
+		addEventListener(Event.ENTER_FRAME, (Action1<Event>)main);
 	}
 		
 	// =================================================================================================

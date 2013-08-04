@@ -4,12 +4,12 @@ namespace flash.events
 {
     public class EventDispatcher { 
         
-        public Action<Event> deactivateActions;
-        public Action<Event> activateActions;
-        public Action<Event> addedToStageActions;
-        public Action<Event> enterFrameActions;
+        public Action1<Event> deactivateActions;
+        public Action1<Event> activateActions;
+        public Action1<Event> addedToStageActions;
+        public Action1<Event> enterFrameActions;
 
-        public void addEventListener(string type, Action<Event>  action) {
+        public void addEventListener(string type, Action1<Event>  action) {
             switch(type) {
                 case Event.DEACTIVATE:
                     deactivateActions += action;
@@ -28,11 +28,11 @@ namespace flash.events
             }
         }
 
-        public Action<MouseEvent> mouseDownActions;
-        public Action<MouseEvent> mouseMoveActions;
-        public Action<MouseEvent> mouseUpActions;
+        public Action1<MouseEvent> mouseDownActions;
+        public Action1<MouseEvent> mouseMoveActions;
+        public Action1<MouseEvent> mouseUpActions;
 
-        public void addEventListener(string type, Action<MouseEvent>  action) {
+        public void addEventListener(string type, Action1<MouseEvent>  action) {
             switch(type) {
                 case MouseEvent.MOUSE_DOWN:
                     mouseDownActions += action;
@@ -48,10 +48,10 @@ namespace flash.events
             }
         }
 
-        public Action<KeyboardEvent> keyDownActions;
-        public Action<KeyboardEvent> keyUpActions;
+        public Action1<KeyboardEvent> keyDownActions;
+        public Action1<KeyboardEvent> keyUpActions;
 
-        public void addEventListener(string type, Action<KeyboardEvent>  action) {
+        public void addEventListener(string type, Action1<KeyboardEvent>  action) {
             switch(type) {
                 case KeyboardEvent.KEY_DOWN:
                     keyDownActions += action;
@@ -64,7 +64,7 @@ namespace flash.events
             }
         }
 
-        public void removeEventListener(string type, Action<Event>  action) {
+        public void removeEventListener(string type, Action1<Event>  action) {
             switch(type) {
                 case Event.ADDED_TO_STAGE:
                     addedToStageActions -= action;
@@ -75,7 +75,7 @@ namespace flash.events
             }
         }
 
-        public void removeEventListener(string type, Action<MouseEvent>  action) {
+        public void removeEventListener(string type, Action1<MouseEvent>  action) {
             switch(type) {
                 case MouseEvent.MOUSE_DOWN:
                     mouseDownActions -= action;
@@ -91,7 +91,7 @@ namespace flash.events
             }
         }
 
-        public void removeEventListener(string type, Action<KeyboardEvent>  action) {
+        public void removeEventListener(string type, Action1<KeyboardEvent>  action) {
             switch(type) {
                 case KeyboardEvent.KEY_DOWN:
                     keyDownActions -= action;

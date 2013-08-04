@@ -1,5 +1,8 @@
+Content\textures\background.xnb
 Content\textures\game-sprites.xnb
 Content\textures\menu-sprites.xnb
+Content\textures\font-sprites.xnb
+Content\textures\scanline.xnb
 Content\sound\8bit-blast-rattle.xnb
 Content\sound\adventure1.xnb
 Content\sound\adventure2.xnb
@@ -71,14 +74,11 @@ Content\sound\trapTwang3.xnb
 Content\sound\trapTwang4.xnb
 Content\sound\twang-kill.xnb
 Content\sound\twang-move.xnb
-Content\textures\background.xnb
-Content\textures\font-sprites.xnb
 Content\effects\BloomCombine.xnb
 Content\effects\BloomExtract.xnb
 Content\effects\GaussianBlur.xnb
 Content\effects\Scanlines.xnb
 Content\effects\BarrelDistortion.xnb
-Content\textures\scanline.xnb
 Content\textures\Mousepointer.xnb
 levels.xml
 levels.json

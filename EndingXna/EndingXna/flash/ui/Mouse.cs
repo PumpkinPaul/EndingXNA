@@ -9,11 +9,11 @@ namespace flash
     public static class Mouse {
         
         public static void show() {
-            XnaGame.Instance.IsMouseVisible = true;
+            XnaGame.Instance.MouseVisible = true;
         }
 
         public static void hide() {
-            XnaGame.Instance.IsMouseVisible = false;
+            XnaGame.Instance.MouseVisible = false;
         }
     }
 }
