@@ -47,9 +47,6 @@ namespace pumpkin
 #endif
         }
 
-        #region Variables
-
-
         /// <summary>
         /// Mouse state, set every frame in the Update method.
         /// </summary>
@@ -73,8 +70,7 @@ namespace pumpkin
         /// information, section Input). We store our own array of keys from
         /// the last frame for comparing stuff.
         /// </summary>
-        private static KeyboardState keyboardState =
-            Microsoft.Xna.Framework.Input.Keyboard.GetState();
+        private static KeyboardState keyboardState = Microsoft.Xna.Framework.Input.Keyboard.GetState();
 
         /// <summary>
         /// Keys pressed last frame, for comparison if a key was just pressed.
@@ -100,10 +96,13 @@ namespace pumpkin
         /// mouse button. Used for the MouseDraggingAmount property.
         /// </summary>
         private static Point startDraggingPos;
-        #endregion
 
-        #region Mouse Properties
         public static bool CaptureMouse { get; set; }
+
+        #if WINDOWS_PHONE
+        private static TouchCollection touchCollection;
+        #endif
+
         /// <summary>
         /// Was a mouse detected? Returns true if the user moves the mouse.
         /// On the Xbox 360 there will be no mouse movement and theirfore we
@@ -167,7 +166,7 @@ namespace pumpkin
         {
             get
             {
-#if WINDOWS
+#if WINDOWS || WINDOWS_PHONE
                 return mouseState.LeftButton == ButtonState.Pressed;
 #elif XBOX360
                 //Spoof the mouse button
@@ -218,7 +217,7 @@ namespace pumpkin
         {
             get
             {
-#if WINDOWS
+#if WINDOWS || WINDOWS_PHONE
                 return mouseState.LeftButton == ButtonState.Pressed && mouseStateLastFrame.LeftButton == ButtonState.Released;
 #elif XBOX360
                 return GamePadAJustPressed(PlayerIndex);
@@ -260,10 +259,6 @@ namespace pumpkin
             }
         }
 
-
-
-
-
         /// <summary>
         /// Mouse left button just released
         /// </summary>
@@ -272,7 +267,7 @@ namespace pumpkin
         {
             get
             {
-#if WINDOWS
+#if WINDOWS || WINDOWS_PHONE
                 return mouseState.LeftButton == ButtonState.Released && mouseStateLastFrame.LeftButton == ButtonState.Pressed;
 #elif XBOX360
                 return GamePadAJustReleased(PlayerIndex);     
@@ -349,9 +344,7 @@ namespace pumpkin
         {
             Mouse.SetPosition(x, y);
         }
-        #endregion
 
-        #region Keyboard Properties
         /// <summary>
         /// Keyboard
         /// </summary>
@@ -656,9 +649,7 @@ namespace pumpkin
         {
             return keyboardState.IsKeyDown(key);
         }
-        #endregion
 
-        #region GamePad Properties
         public static bool GamePadSpoofedKeyIsJustPressed(Keys key)
         {
             if (key == Keys.Escape)
@@ -1078,9 +1069,7 @@ namespace pumpkin
                 (GamePad(PlayerIndex).ThumbSticks.Right.X > 0.35f || GamePad(PlayerIndex).ThumbSticks.Right.X < -0.35f || GamePad(PlayerIndex).ThumbSticks.Right.Y > 0.35f || GamePad(PlayerIndex).ThumbSticks.Right.Y < -0.35f) ||
                 GamePadAJustPressed(PlayerIndex) || GamePadBJustPressed(PlayerIndex) || GamePadXJustPressed(PlayerIndex) || GamePadYJustPressed(PlayerIndex));
         }
-        #endregion
 
-        #region Update
         /// <summary>
         /// Update, called from BaseGame.Update().
         /// Will catch all new states for keyboard, mouse and the gamepad.
@@ -1104,22 +1093,77 @@ namespace pumpkin
 
 #if WINDOWS  
             mouseState = Mouse.GetState();
+
+            // Update mouseXMovement and mouseYMovement
+            lastMouseXMovement += mouseState.X - mouseStateLastFrame.X;
+            lastMouseYMovement += mouseState.Y - mouseStateLastFrame.Y;
+
 #elif XBOX360
             //Spoof mouse with gamepad!
             mouseState = new pumpkin.MouseState();
             mouseState.X = (int)MathHelper.Clamp(mouseStateLastFrame.X + (int)(GamePad(PlayerIndex).ThumbSticks.Right.X * MousePosScale), 0, XnaGame.Instance.Window.ClientBounds.Width);
             mouseState.Y = (int)MathHelper.Clamp(mouseStateLastFrame.Y - (int)(GamePad(PlayerIndex).ThumbSticks.Right.Y * MousePosScale), 0, XnaGame.Instance.Window.ClientBounds.Height);
             mouseState.LeftButton = GamePad(PlayerIndex).Buttons.A;
-#endif
 
             // Update mouseXMovement and mouseYMovement
             lastMouseXMovement += mouseState.X - mouseStateLastFrame.X;
             lastMouseYMovement += mouseState.Y - mouseStateLastFrame.Y;
+#elif WINDOWS_PHONE
+        
+        touchCollection = TouchPanel.GetState();
+        if (touchCollection.Count > 0)
+            mouseState = new pumpkin.MouseState();
+
+        foreach (var tl in touchCollection)
+        {
+            if (tl.State == TouchLocationState.Pressed || tl.State == TouchLocationState.Moved)
+            {
+                
+                mouseState.X = (int)tl.Position.X;
+                mouseState.Y = (int)tl.Position.Y;
+                mouseState.LeftButton = tl.State == TouchLocationState.Pressed ? ButtonState.Pressed : ButtonState.Released;
+
+            }
+        }
+
+        if (TouchPanel.IsGestureAvailable)
+        {
+            while (TouchPanel.IsGestureAvailable)
+            {
+                var gesture = TouchPanel.ReadGesture();
+ 
+                switch (gesture.GestureType)
+                {
+ 
+                    case GestureType.HorizontalDrag:
+                    // Update mouseXMovement and mouseYMovement
+                    lastMouseXMovement = gesture.Delta.X;
+                    lastMouseYMovement = gesture.Delta.Y;
+                        break;
+
+                    case GestureType.VerticalDrag:
+                    // Update mouseXMovement and mouseYMovement
+                    lastMouseXMovement = gesture.Delta.X;
+                    lastMouseYMovement = gesture.Delta.Y;
+           
+                        break;
+                    case GestureType.Flick:
+                        lastMouseXMovement = gesture.Delta.X;
+                        lastMouseYMovement = gesture.Delta.Y;
+                        break;
+ 
+                }
+            }
+        }
+
+#endif
+
+            
 
             mouseXMovement = lastMouseXMovement;
             mouseYMovement = lastMouseYMovement;
-            lastMouseXMovement -= lastMouseXMovement;
-            lastMouseYMovement -= lastMouseYMovement;
+            //lastMouseXMovement -= lastMouseXMovement;
+            //lastMouseYMovement -= lastMouseYMovement;
 
             if (MouseLeftButtonPressed == false)
                 startDraggingPos = MousePos;
@@ -1136,6 +1180,5 @@ namespace pumpkin
 
             keyboardState = Microsoft.Xna.Framework.Input.Keyboard.GetState();
         }
-        #endregion
     }
 }

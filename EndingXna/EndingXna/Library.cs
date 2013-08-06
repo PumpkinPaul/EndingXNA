@@ -1,10 +1,19 @@
+//#if WINDOWS_PHONE
+//#define JSON 
+//#endif
+
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using System.Xml.Linq;
+using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 #if JSON
 using Newtonsoft.Json;
 #endif
 using flash;
+using Point = flash.geom.Point;
 
 /// <summary>
 /// Initialises levels and manages requests for them
@@ -41,21 +50,36 @@ public class Library
     #if JSON
     private const string _levelsFilename = "levels.json";
     #else
-    private const string _levelsFilename = "levels.xml";
+    private const string _levelsFilename = "levels2.xml";
     #endif
     
     public static void initLevels() {
+        
         string data = null;
         using (var fs = TitleContainer.OpenStream(_levelsFilename)) {
             using (var sr = new StreamReader(fs))
                 data = sr.ReadToEnd();
         }
-        
+
         #if JSON
         var deserializedLevels = JsonConvert.DeserializeObject<LevelData[]>(data);
         #else
         var deserializedLevels = XnaGame.Instance.StorageManager.DeserializeObject<LevelData[]>(data);
         #endif
+
+        //deserializedLevels = LoadXmlDoc();
+
+        //var doc = LoadXmlDoc();
+
+        //var sb = new StringBuilder();
+        //using (var s = new StringWriter(sb)) {
+        //    var x = new XmlSerializer(typeof(LevelData[]));
+        //    x.Serialize(s, doc);
+        //}
+
+
+
+
 
         if (PERMANENT_LEVELS == null)
             PERMANENT_LEVELS = new Array<LevelData>(deserializedLevels);
@@ -83,4 +107,51 @@ public class Library
 		}
 		return levels.length - 1;
 	}
+
+    private static LevelData[] LoadXmlDoc()
+    {
+        string data = null;
+        using (var fs = TitleContainer.OpenStream("levels.xml")) {
+            using (var sr = new StreamReader(fs))
+                data = sr.ReadToEnd();
+        }
+
+        
+        var lvls = new List<LevelData>();
+        var doc = XDocument.Parse(data);
+
+        foreach(var ld in  doc.Root.Elements("LevelData"))
+        {
+            if (ld.IsEmpty)
+                break;
+
+            var levelData = new LevelData();
+
+            levelData.map = new Array<Array<int>>();
+
+            var map = ld.Element("map");
+
+            foreach(var aoi in map.Elements("ArrayOfInt")) 
+            {
+                var a = new Array<int>();
+                foreach(var i in aoi.Elements("int")) 
+                {
+                    a.push(Convert.ToInt32(i.Value));
+                }
+                levelData.map.push(a);
+            }
+
+            levelData.playerDir = Convert.ToInt32(ld.Element("playerDir").Value);
+            int x = Convert.ToInt32(ld.Element("player").Element("x").Value);
+            int y = Convert.ToInt32(ld.Element("player").Element("y").Value);
+            levelData.player = new Point(x, y);
+            levelData.food = Convert.ToInt32(ld.Element("food").Value);
+            levelData.endingDist = Convert.ToInt32(ld.Element("endingDist").Value);
+            levelData.turns = Convert.ToInt32(ld.Element("turns").Value);
+
+            lvls.Add(levelData);        
+        }
+
+        return lvls.ToArray();
+    }   
 }

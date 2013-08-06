@@ -1,3 +1,4 @@
+#if WINDOWS || XBOX360
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -63,3 +64,4 @@ public class BarrelDistortionProcessor : BaseProcessor
         return base.OnDraw(spriteBatch, deltaTime, texture, renderTarget);
     }
 }
+#endif

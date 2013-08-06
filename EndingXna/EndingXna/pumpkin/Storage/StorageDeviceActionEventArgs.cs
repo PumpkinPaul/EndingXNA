@@ -1,8 +1,5 @@
 using System;
-
-#if !WINDOWS_PHONE
 using Microsoft.Xna.Framework.Storage;
-#endif
 
 namespace pumpkin
 {

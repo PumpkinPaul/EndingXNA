@@ -425,35 +425,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="effects\BloomCombine.fx">
-      <Name>BloomCombine</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-    <Compile Include="effects\BloomExtract.fx">
-      <Name>BloomExtract</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-    <Compile Include="effects\GaussianBlur.fx">
-      <Name>GaussianBlur</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-    <Compile Include="effects\Scanlines.fx">
-      <Name>Scanlines</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="effects\BarrelDistortion.fx">
-      <Name>BarrelDistortion</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="textures\scanline.png">
       <Name>scanline</Name>
       <Importer>TextureImporter</Importer>

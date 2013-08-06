@@ -68,8 +68,11 @@ public class Game : Sprite
     }
 
     public const Boolean TEST_BED_INIT = false;
-	public static Boolean MOBILE = false;
-		
+    #if WINDOWS_PHONE
+	public static Boolean MOBILE = true;
+    #else
+    public static Boolean MOBILE = false;
+    #endif
 	public static Game game;
 	public static Renderer renderer;
 		

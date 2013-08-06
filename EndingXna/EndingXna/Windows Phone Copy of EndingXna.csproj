@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectGuid>{63169D6B-2A4B-4711-8072-38C7B4DF7CE2}</ProjectGuid>
+    <ProjectGuid>{0f906f8f-e9bb-457b-8148-8704df3959c8}</ProjectGuid>
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <OutputType>WinExe</OutputType>
+    <Platform Condition=" '$(Platform)' == '' ">Windows Phone</Platform>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>EndingXna</RootNamespace>
     <AssemblyName>EndingXna</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
-    <XnaPlatform>Windows</XnaPlatform>
-    <XnaProfile>HiDef</XnaProfile>
+    <XnaPlatform>Windows Phone</XnaPlatform>
+    <XnaProfile>Reach</XnaProfile>
     <XnaCrossPlatformGroupID>bf38f449-1b2e-42b1-9996-f38f342721fd</XnaCrossPlatformGroupID>
     <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>Game.ico</ApplicationIcon>
@@ -33,82 +33,43 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <XnaRefreshLevel>1</XnaRefreshLevel>
+    <XapFilename Condition="$(XnaOutputType)=='Game'">$(AssemblyName).xap</XapFilename>
+    <SilverlightManifestTemplate Condition="$(XnaOutputType)=='Game'">Properties\AppManifest.xml</SilverlightManifestTemplate>
+    <XnaWindowsPhoneManifestTemplate Condition="$(XnaOutputType)=='Game'">Properties\WMAppManifest.xml</XnaWindowsPhoneManifestTemplate>
+    <TileImage Condition="$(XnaOutputType)=='Game'">Background.png</TileImage>
+    <TileTitle Condition="$(XnaOutputType)=='Game'">$(AssemblyName)</TileTitle>
+    <SupportedCultures />
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Windows Phone' ">
+    <OutputPath>bin\Windows Phone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE;WINDOWS_PHONE</DefineConstants>
+    <XnaCompressContent>false</XnaCompressContent>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Windows Phone' ">
+    <OutputPath>bin\Windows Phone\Debug</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\x86\Debug</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoStdLib>true</NoStdLib>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <PlatformTarget>x86</PlatformTarget>
+    <DefineConstants>DEBUG;TRACE;WINDOWS_PHONE</DefineConstants>
     <XnaCompressContent>false</XnaCompressContent>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\x86\Release</OutputPath>
-    <DefineConstants>TRACE;WINDOWS</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoStdLib>true</NoStdLib>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <PlatformTarget>x86</PlatformTarget>
-    <XnaCompressContent>true</XnaCompressContent>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.GamerServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Xact, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Video, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Avatar, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Net, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Storage, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="mscorlib">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>dependencies\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Xml">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Core">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Xml.Linq">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Net">
-      <Private>False</Private>
-    </Reference>
+    <ProjectReference Include="..\EndingXnaContent\EndingXnaContent.contentproj">
+      <Name>EndingXnaContent %28Content%29</Name>
+      <XnaReferenceType>Content</XnaReferenceType>
+      <Project>{CD66BCDB-CD53-4276-9CD2-08A2438F0540}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="com\robotacid\engine\Room.cs" />
@@ -187,19 +148,20 @@
     <Content Include="levels.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="levels2.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EndingXnaContentHiDef\EndingXnaContentHiDef.contentproj">
-      <Project>{59B68AF0-F8DE-405F-898D-38AEB76FDFD5}</Project>
-      <Name>EndingXnaContentHiDef %28Content%29</Name>
-      <XnaReferenceType>Content</XnaReferenceType>
-    </ProjectReference>
-    <ProjectReference Include="..\EndingXnaContent\EndingXnaContent.contentproj">
-      <Name>EndingXnaContent %28Content%29</Name>
-      <XnaReferenceType>Content</XnaReferenceType>
-      <Project>{CD66BCDB-CD53-4276-9CD2-08A2438F0540}</Project>
-    </ProjectReference>
+    <None Include="Background.png">
+      <XnaPlatformSpecific>true</XnaPlatformSpecific>
+    </None>
+    <None Include="PhoneGameThumb.png">
+      <XnaPlatformSpecific>true</XnaPlatformSpecific>
+    </None>
+    <None Include="Properties\AppManifest.xml">
+      <XnaPlatformSpecific>true</XnaPlatformSpecific>
+    </None>
+    <None Include="Properties\WMAppManifest.xml">
+      <XnaPlatformSpecific>true</XnaPlatformSpecific>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
@@ -234,6 +196,24 @@
     </Content>
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Reference Include="Microsoft.Xna.Framework" />
+    <Reference Include="Microsoft.Xna.Framework.Avatar" />
+    <Reference Include="Microsoft.Xna.Framework.Game" />
+    <Reference Include="Microsoft.Xna.Framework.GamerServices" />
+    <Reference Include="Microsoft.Xna.Framework.Graphics" />
+    <Reference Include="Microsoft.Xna.Framework.Net" />
+    <Reference Include="Microsoft.Xna.Framework.Storage" />
+    <Reference Include="Microsoft.Xna.Framework.Video" />
+    <Reference Include="Microsoft.Xna.Framework.Xact" />
+    <Reference Include="mscorlib" />
+    <Reference Include="Newtonsoft.Json" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

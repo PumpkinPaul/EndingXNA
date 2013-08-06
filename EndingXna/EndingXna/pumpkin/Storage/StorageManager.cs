@@ -227,8 +227,12 @@ namespace pumpkin
                 if (saveRequired == false)
                     return;
 
+                #if WINDOWS || XBOX360
                 //Sync the cached file system (asynchronously)
                 XnaGame.Instance.ThreadPoolComponent.AddTask(ThreadTarget.Core1Thread3, SaveQueuedData, null, null);
+                #elif WINDOWS_PHONE
+                SaveQueuedData();
+                #endif
             }
             catch
             {
@@ -250,7 +254,7 @@ namespace pumpkin
                 //Monitor guide for a selection.
                 return this.MonitorDeviceSelection();
             }
-            catch 
+            catch (Exception ex)
             {
                 this._storageDevice = null;
                 this._showStorageGuide = false;
@@ -275,9 +279,8 @@ namespace pumpkin
                 return;
 #endif
 
-#if !WINDOWS_PHONE
             this._storageGuideResult = StorageDevice.BeginShowSelector(null, null);
-#endif
+
             this._storageGuideRequested = true;
             this._showStorageGuide = false;
         }
@@ -375,12 +378,16 @@ namespace pumpkin
             IAsyncResult result = storageDevice.BeginOpenContainer(this.ContainerName, null, null);
 
             //Wait for the WaitHandle to become signaled.
+            #if !WINDOWS_PHONE
             result.AsyncWaitHandle.WaitOne();
+            #endif
 
             this._storageContainer = storageDevice.EndOpenContainer(result);
 
             //Close the wait handle.
+            #if !WINDOWS_PHONE
             result.AsyncWaitHandle.Close();
+            #endif
 
             return this._storageContainer;
         }

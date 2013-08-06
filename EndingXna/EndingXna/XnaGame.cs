@@ -36,7 +36,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     public static Stage Stage { get; private set; }
     public float Scale { get { return (float)Instance._game.scaleRatio; } }
 
-    private bool _mousepointer = true;
+    private bool _mousepointer;
     public bool MouseVisible 
     {
         get { return _mousepointer; }
@@ -58,7 +58,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         public const int TitleSafeTestOffset = 0;
     #else
         public const float DefaultZoomFactor = 0.0f;
-        public const int TitleSafeTestOffset = 96;
+        public const int TitleSafeTestOffset = 0;
     #endif
 
     private float _zoomFactor = DefaultZoomFactor;
@@ -86,13 +86,23 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         IsFixedTimeStep = true;
         IsMouseVisible = false;
 
-        //#if WINDOWS
+        #if WINDOWS
         //_graphics.PreferredBackBufferWidth = 960;
         //_graphics.PreferredBackBufferHeight = 640;
-        //#elif XBOX360
+
+        _mousepointer = true;
+        #elif XBOX360
         _graphics.PreferredBackBufferWidth = 1280;
         _graphics.PreferredBackBufferHeight = 720;
-        //#endif
+
+        _mousepointer = true;
+        #elif WINDOWS_PHONE
+        //_graphics.PreferredBackBufferWidth = 800;
+        //_graphics.PreferredBackBufferHeight = 400;
+        //_graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
+    
+        _mousepointer = true; //false;
+        #endif
 
         //Make 30 FPS or put a key limiter on KeyDown!
         TargetElapsedTime = TimeSpan.FromSeconds(1/60.0f);
@@ -109,6 +119,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
 
         //Post processing effects for bloom, fisheye and scanlines...
         PostProcess = new PostProcess(this, null);
+        #if WINDOWS || XBOX360
         PostProcess.AddProcessor(new BloomProcessor(this) { 
             Active = true, Settings = BloomProcessor.BloomSettings.PresetSettings[7]
         });
@@ -120,7 +131,10 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         });
 
         Components.Add(new GamerServicesComponent(this));
-        Components.Add(ThreadPoolComponent = new ThreadPoolComponent(this));
+
+        #endif
+        
+        //Components.Add(ThreadPoolComponent = new ThreadPoolComponent(this));
     }
 
     /// <summary>
@@ -132,6 +146,8 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     protected override void Initialize()
     {
         base.Initialize();
+
+        InputHelper.Initialize();
 
         //Initialise the final rendering viewport - this will allow the user to size the rendered image to match their display device
         SetRenderViewport();
@@ -211,10 +227,8 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
             Exit();
 
-        //#if WINDOWS
         _mousePosition.X = InputHelper.MousePos.X;
         _mousePosition.Y = InputHelper.MousePos.Y;
-        //#endif
 
         //Send event to flash objects
         DispatchEvents();

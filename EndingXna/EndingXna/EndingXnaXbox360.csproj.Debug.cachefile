@@ -1,3 +1,8 @@
+Content\effects\BarrelDistortion.xnb
+Content\effects\BloomCombine.xnb
+Content\effects\BloomExtract.xnb
+Content\effects\GaussianBlur.xnb
+Content\effects\Scanlines.xnb
 Content\textures\background.xnb
 Content\textures\game-sprites.xnb
 Content\textures\menu-sprites.xnb
@@ -74,11 +79,7 @@ Content\sound\trapTwang3.xnb
 Content\sound\trapTwang4.xnb
 Content\sound\twang-kill.xnb
 Content\sound\twang-move.xnb
-Content\effects\BloomCombine.xnb
-Content\effects\BloomExtract.xnb
-Content\effects\GaussianBlur.xnb
-Content\effects\Scanlines.xnb
-Content\effects\BarrelDistortion.xnb
 Content\textures\Mousepointer.xnb
 levels.xml
+levels2.xml
 levels.json

@@ -59,6 +59,11 @@
     <LangVersion>default</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EndingXnaContentHiDef\EndingXnaContentHiDef.contentproj">
+      <Project>{59B68AF0-F8DE-405F-898D-38AEB76FDFD5}</Project>
+      <Name>EndingXnaContentHiDef %28Content%29</Name>
+      <XnaReferenceType>Content</XnaReferenceType>
+    </ProjectReference>
     <ProjectReference Include="..\EndingXnaContent\EndingXnaContent.contentproj">
       <Name>EndingXnaContent %28Content%29</Name>
       <XnaReferenceType>Content</XnaReferenceType>
@@ -140,6 +145,9 @@
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
     <Content Include="levels.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="levels2.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

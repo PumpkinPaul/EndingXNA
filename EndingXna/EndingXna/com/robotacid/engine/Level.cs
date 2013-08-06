@@ -400,6 +400,7 @@ namespace com.robotacid.engine
                 if (InputHelper.GamePadLeftPressed(InputHelper.PlayerIndex)) dir |= Room.LEFT;
                 if (InputHelper.GamePadRightPressed(InputHelper.PlayerIndex)) dir |= Room.RIGHT;
 			//})
+            #if !WINDOWS_PHONE
 			if(game.mousePressed){
 				if(tapControls){
 					if((game.mouseCorner & Room.UP) > 0) dir |= Room.UP;
@@ -410,6 +411,9 @@ namespace com.robotacid.engine
 					dir = game.getMouseSwipe();
 				}
 			}
+            #else
+            dir = game.getMouseSwipe();
+            #endif
 			return dir;
 		}
 		
