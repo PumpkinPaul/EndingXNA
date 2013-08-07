@@ -7,6 +7,7 @@ using flash.events;
 using flash.system;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Storage;
+using pumpkin;
 using Renderer = com.robotacid.gfx.Renderer;
 using FX = com.robotacid.gfx.FX;
 //using PNGEncoder = com.robotacid.gfx.PNGEncoder;
@@ -600,6 +601,23 @@ public class Game : Sprite
 			}
 		}
 		return 0;
+	}
+
+    public int getSwipe() {
+
+        if (InputHelper.IsSwipeLeft)
+            return Room.LEFT;
+        
+        if (InputHelper.IsSwipeRight)
+            return Room.RIGHT; 
+
+        if (InputHelper.IsSwipeUp)
+            return Room.UP; 
+
+        if (InputHelper.IsSwipeDown)
+            return Room.DOWN; 
+
+        return 0;
 	}
 		
 	private void mouseMove(MouseEvent e) {

@@ -43,7 +43,7 @@ namespace pumpkin
         {
 #if WINDOWS_PHONE
             //TouchPanel.EnabledGestures = GestureType.Hold | GestureType.Tap | GestureType.DoubleTap | GestureType.FreeDrag | GestureType.Flick;// | GestureType.Pinch;
-            TouchPanel.EnabledGestures = GestureType.Tap | GestureType.HorizontalDrag | GestureType.Flick;
+            TouchPanel.EnabledGestures = GestureType.Tap | GestureType.HorizontalDrag | GestureType.VerticalDrag | GestureType.Flick;
 #endif
         }
 
@@ -1070,6 +1070,26 @@ namespace pumpkin
                 GamePadAJustPressed(PlayerIndex) || GamePadBJustPressed(PlayerIndex) || GamePadXJustPressed(PlayerIndex) || GamePadYJustPressed(PlayerIndex));
         }
 
+        public static bool IsSwipeLeft
+        {
+            get { return lastMouseXMovement < 0; }
+        }
+
+        public static bool IsSwipeRight
+        {
+            get { return lastMouseXMovement > 0; }
+        }
+
+        public static bool IsSwipeUp
+        {
+            get { return lastMouseYMovement < 0; }
+        }
+
+        public static bool IsSwipeDown
+        {
+            get { return lastMouseYMovement > 0; }
+        }
+
         /// <summary>
         /// Update, called from BaseGame.Update().
         /// Will catch all new states for keyboard, mouse and the gamepad.
@@ -1109,10 +1129,11 @@ namespace pumpkin
             lastMouseXMovement += mouseState.X - mouseStateLastFrame.X;
             lastMouseYMovement += mouseState.Y - mouseStateLastFrame.Y;
 #elif WINDOWS_PHONE
-        
+        lastMouseXMovement = 0;
+        lastMouseYMovement = 0;
+
         touchCollection = TouchPanel.GetState();
-        if (touchCollection.Count > 0)
-            mouseState = new pumpkin.MouseState();
+        mouseState = new pumpkin.MouseState();
 
         foreach (var tl in touchCollection)
         {
@@ -1121,8 +1142,7 @@ namespace pumpkin
                 
                 mouseState.X = (int)tl.Position.X;
                 mouseState.Y = (int)tl.Position.Y;
-                mouseState.LeftButton = tl.State == TouchLocationState.Pressed ? ButtonState.Pressed : ButtonState.Released;
-
+                mouseState.LeftButton = ButtonState.Pressed;
             }
         }
 
@@ -1134,36 +1154,20 @@ namespace pumpkin
  
                 switch (gesture.GestureType)
                 {
- 
                     case GestureType.HorizontalDrag:
-                    // Update mouseXMovement and mouseYMovement
-                    lastMouseXMovement = gesture.Delta.X;
-                    lastMouseYMovement = gesture.Delta.Y;
-                        break;
-
                     case GestureType.VerticalDrag:
-                    // Update mouseXMovement and mouseYMovement
-                    lastMouseXMovement = gesture.Delta.X;
-                    lastMouseYMovement = gesture.Delta.Y;
-           
-                        break;
                     case GestureType.Flick:
                         lastMouseXMovement = gesture.Delta.X;
                         lastMouseYMovement = gesture.Delta.Y;
+                        mouseState.LeftButton = ButtonState.Pressed;
                         break;
- 
                 }
             }
         }
 
 #endif
-
-            
-
             mouseXMovement = lastMouseXMovement;
             mouseYMovement = lastMouseYMovement;
-            //lastMouseXMovement -= lastMouseXMovement;
-            //lastMouseYMovement -= lastMouseYMovement;
 
             if (MouseLeftButtonPressed == false)
                 startDraggingPos = MousePos;

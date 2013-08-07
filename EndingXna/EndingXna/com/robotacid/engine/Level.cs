@@ -412,7 +412,7 @@ namespace com.robotacid.engine
 				}
 			}
             #else
-            dir = game.getMouseSwipe();
+            dir = game.getSwipe();
             #endif
 			return dir;
 		}

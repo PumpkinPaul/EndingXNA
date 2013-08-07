@@ -307,12 +307,12 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         SpriteBatch.Draw(_sceneRenderTarget, Vector2.Zero, null, Color.White, 0, Vector2.Zero, new Vector2(Scale * xScale, Scale) , SpriteEffects.None, 0);
         SpriteBatch.End();
         
-        if (_mousepointer) 
-        {
+        //if (_mousepointer) 
+        //{
             SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null,null);
             SpriteBatch.Draw(_mousepointerTexture, MousePosition, null, Color.White, 0, new Vector2(64), 1.0f, SpriteEffects.None, 1.0f);
             SpriteBatch.End();
-        }
+        //}
 
         base.Draw(gameTime);
 

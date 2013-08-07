@@ -17,7 +17,7 @@
     <XnaCrossPlatformGroupID>bf38f449-1b2e-42b1-9996-f38f342721fd</XnaCrossPlatformGroupID>
     <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>Game.ico</ApplicationIcon>
-    <Thumbnail>GameThumbnail.png</Thumbnail>
+    <Thumbnail>GameThumbnail173x173.png</Thumbnail>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -38,7 +38,7 @@
     <SilverlightManifestTemplate Condition="$(XnaOutputType)=='Game'">Properties\AppManifest.xml</SilverlightManifestTemplate>
     <XnaWindowsPhoneManifestTemplate Condition="$(XnaOutputType)=='Game'">Properties\WMAppManifest.xml</XnaWindowsPhoneManifestTemplate>
     <TileImage Condition="$(XnaOutputType)=='Game'">Background.png</TileImage>
-    <TileTitle Condition="$(XnaOutputType)=='Game'">$(AssemblyName)</TileTitle>
+    <TileTitle Condition="$(XnaOutputType)=='Game'">Ending</TileTitle>
     <SupportedCultures />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Windows Phone' ">
@@ -145,12 +145,14 @@
     <Compile Include="UserData.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="GameThumbnail173x173.png" />
+    <Content Include="GameThumbnail62x62.png" />
     <Content Include="levels2.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="dependencies\Newtonsoft.Json.dll" />
     <Content Include="Game.ico" />
-    <Content Include="GameThumbnail.png" />
+    <Content Include="GameThumbnail64x64.png" />
     <Content Include="levels.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
