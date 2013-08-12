@@ -5,8 +5,8 @@
     /// </summary>
     public static class Capabilities {
        
-        public static double screenResolutionX { get { return XnaGame.Instance.FullscreenViewport.Width; } }
-        public static double screenResolutionY { get { return XnaGame.Instance.FullscreenViewport.Height; } }
+        public static double screenResolutionX { get { return XnaGame.Instance.GameWindow.Width; } }
+        public static double screenResolutionY { get { return XnaGame.Instance.GameWindow.Height; } }
         
     }
 }

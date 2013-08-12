@@ -40,7 +40,12 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     public bool MouseVisible 
     {
         get { return _mousepointer; }
-        set { _mousepointer = value; }
+        set 
+        { 
+            #if (WINDOWS || XBOX360)
+            _mousepointer = value; 
+            #endif
+        }
     }
 
     private Vector2 _mousePosition;
@@ -97,11 +102,12 @@ public class XnaGame : Microsoft.Xna.Framework.Game
 
         _mousepointer = true;
         #elif WINDOWS_PHONE
-        //_graphics.PreferredBackBufferWidth = 800;
-        //_graphics.PreferredBackBufferHeight = 400;
+        //_graphics.PreferredBackBufferWidth = 960;
+        //_graphics.PreferredBackBufferHeight = 480;
         //_graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
     
-        _mousepointer = true; //false;
+        _graphics.PreferredBackBufferFormat = SurfaceFormat.Color;
+        _mousepointer = false;
         #endif
 
         //Make 30 FPS or put a key limiter on KeyDown!
@@ -163,8 +169,9 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     {
         FullscreenViewport = GraphicsDevice.Viewport;
 
-        //Stage is 960 x 480 aspect ratio (1.5) - we want to mimic that in current resolution.
-        int ratioPixelsX = (int)((FullscreenViewport.Width - FullscreenViewport.Height * 1.5f) / 2.0f);
+        //aspect ratio (1.5) - we want to mimic that in current resolution.
+        //Ideal stage is 2 x 1 (e.g 960x480) 
+        var ratioPixelsX = (int)((FullscreenViewport.Width - FullscreenViewport.Height * 1.5f) / 2.0f);
 
         //Create the final render viewport repecting the titlesafe and above aspect ratio
         RenderViewport = new Viewport(
@@ -295,7 +302,11 @@ public class XnaGame : Microsoft.Xna.Framework.Game
 
         //Ending wants a 1.5 aspect ratio - the default 1280x720 Xbox ratio is 1.7777 - therefore we'll add a modifier to the render viewport and the 
         //mouseposition to fix along the x-axis by the correct amount.
+        #if WINDOWS || XBOX360
         float xScale = ((FullscreenViewport.Width / (float)FullscreenViewport.Height) / 1.5f);
+        #else
+        const float xScale = 1.0f;
+        #endif
         _mousePosition.X = (int)(MousePosition.X * xScale);
 
         Stage.Draw(_sceneRenderTarget, gameTime);
@@ -307,12 +318,12 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         SpriteBatch.Draw(_sceneRenderTarget, Vector2.Zero, null, Color.White, 0, Vector2.Zero, new Vector2(Scale * xScale, Scale) , SpriteEffects.None, 0);
         SpriteBatch.End();
         
-        //if (_mousepointer) 
-        //{
+        if (_mousepointer) 
+        {
             SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null,null);
             SpriteBatch.Draw(_mousepointerTexture, MousePosition, null, Color.White, 0, new Vector2(64), 1.0f, SpriteEffects.None, 1.0f);
             SpriteBatch.End();
-        //}
+        }
 
         base.Draw(gameTime);
 

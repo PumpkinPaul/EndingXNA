@@ -377,7 +377,7 @@ namespace com.robotacid.engine
                 usingGamepad = true;
             }
 
-            if ((usingKeys && InputHelper.Keyboard.GetPressedKeys().Length == 0) || (usingGamepad && InputHelper.GamePadPressed(InputHelper.PlayerIndex) == false)) 
+            if ((Game.MOBILE)|| (usingKeys && InputHelper.Keyboard.GetPressedKeys().Length == 0) || (usingGamepad && InputHelper.GamePadPressed(InputHelper.PlayerIndex) == false)) 
                 inputFames = 0;
             else {
                 if (inputFames > 0) {
@@ -385,7 +385,11 @@ namespace com.robotacid.engine
                     return 0;
                 }
 
+                #if (WINDOWS || XBOX360)
                 inputFames = 8;
+                #elif WINDOWS_PHONE
+                inputFames = 3;
+                #endif
             }
 
 			var dir = 0;

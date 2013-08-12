@@ -43,7 +43,7 @@ namespace pumpkin
         {
 #if WINDOWS_PHONE
             //TouchPanel.EnabledGestures = GestureType.Hold | GestureType.Tap | GestureType.DoubleTap | GestureType.FreeDrag | GestureType.Flick;// | GestureType.Pinch;
-            TouchPanel.EnabledGestures = GestureType.Tap | GestureType.HorizontalDrag | GestureType.VerticalDrag | GestureType.Flick;
+            TouchPanel.EnabledGestures = GestureType.Tap;// | /*GestureType.HorizontalDrag | GestureType.VerticalDrag |*/ GestureType.Flick;
 #endif
         }
 
@@ -1070,25 +1070,10 @@ namespace pumpkin
                 GamePadAJustPressed(PlayerIndex) || GamePadBJustPressed(PlayerIndex) || GamePadXJustPressed(PlayerIndex) || GamePadYJustPressed(PlayerIndex));
         }
 
-        public static bool IsSwipeLeft
-        {
-            get { return lastMouseXMovement < 0; }
-        }
-
-        public static bool IsSwipeRight
-        {
-            get { return lastMouseXMovement > 0; }
-        }
-
-        public static bool IsSwipeUp
-        {
-            get { return lastMouseYMovement < 0; }
-        }
-
-        public static bool IsSwipeDown
-        {
-            get { return lastMouseYMovement > 0; }
-        }
+        public static bool IsSwipeLeft { get; set; }
+        public static bool IsSwipeRight { get; set; }
+        public static bool IsSwipeUp { get; set; }
+        public static bool IsSwipeDown { get; set; }
 
         /// <summary>
         /// Update, called from BaseGame.Update().
@@ -1129,41 +1114,52 @@ namespace pumpkin
             lastMouseXMovement += mouseState.X - mouseStateLastFrame.X;
             lastMouseYMovement += mouseState.Y - mouseStateLastFrame.Y;
 #elif WINDOWS_PHONE
+        IsSwipeUp = false;
+        IsSwipeDown = false;
+        IsSwipeLeft = false;
+        IsSwipeRight = false;
         lastMouseXMovement = 0;
         lastMouseYMovement = 0;
 
         touchCollection = TouchPanel.GetState();
         mouseState = new pumpkin.MouseState();
 
-        foreach (var tl in touchCollection)
+        if (touchCollection.Count > 0)
         {
-            if (tl.State == TouchLocationState.Pressed || tl.State == TouchLocationState.Moved)
+            var tl = touchCollection[0];
+
+            if (tl.State == TouchLocationState.Pressed )
             {
-                
+                mouseStateLastFrame.X = (int)tl.Position.X;
+                mouseStateLastFrame.Y = (int)tl.Position.Y;
                 mouseState.X = (int)tl.Position.X;
                 mouseState.Y = (int)tl.Position.Y;
+
+                mouseState.LeftButton = ButtonState.Pressed;
+            }
+
+            if (tl.State == TouchLocationState.Moved)
+            {
+                mouseState.X = (int)tl.Position.X;
+                mouseState.Y = (int)tl.Position.Y;
+                
+                lastMouseXMovement = mouseState.X - mouseStateLastFrame.X;
+                lastMouseYMovement = mouseState.Y - mouseStateLastFrame.Y;
+
                 mouseState.LeftButton = ButtonState.Pressed;
             }
         }
 
-        if (TouchPanel.IsGestureAvailable)
-        {
-            while (TouchPanel.IsGestureAvailable)
-            {
-                var gesture = TouchPanel.ReadGesture();
- 
-                switch (gesture.GestureType)
-                {
-                    case GestureType.HorizontalDrag:
-                    case GestureType.VerticalDrag:
-                    case GestureType.Flick:
-                        lastMouseXMovement = gesture.Delta.X;
-                        lastMouseYMovement = gesture.Delta.Y;
-                        mouseState.LeftButton = ButtonState.Pressed;
-                        break;
-                }
-            }
-        }
+        //For touch moves.
+        if (lastMouseXMovement > 50)
+            IsSwipeRight = true;
+        else if (lastMouseXMovement < -50)
+            IsSwipeLeft = true;
+
+        if (lastMouseYMovement < -30)
+            IsSwipeUp = true;
+        else if (lastMouseYMovement > 30)
+            IsSwipeDown = true;
 
 #endif
             mouseXMovement = lastMouseXMovement;
