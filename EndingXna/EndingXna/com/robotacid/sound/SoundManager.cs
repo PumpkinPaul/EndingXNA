@@ -39,7 +39,7 @@ namespace com.robotacid.sound
 			var sound = sounds[name];
 			var soundTransform = volumes[name] * volume;
             var instance = sound.CreateInstance();
-			soundChannels[name] = sound.CreateInstance();
+			soundChannels[name] = instance;
             instance.Volume = (float)soundTransform;
             instance.Play();
 		}
