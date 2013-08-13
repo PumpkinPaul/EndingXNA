@@ -92,8 +92,8 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         IsMouseVisible = false;
 
         #if WINDOWS
-        //_graphics.PreferredBackBufferWidth = 960;
-        //_graphics.PreferredBackBufferHeight = 640;
+        _graphics.PreferredBackBufferWidth = 960;
+        _graphics.PreferredBackBufferHeight = 640;
 
         _mousepointer = true;
         #elif XBOX360
@@ -101,11 +101,7 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         _graphics.PreferredBackBufferHeight = 720;
 
         _mousepointer = true;
-        #elif WINDOWS_PHONE
-        //_graphics.PreferredBackBufferWidth = 960;
-        //_graphics.PreferredBackBufferHeight = 480;
-        //_graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
-    
+        #elif WINDOWS_PHONE    
         _graphics.PreferredBackBufferFormat = SurfaceFormat.Color;
         _mousepointer = false;
         #endif
@@ -137,10 +133,8 @@ public class XnaGame : Microsoft.Xna.Framework.Game
         });
 
         Components.Add(new GamerServicesComponent(this));
-
+        Components.Add(ThreadPoolComponent = new ThreadPoolComponent(this));
         #endif
-        
-        //Components.Add(ThreadPoolComponent = new ThreadPoolComponent(this));
     }
 
     /// <summary>
@@ -224,6 +218,8 @@ public class XnaGame : Microsoft.Xna.Framework.Game
     /// <param name="gameTime">Provides a snapshot of timing values.</param>
     protected override void Update(GameTime gameTime)
     {
+        base.Update(gameTime);
+
         if (Guide.IsVisible)
             return;
 
@@ -239,8 +235,6 @@ public class XnaGame : Microsoft.Xna.Framework.Game
 
         //Send event to flash objects
         DispatchEvents();
-
-        base.Update(gameTime);
     }
 
     /// <summary>

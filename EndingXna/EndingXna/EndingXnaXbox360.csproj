@@ -154,11 +154,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="GameThumbnail.png">
-      <XnaPlatformSpecific>true</XnaPlatformSpecific>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
