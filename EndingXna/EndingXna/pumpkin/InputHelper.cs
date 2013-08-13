@@ -1106,8 +1106,8 @@ namespace pumpkin
 #elif XBOX360
             //Spoof mouse with gamepad!
             mouseState = new pumpkin.MouseState();
-            mouseState.X = (int)MathHelper.Clamp(mouseStateLastFrame.X + (int)(GamePad(PlayerIndex).ThumbSticks.Right.X * MousePosScale), 0, XnaGame.Instance.Window.ClientBounds.Width);
-            mouseState.Y = (int)MathHelper.Clamp(mouseStateLastFrame.Y - (int)(GamePad(PlayerIndex).ThumbSticks.Right.Y * MousePosScale), 0, XnaGame.Instance.Window.ClientBounds.Height);
+            mouseState.X = (int)MathHelper.Clamp(mouseStateLastFrame.X + (int)(GamePad(PlayerIndex).ThumbSticks.Right.X * MousePosScale), 0, XnaGame.Instance.GameWindow.Width);
+            mouseState.Y = (int)MathHelper.Clamp(mouseStateLastFrame.Y - (int)(GamePad(PlayerIndex).ThumbSticks.Right.Y * MousePosScale), 0, XnaGame.Instance.GameWindow.Height);
             mouseState.LeftButton = GamePad(PlayerIndex).Buttons.A;
 
             // Update mouseXMovement and mouseYMovement
