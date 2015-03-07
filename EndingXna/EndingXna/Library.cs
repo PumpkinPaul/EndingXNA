@@ -1,5 +1,5 @@
 //#if WINDOWS_PHONE
-//#define JSON 
+#define JSON 
 //#endif
 
 using System;
